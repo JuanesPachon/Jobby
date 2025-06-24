@@ -1,1 +1,53 @@
 @import "tailwindcss";
+
+/* Import fonts */
+
+@font-face {
+    font-family: 'Poppins';
+    src: url('../public/fonts/poppins/Poppins-Regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Poppins';
+    src: url('../public/fonts/poppins/Poppins-Medium.ttf') format('truetype');
+    font-weight: 500;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Poppins';
+    src: url('../public/fonts/poppins/Poppins-SemiBold.ttf') format('truetype');
+    font-weight: 600;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Inter';
+    src: url('../public/fonts/inter/Inter_24pt-Regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Inter';
+    src: url('../public/fonts/inter/Inter_24pt-Medium.ttf') format('truetype');
+    font-weight: 500;
+    font-style: normal;
+}
+
+/* Global variables */
+
+@theme {
+    
+    /* fonts */
+    --font-poppins: 'Poppins', sans-serif;
+    --font-inter: 'Inter', sans-serif;
+
+    /* colors */
+    --color-bg-white: #f0e9e5; 
+    --color-main-red: #f24f1c;
+    --color-main-yelllow: #FAD02C;
+    --color-main-blue: #2b73de;
+}
