@@ -1,10 +1,14 @@
 import { Component, inject, OnDestroy, OnInit, signal, Signal } from '@angular/core';
 import { map, Subject, takeUntil } from 'rxjs';
 import { BreakpointObserver } from '@angular/cdk/layout';
+import { HomeNavbar } from '../../shared/home-navbar/home-navbar';
+import { HomeFooter } from '../../shared/home-footer/home-footer';
+import { HomeRating } from './components/home-rating/home-rating';
+import { HomeCollage } from './components/home-collage/home-collage';
 
 @Component({
   selector: 'app-home',
-  imports: [],
+  imports: [HomeNavbar, HomeFooter, HomeRating, HomeCollage],
   templateUrl: './home.html',
   styleUrl: './home.css'
 })
