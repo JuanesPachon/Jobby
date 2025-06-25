@@ -50,4 +50,10 @@
     --color-main-red: #f24f1c;
     --color-main-yelllow: #FAD02C;
     --color-main-blue: #2b73de;
+
+    /* breakpoints */
+    --breakpoint-2xl: 99rem;
+    --breakpoint-xl: 86rem;
+    --breakpoint-md: 56rem;
+    --breakpoint-sm: 48rem;
 }
