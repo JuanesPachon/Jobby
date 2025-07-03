@@ -3,27 +3,27 @@
 <main class="relative mx-auto font-poppins max-w-[2200px]">
 
     <!-- mobile hero section -->
-    @if (isMobile()) {
-        <section class="lg:hidden relative flex flex-col items-center py-28 bg-[url('/images/WebP/home_collage_vertical3.webp')] bg-cover bg-no-repeat bg-center">
-        <div class="absolute inset-0 bg-black/50"></div>
-        <div class="relative z-2 flex flex-col items-center">
-            <h1 class="text-[2.5rem] text-center mb-11 text-white">Conectamos personas con oportunidades</h1>
-            <button class="bg-bg-white py-2 px-4 rounded-3xl">Conviertete en un Jobbie</button>
-        </div>
-        </section>
-    } @else {
-        <section class="relative h-[30vw] w-full 2xl:max-w left-1/2 -translate-x-1/2 overflow-hidden flex gap-x-5 justify-center items-center bg-[url('/images/WebP/home_background_call_to_action.webp')] bg-cover bg-no-repeat bg-center">
-            <div class="absolute inset-0 bg-black/80"></div>
+    <section class="lg:hidden relative flex flex-col items-center py-28 bg-[url('/images/WebP/home_collage_vertical3.webp')] bg-cover bg-no-repeat bg-center">
+    <div class="absolute inset-0 bg-black/50"></div>
+    <div class="relative z-2 flex flex-col items-center">
+        <h1 class="text-[2.5rem] text-center mb-11 text-white">Conectamos personas con oportunidades</h1>
+        <button class="bg-bg-white py-2 px-4 rounded-3xl">Conviertete en un Jobbie</button>
+    </div>
+    </section>
 
-            <div class="container mx-auto relative z-10 h-full flex items-center justify-between gap-x-5">
-                <div class="relative z-2 flex flex-col items-center">
-                    <h1 class="text-4xl xl:text-5xl 2xl:text-6xl text-center mb-11 text-white w-[125%] mr-[-15%] px-10 xl:px-20">Conectamos personas con oportunidades</h1>
-                    <button class="bg-bg-white py-2 px-6 rounded-3xl mr-[-15%] text-lg">Conviertete en un Jobbie</button>
-                </div>
-                <img class="relative z-3 h-full object-cover" src="images/WebP/hero_bg.png" alt="Imagen de portada">
+    <!-- desktop hero section -->
+    <section class="hidden relative h-[30vw] w-full 2xl:max-w left-1/2 -translate-x-1/2 overflow-hidden lg:flex gap-x-5 justify-center items-center bg-[url('/images/WebP/home_background_call_to_action.webp')] bg-cover bg-no-repeat bg-center">
+        <div class="absolute inset-0 bg-black/80"></div>
+
+        <div class="container mx-auto relative z-10 h-full flex items-center justify-between gap-x-5">
+            <div class="relative z-2 flex flex-col items-center">
+                <h1 class="text-4xl xl:text-5xl 2xl:text-6xl text-center mb-11 text-white w-[125%] mr-[-15%] px-10 xl:px-20">Conectamos personas con oportunidades</h1>
+                <button class="bg-bg-white py-2 px-6 rounded-3xl mr-[-15%] text-lg">Conviertete en un Jobbie</button>
             </div>
-        </section>
-    }
+            <img class="relative z-3 h-full object-cover" src="images/WebP/hero_bg.png" alt="Imagen de portada">
+        </div>
+    </section>
+
 
 
 
@@ -39,11 +39,18 @@
     <section class="relative w-full left-1/2 -translate-x-1/2">
 
         <div class="absolute inset-0 bg-black/40"></div>
-        <img 
-            [src]="isMobile() ? '/images/WebP/home_below_jobby_information.webp' : '/images/WebP/home_collage_horizontal2.webp'" 
-            alt="imagen informativa de fondo"
-            class="w-full h-[40vh] object-cover object-center"
-        >
+        <picture class="w-full h-[40vh] block relative">
+            <div class="absolute inset-0 bg-black/40"></div>
+            <source
+                media="(min-width: 1024px)"
+                srcset="/images/WebP/home_collage_horizontal2.webp"
+            />
+            <img
+                src="/images/WebP/home_below_jobby_information.webp"
+                alt="imagen informativa de fondo"
+                class="w-full h-full object-cover object-center"
+            />
+        </picture>
     </section>
 
     <app-home-rating/>
