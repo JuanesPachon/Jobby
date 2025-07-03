@@ -3,12 +3,16 @@
 <main class="relative mx-auto font-poppins max-w-[2200px]">
 
     <!-- mobile hero section -->
-    <section class="lg:hidden relative flex flex-col items-center py-28 bg-[url('/images/WebP/home_collage_vertical3.webp')] bg-cover bg-no-repeat bg-center">
-    <div class="absolute inset-0 bg-black/50"></div>
-    <div class="relative z-2 flex flex-col items-center">
-        <h1 class="text-[2.5rem] text-center mb-11 text-white">Conectamos personas con oportunidades</h1>
-        <button class="bg-bg-white py-2 px-4 rounded-3xl">Conviertete en un Jobbie</button>
-    </div>
+    <section class="lg:hidden relative flex flex-col items-center py-28 overflow-hidden">
+        <img
+            ngSrc="/images/WebP/home_collage_vertical3.webp" alt="Collage vertical informativo" width="800" height="1200" priority           
+            class="absolute inset-0 w-full h-full object-cover object-center"
+        />
+        <div class="absolute inset-0 bg-black/50"></div>
+        <div class="relative z-2 flex flex-col items-center">
+            <h1 class="text-[2.5rem] text-center mb-11 text-white">Conectamos personas con oportunidades</h1>
+            <button class="bg-bg-white py-2 px-4 rounded-3xl">Conviertete en un Jobbie</button>
+        </div>
     </section>
 
     <!-- desktop hero section -->
@@ -20,7 +24,9 @@
                 <h1 class="text-4xl xl:text-5xl 2xl:text-6xl text-center mb-11 text-white w-[125%] mr-[-15%] px-10 xl:px-20">Conectamos personas con oportunidades</h1>
                 <button class="bg-bg-white py-2 px-6 rounded-3xl mr-[-15%] text-lg">Conviertete en un Jobbie</button>
             </div>
-            <img class="relative z-3 h-full object-cover" src="images/WebP/hero_bg.png" alt="Imagen de portada">
+            <div class="relative z-3 w-full h-full">
+                <img class="absolute inset-0 object-cover object-center" ngSrc="images/WebP/hero_bg.png" priority fill alt="Imagen de portada">
+            </div>
         </div>
     </section>
 
@@ -49,6 +55,8 @@
                 src="/images/WebP/home_below_jobby_information.webp"
                 alt="imagen informativa de fondo"
                 class="w-full h-full object-cover object-center"
+                loading="lazy"
+                fetchpriority="high"
             />
         </picture>
     </section>
