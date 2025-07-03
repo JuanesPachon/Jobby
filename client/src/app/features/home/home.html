@@ -1,6 +1,6 @@
 <app-home-navbar/>
 
-<main class="relative container mx-auto font-poppins">
+<main class="relative mx-auto font-poppins max-w-[2200px]">
 
     <!-- mobile hero section -->
     @if (isMobile()) {
@@ -12,18 +12,16 @@
         </div>
         </section>
     } @else {
-        <section class="relative h-[30vw] overflow-hidden flex gap-x-5 justify-center items-center bg-[url('/images/WebP/home_background_call_to_action.webp')] bg-cover bg-no-repeat bg-center">
+        <section class="relative h-[30vw] w-full 2xl:max-w left-1/2 -translate-x-1/2 overflow-hidden flex gap-x-5 justify-center items-center bg-[url('/images/WebP/home_background_call_to_action.webp')] bg-cover bg-no-repeat bg-center">
             <div class="absolute inset-0 bg-black/80"></div>
 
-            <div class="absolute inset-y-0 z-3 left-0 w-10 pointer-events-none bg-gradient-to-r from-bg-white to-transparent"></div>
-
-            <div class="absolute inset-y-0 z-3 right-0 w-10 pointer-events-none bg-gradient-to-l from-bg-white to-transparent"></div>
-
-            <div class="relative z-2 flex flex-col items-center">
-                <h1 class="text-5xl text-center mb-11 text-white w-[125%] mr-[-35%] px-20">Conectamos personas con oportunidades</h1>
-                <button class="bg-bg-white py-2 px-4 rounded-3xl mr-[-35%] text-lg">Conviertete en un Jobbie</button>
+            <div class="container mx-auto relative z-10 h-full flex items-center justify-between gap-x-5">
+                <div class="relative z-2 flex flex-col items-center">
+                    <h1 class="text-4xl xl:text-5xl 2xl:text-6xl text-center mb-11 text-white w-[125%] mr-[-15%] px-10 xl:px-20">Conectamos personas con oportunidades</h1>
+                    <button class="bg-bg-white py-2 px-6 rounded-3xl mr-[-15%] text-lg">Conviertete en un Jobbie</button>
+                </div>
+                <img class="relative z-3 h-full object-cover" src="images/WebP/hero_bg.png" alt="Imagen de portada">
             </div>
-            <img class="relative z-3 h-full object-cover" src="/images/WebP/hero_bg.png" alt="Imagen de portada">
         </section>
     }
 
@@ -34,23 +32,17 @@
         <p class="text-center">que conecta a personas con tareas especificas de forma rapida, flexible y sin complicaciones.</p>
     </section>
 
-    <section class="relative">
-        <div class="hidden lg:block absolute inset-y-0 z-3 left-0 w-10 pointer-events-none bg-gradient-to-r from-bg-white to-transparent"></div>
-        <div class="hidden lg:block absolute inset-y-0 z-3 right-0 w-10 pointer-events-none bg-gradient-to-l from-bg-white to-transparent"></div>
-
+    <section class="relative w-full left-1/2 -translate-x-1/2">
         <h3 class="text-main-yelllow bg-black p-4 text-center font-semibold">¡Gana dinero en tu tiempo libre y encuentra oportunidades cerca de ti!</h3>
     </section>
 
-    <section class="relative">
+    <section class="relative w-full left-1/2 -translate-x-1/2">
 
-        <div class="hidden lg:block absolute inset-y-0 z-3 left-0 w-10 pointer-events-none bg-gradient-to-r from-bg-white to-transparent"></div>
-        <div class="hidden lg:block absolute inset-y-0 z-3 right-0 w-10 pointer-events-none bg-gradient-to-l from-bg-white to-transparent"></div>
-
-        <div class="absolute inset-0 bg-black/50"></div>
+        <div class="absolute inset-0 bg-black/40"></div>
         <img 
             [src]="isMobile() ? '/images/WebP/home_below_jobby_information.webp' : '/images/WebP/home_collage_horizontal2.webp'" 
             alt="imagen informativa de fondo"
-            class="w-full h-64 md:h-80 lg:h-[40vh] object-cover object-center"
+            class="w-full h-[40vh] object-cover object-center"
         >
     </section>
 
@@ -58,7 +50,7 @@
 
     <app-home-collage/>
 
-    <button class="fixed bottom-10 right-8 w-[5rem] h-[5rem] lg:w-20 lg:h-20 flex items-center justify-center lg:right-[calc((100vw-1024px)/2+1rem)] xl:right-[calc((100vw-1280px)/2+1rem)] 2xl:right-[calc((100vw-1536px)/2+1rem)] z-30 bg-main-yelllow p-2 rounded-full border-[1px] border-black">
+    <button class="fixed bottom-10 right-8 w-[4.5rem] h-[4.5rem] lg:w-20 lg:h-20 flex items-center justify-center lg:right-[calc((100vw-1024px)/2+1rem)] xl:right-[calc((100vw-1280px)/2+1rem)] 2xl:right-[calc((100vw-1536px)/2+1rem)] z-30 bg-main-yelllow p-2 rounded-full border-[1px] border-black">
         <img class="w-10 h-10" src="/icons/help_icon.svg" alt="Boton de ayuda" />
     </button>
 
