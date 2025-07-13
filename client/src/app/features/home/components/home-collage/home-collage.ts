@@ -1,11 +1,21 @@
 import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-home-collage',
-  imports: [],
+  standalone: true,
+  imports: [CommonModule],
   templateUrl: './home-collage.html',
-  styleUrl: './home-collage.css'
+  styleUrls: ['./home-collage.css']
 })
 export class HomeCollage {
+  activeTab: number = 0;
 
+  setTab(tabNumber: number): void {
+    if (this.activeTab === tabNumber) {
+      this.activeTab = 0;
+    } else {
+      this.activeTab = tabNumber;
+    }
+  }
 }
