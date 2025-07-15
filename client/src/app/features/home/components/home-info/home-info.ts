@@ -10,6 +10,7 @@ import { TabInfo } from './tabInfo.interface';
   styleUrls: ['./home-info.css']
 })
 export class HomeInfo {
+
   activeTab = signal<number>(0);
 
   setTab(tabNumber: number): void {
@@ -18,6 +19,18 @@ export class HomeInfo {
     } else {
       this.activeTab.set(tabNumber);
     }
+  }
+
+  getTabLabel(tabId: number): string {
+    const labels: Record<number, string> = {
+      1: '🔍 ¿Cómo funciona?',
+      2: '🛠 Servicios disponibles',
+      3: '🕒 Flexibilidad laboral',
+      4: '🌟 Calificaciones',
+      5: '🤝 Seguridad',
+      6: '💬 Conexión directa'
+    };
+    return labels[tabId] || '';
   }
 
   public tabInfo: TabInfo[] = [
