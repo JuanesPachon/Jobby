@@ -7,12 +7,12 @@
         
      <!-- Desktop Menu -->
     <div class="hidden lg:flex gap-3">
-      <button class="bg-main-yelllow hover:bg-main-yelllow text-black px-7 py-2 rounded-full font-medium text-sm border-[1px] border-black">
+      <a class="bg-main-yelllow hover:bg-main-yelllow text-black px-7 py-2 rounded-full font-medium text-sm border-[1px] border-black">
         Iniciar sesión
-      </button>
-      <button class="bg-main-blue hover:bg-main-blue text-white px-7 py-2 rounded-full font-medium text-sm border-[1px] border-black">
+      </a>
+      <a [routerLink]="'/register'" class="bg-main-blue hover:bg-main-blue text-white px-7 py-2 rounded-full font-medium text-sm border-[1px] border-black">
         Registrarse
-      </button>
+      </a>
     </div>
   </nav>
 
@@ -20,15 +20,15 @@
     <div class="lg:hidden fixed top-16 inset-0 bg-black/65 z-11" (click)="toggleMenu()"></div>
 
     <div class="absolute top-16 mt-2 right-4 z-50 bg-white rounded-lg shadow-lg flex flex-col p-2 divide-y">
-      <button class="flex items-center w-full px-4 py-3 text-left font-semibold hover:bg-gray-100">
+      <a class="flex items-center w-full px-4 py-3 text-left font-semibold hover:bg-gray-100">
         <img src="/icons/bar_login.svg" alt="Iniciar sesión" class="h-5 w-5 mr-3" />
         Iniciar sesión
-      </button>
+      </a>
 
-      <button class="flex items-center w-full px-4 py-3 text-left font-semibold hover:bg-gray-100">
+      <a [routerLink]="'/register'" class="flex items-center w-full px-4 py-3 text-left font-semibold hover:bg-gray-100">
         <img src="/icons/bar_signup.svg" alt="Registrarse" class="h-5 w-5 mr-3" />
         Registrarse
-      </button>
+      </a>
     </div>
   }
 
