@@ -1,0 +1,20 @@
+<div class="container mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 lg:gap-2 py-14 px-6">
+
+    @for (rating of ratingInfo; track rating.id) {
+        <div class="p-6 sm:p-8 md:p-10 lg:p-8 rounded-xl text-center w-full mx-auto flex flex-col h-full">
+            <img [src]="rating.photoUrl"
+                alt="Foto de perfil de usuario"
+                class="w-full max-h-[320px] lg:max-h-[360px] xl:max-h-[320px] aspect-auto  mx-auto max-w-md rounded-[20px] sm:rounded-[24px] md:rounded-[28px] object-cover mb-8 shadow-lg border border-black"/>
+            <div class="flex justify-center mb-4">
+                
+                @for (star of [1,2,3,4,5]; track []) {
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="#FBBF24" stroke="black" stroke-width="0.5" viewBox="0 0 20 20" class="w-9 h-9 md:w-10 md:h-10 mx-1"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.967a1 1 0 00.95.69h4.175c.969 0 1.371 1.24.588 1.81l-3.38 2.455a1 1 0 00-.364 1.118l1.287 3.966c.3.922-.755 1.688-1.54 1.118l-3.38-2.454a1 1 0 00-1.175 0l-3.38 2.454c-.784.57-1.838-.196-1.539-1.118l1.287-3.966a1 1 0 00-.364-1.118L2.05 9.394c-.783-.57-.38-1.81.588-1.81h4.175a1 1 0 00.95-.69l1.286-3.967z"/></svg>
+                }
+
+            </div>
+            <h3 class="font-bold text-xl sm:text-2xl md:text-2xl lg:text-xl mb-4">{{rating.name}}</h3>
+            <p class="sm:text-lg md:text-xl lg:text-lg text-gray-600">{{rating.comment}}</p>
+        </div>
+    }
+
+</div>
