@@ -14,7 +14,7 @@ app.disable("x-powered-by");
 
 app.use("/api/v1/", authRouter);
 
-app.use((req, res) => {
+app.use((_req, res) => {
   res.status(404).json({ message: "Not Found" });
 })
 
