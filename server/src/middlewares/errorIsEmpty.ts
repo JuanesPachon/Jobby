@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-const { validationResult } = require('express-validator'); // Express-validator uses CommonJS, so we import it this way
+import { validationResult } from "express-validator";
 
 function errorsIsEmpty(req: Request, res: Response, next: NextFunction) {
 

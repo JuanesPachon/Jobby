@@ -1,4 +1,4 @@
-const { check } = require('express-validator');
+import { check } from "express-validator";
 
 export const userValidations = [
   check("first_name")
@@ -75,7 +75,9 @@ export const userValidations = [
     .withMessage("Phone number must contain only numbers"),
 
   check("password")
-    .if((value: string, { req }: { req: { body: { oauth_provider?: string } } }) => req.body.oauth_provider === 'local' || !req.body.oauth_provider)
+    .if(({ req }) => {
+      return req.body.oauth_provider === 'local' || !req.body.oauth_provider;
+    })
     .notEmpty()
     .withMessage("Password is required")
     .isLength({ min: 8 })
