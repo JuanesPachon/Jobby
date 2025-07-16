@@ -12,7 +12,7 @@ app.use(helmet());
 app.use(express.json());
 app.disable("x-powered-by");
 
-app.use("/api/v1", authRouter);
+app.use("/api/v1/", authRouter);
 
 app.use((req, res) => {
   res.status(404).json({ message: "Not Found" });
