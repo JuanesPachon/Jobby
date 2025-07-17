@@ -1,122 +1,95 @@
-<!DOCTYPE html>
-<html lang="es">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Registro - Jobby</title>
+<main class="min-h-screen flex items-center justify-center font-poppins bg-cover bg-center bg-[url('/images/WebP/dashboard_inicio_sesion.webp')]">
 
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet" />
-    <style>
-      * {
-        font-family: 'Poppins', sans-serif;
-      }
-    </style>
-  </head>
+  <div class="bg-white sm:rounded-2xl shadow-xl p-6 pb-3 w-full max-w-xl">
 
-  <body class="bg-gray-800 min-h-screen flex items-center justify-center"
-      style="background-image: url('/images/WebP/Dashboard _Inicio_de_sesion.webp'); background-size: cover; background-position: center;">
-
-
-    <!-- Contenedor del formulario -->
-    <div class="bg-white rounded-2xl shadow-xl p-6 w-full max-w-xl">
-
-      <!-- Logo superior (ligeramente más grande) -->
-      <div class="mb-4 text-center">
-        <img src="/images/LOGO/png_sin_fondo/fondo_blanco.png" alt="Jobby Logo" class="mx-auto h-12 md:h-14" />
-      </div>
-
-      <!-- Título del formulario -->
-      <h1 class="text-xl font-bold text-center text-gray-800 mb-6">Registro de cuenta</h1>
-
-      <!-- Formulario de registro -->
-      <form id="registerForm">
-
-        <!--  Nombre y Apellido -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-5">
-          <div>
-            <label class="text-sm text-gray-700 block mb-1">Nombre*</label>
-            <input name="nombre" placeholder="Nombre*" required class="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none" />
-          </div>
-          <div>
-            <label class="text-sm text-gray-700 block mb-1">Apellido*</label>
-            <input name="apellido" placeholder="Apellido*" required class="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none" />
-          </div>
-        </div>
-
-        <!--  Fecha de nacimiento y Tipo de documento -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-5">
-          <div>
-            <label class="text-sm text-gray-700 block mb-1">Fecha de nacimiento*</label>
-            <input name="nacimiento" type="date" required class="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none" />
-          </div>
-          <div>
-            <label class="text-sm text-gray-700 block mb-1">Tipo de documento*</label>
-            <select name="tipoDocumento" required class="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none">
-              <option value="">Selecciona...</option>
-              <option value="CC">Cédula</option>
-              <option value="TI">Tarjeta de Identidad</option>
-            </select>
-          </div>
-        </div>
-
-        <!-- Número de documento y Correo -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-5">
-          <div>
-            <label class="text-sm text-gray-700 block mb-1">Número de documento*</label>
-            <input name="documento" placeholder="Número de documento*" required class="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none" />
-          </div>
-          <div>
-            <label class="text-sm text-gray-700 block mb-1">Correo electrónico*</label>
-            <input name="correo" type="email" placeholder="Correo electrónico*" required class="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none" />
-          </div>
-        </div>
-
-        <!-- Teléfono y Contraseña -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-5">
-          <div>
-            <label class="text-sm text-gray-700 block mb-1">Teléfono*</label>
-            <input name="telefono" placeholder="Teléfono*" required class="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none" />
-          </div>
-          <div>
-            <label class="text-sm text-gray-700 block mb-1">Contraseña*</label>
-            <input name="password" type="password" placeholder="Contraseña*" required class="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none" />
-          </div>
-        </div>
-
-        <!--  términos -->
-        <div class="flex items-start space-x-2 mb-6">
-          <input type="checkbox" id="terms" required class="mt-1 h-4 w-4 text-blue-600" />
-          <label for="terms" class="text-sm text-gray-700">Acepto los <a href="#" class="text-blue-600 underline">Términos y condiciones</a></label>
-        </div>
-
-        <!--  Google y Crear cuenta -->
-        <div class="flex flex-col md:flex-row gap-3 mb-5">
-          <button type="button" class="w-full md:w-1/2 flex items-center justify-center bg-white border border-gray-300 text-gray-700 text-sm font-semibold py-2 rounded-md transition hover:bg-gray-50">
-            <img src="https://www.google.com/images/branding/googleg/1x/googleg_standard_color_64dp.png" alt="Google" class="h-4 w-4 mr-2" />
-            Iniciar con Google
-          </button>
-          <button type="submit" class="w-full md:w-1/2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold py-2 rounded-md transition">Crear cuenta</button>
-        </div>
-
-        <!-- Separador -->
-        <div class="text-center mb-4">
-          <p class="text-sm text-gray-500">O</p>
-        </div>
-
-        <!-- Botón Iniciar sesión -->
-        <div class="text-center mb-4">
-          <p class="text-sm mb-1">¿Ya tienes una cuenta?</p>
-          <button type="button" class="w-full md:w-1/2 mx-auto bg-yellow-500 hover:bg-yellow-600 text-white text-sm font-semibold py-2 rounded-md transition">Iniciar Sesión</button>
-        </div>
-      </form>
-
-      <!-- Footer -->
-      <div class="mt-6 border-t border-gray-300 pt-3 flex items-center justify-between">
-        <p class="text-xs text-gray-500">© ADSO - 2025</p>
-        <img src="/images/LOGO/png_sin_fondo/fondo_blanco.png" alt="Jobby Logo" class="h-5 md:h-6" />
-      </div>
-
+    <div class="mb-4 text-center">
+      <img src="/images/LOGO/png_sin_fondo/fondo_blanco.png" alt="Jobby Logo" class="mx-auto h-12 md:h-14" />
     </div>
-  </body>
-</html>
+
+    <h1 class="text-2xl font-semibold text-center text-gray-800 mb-6">Registro de cuenta</h1>
+
+    <form id="registerForm">
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-5">
+        <div>
+          <label for="first_name" class="text-sm text-black block mb-1">Nombre *</label>
+          <input id="first_name" name="first_name" required class="w-full px-3 py-2 text-sm border border-gray-400 rounded-md focus:ring-2 focus:ring-black focus:outline-none" />
+        </div>
+        <div>
+          <label for="last_name" class="text-sm text-black block mb-1">Apellido *</label>
+          <input id="last_name" name="last_name" required class="w-full px-3 py-2 text-sm border border-gray-400 rounded-md focus:ring-2 focus:ring-black focus:outline-none" />
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-5">
+        <div>
+          <label for="birth_date" class="text-sm text-black block mb-1">Fecha de nacimiento *</label>
+          <input id="birth_date" name="birth_date" type="datetime" required class="w-full px-3 py-2 text-sm border border-gray-400 rounded-md focus:ring-2 focus:ring-black focus:outline-none" />
+        </div>
+        <div>
+          <label for="doc_type" class="text-sm text-black block mb-1">Tipo de documento *</label>
+          <select id="doc_type" name="doc_type" required class="w-full px-3 pr-8 py-2 text-sm border border-gray-400 rounded-md focus:ring-2 focus:ring-black focus:outline-none">
+        <option value="" disabled selected>Selecciona...</option>
+        <option value="cedula de ciudadania">Cédula de ciudadania</option>
+        <option value="pasaporte">Pasaporte</option>
+        <option value="cedula de extranjeria">Cédula de extranjeria</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-5">
+        <div>
+          <label for="doc_number" class="text-sm text-black block mb-1">Número de documento *</label>
+          <input id="doc_number" name="doc_number" required class="w-full px-3 py-2 text-sm border border-gray-400 rounded-md focus:ring-2 focus:ring-black focus:outline-none" />
+        </div>
+        <div>
+          <label for="email" class="text-sm text-black block mb-1">Correo electrónico *</label>
+          <input id="email" name="email" type="email" required class="w-full px-3 py-2 text-sm border border-gray-400 rounded-md focus:ring-2 focus:ring-black focus:outline-none" />
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-5">
+        <div>
+          <label for="phone" class="text-sm text-black block mb-1">Teléfono *</label>
+          <input id="phone" name="phone" required class="w-full px-3 py-2 text-sm border border-gray-400 rounded-md focus:ring-2 focus:ring-black focus:outline-none" />
+        </div>
+        <div>
+          <label for="password" class="text-sm text-black block mb-1">Contraseña *</label>
+          <input id="password" name="password" type="password" required class="w-full px-3 py-2 text-sm border border-gray-400 rounded-md focus:ring-2 focus:ring-black focus:outline-none" />
+        </div>
+      </div>
+
+      <div class="flex items-start space-x-2 mb-6">
+        <input type="checkbox" id="accepted_terms" name="accepted_terms" required class="mt-0.5 h-4 w-4 text-blue-600" />
+        <label for="accepted_terms" class="text-sm text-black">Acepto los <a class="text-blue-600 underline">Términos y condiciones</a></label>
+      </div>
+
+      <div class="flex flex-col md:flex-row gap-3 mb-5">
+        <button type="button" class="w-full md:w-1/2 flex items-center justify-center bg-white border-1 border-black text-black text-sm py-2 rounded-md transition hover:bg-gray-50">
+          <img src="https://www.google.com/images/branding/googleg/1x/googleg_standard_color_64dp.png" alt="Google" class="h-4 w-4 mr-2" />
+          Iniciar con Google
+        </button>
+        <button type="submit" class="w-full md:w-1/2 border-1 border-black bg-main-blue hover:bg-blue-700 text-white text-sm py-2 rounded-md transition">Crear cuenta</button>
+      </div>
+
+      <div class="relative flex items-center justify-center mb-4">
+        <div class="flex-grow border-t border-gray-400"></div>
+        <div class="mx-3 bg-white rounded-full w-8 h-8 flex items-center justify-center">
+          <div class="w-1 h-1 bg-gray-400 rounded-full"></div>
+        </div>
+        <div class="flex-grow border-t border-gray-400"></div>
+      </div>
+
+      <div class="text-center mb-4">
+        <p class="text-sm mb-2">¿Ya tienes una cuenta?</p>
+        <button type="button" class="w-full md:w-1/2 mx-auto border-1 border-black bg-main-yelllow hover:bg-yellow-500 text-sm font-semibold py-2 rounded-xl transition">Iniciar Sesión</button>
+      </div>
+    </form>
+
+    <div class="mt-6 border-t border-gray-400 pt-3 flex items-center justify-between">
+      <p class="text-xs text-black">© ADSO - 2025</p>
+      <img src="/images/LOGO/png_sin_fondo/fondo_blanco.png" alt="Jobby Logo" class="h-5 md:h-6" />
+    </div>
+
+  </div>
+</main>
