@@ -1,8 +1,9 @@
 import bcrypt from "bcryptjs"
 import pool from "../config/db_config.js";
-import { ResultSetHeader } from "mysql2/promise";
-import { DatabaseError, RegisterResult } from "../interfaces/databaseError.js";
+import { ResultSetHeader, RowDataPacket } from "mysql2/promise";
+import { DatabaseError, RegisterResult, LoginResult } from "../interfaces/databaseError.js";
 import { User } from "../interfaces/user.interface.js";
+import { Auth } from "../interfaces/auth.interface.js";
 
 const registerUser = async (user: User): Promise<RegisterResult> => {
     try {
@@ -70,4 +71,46 @@ const registerUser = async (user: User): Promise<RegisterResult> => {
     }
 }
 
-export { registerUser };
+const loginUser = async (credentials: Auth): Promise<LoginResult> => {
+    try {
+       
+        const [rows] = await pool.query<RowDataPacket[]>(
+            `SELECT id, email, password_hash, oauth_provider
+             FROM users 
+             WHERE email = ? AND deleted_at IS NULL`,
+            [credentials.email]
+        );
+
+        const user = rows[0];
+
+        let isPasswordValid: boolean = false;
+
+        if (user.oauth_provider === 'local') {
+            isPasswordValid = await bcrypt.compare(credentials.password as string, user.password_hash);
+        } else {
+            isPasswordValid = true;
+        }
+
+        if (!isPasswordValid || rows.length === 0) {
+            return {
+                success: false,
+                error: 'invalid_credentials',
+                message: 'Invalid email or password'
+            };
+        }
+
+        return {
+            success: true,
+            message: 'Login successful',
+        };
+
+    } catch (error) {
+        return {
+            success: false,
+            error: 'server',
+            message: 'Internal server error'
+        };
+    }
+}
+
+export { registerUser, loginUser };
