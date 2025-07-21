@@ -1,10 +1,10 @@
 import bcrypt from "bcryptjs"
 import pool from "../config/db_config.js";
 import { ResultSetHeader } from "mysql2/promise";
-import { DatabaseError } from "../interfaces/databaseError.js";
+import { DatabaseError, RegisterResult } from "../interfaces/databaseError.js";
 import { User } from "../interfaces/user.interface.js";
 
-const registerUser = async (user: User) => {
+const registerUser = async (user: User): Promise<RegisterResult> => {
     try {
 
         let hashedPassword: string | null = null;
@@ -41,23 +41,30 @@ const registerUser = async (user: User) => {
         if (result.affectedRows > 0) {
             return { 
                 success: true,
+                message: 'User registered successfully',
             };
         } else {
-            throw new Error("there's a problem with the insertion");
+            return {
+                success: false,
+                error: 'server',
+                message: 'Error inserting user into the database'
+            };
         }
 
     } catch (error) {
+        console.error('Error en registerUser:', error);
         
         if (error instanceof Error && (error as DatabaseError).code === 'ER_DUP_ENTRY') {
             return { 
                 success: false, 
-                error: "duplicate",
+                error: 'duplicate',
+                message: 'Email or docNumber are already registered'
             };
         } else {
-            console.log(error);
             return { 
                 success: false, 
-                error: "server",
+                error: 'server',
+                message: 'Internal server error'
             };
         }
     }
