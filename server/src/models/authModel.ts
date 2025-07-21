@@ -75,11 +75,19 @@ const loginUser = async (credentials: Auth): Promise<LoginResult> => {
     try {
        
         const [rows] = await pool.query<RowDataPacket[]>(
-            `SELECT id, password_hash
-            FROM users 
-            WHERE email = ? AND deleted_at IS NULL`,
+            `SELECT id, password_hash, oauth_provider
+             FROM users 
+             WHERE email = ? AND deleted_at IS NULL`,
             [credentials.email]
         );
+
+        if (rows.length === 0) {
+            return {
+                success: false,
+                error: 'invalid_credentials',
+                message: 'Invalid email or password'
+            };
+        }
 
         const user = rows[0];
 
@@ -91,7 +99,7 @@ const loginUser = async (credentials: Auth): Promise<LoginResult> => {
             isPasswordValid = true;
         }
 
-        if (!isPasswordValid || rows.length === 0) {
+        if (!isPasswordValid) {
             return {
                 success: false,
                 error: 'invalid_credentials',
@@ -102,6 +110,10 @@ const loginUser = async (credentials: Auth): Promise<LoginResult> => {
         return {
             success: true,
             message: 'Login successful',
+            user: {
+                id: user.id,
+                email: credentials.email
+            }
         };
 
     } catch (error) {

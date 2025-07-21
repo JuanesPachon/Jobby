@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import errorHandler from "../utils/errorHandler.js";
 import { loginUser, registerUser } from "../models/authModel.js";
+import jwt from "jsonwebtoken";
 
 const registerController = async (req: Request, res: Response) => {
   try {
@@ -29,8 +30,20 @@ const loginController = async (req: Request, res: Response) => {
     const credentials = req.body;
     const response = await loginUser(credentials);
 
-    if (response.success) {
-      return res.status(200).json({
+    if (response.success && response.user) {
+
+      const tokenPayload = {
+        sub: response.user.id,
+        iat: Date.now()
+      }
+
+      const token = jwt.sign(tokenPayload, (process.env.JWT_SECRET as string), {
+        expiresIn: '7d'
+      });
+
+      return res.cookie('access_token', token, {
+        httpOnly: true,
+      }).status(200).json({
         success: true,
         message: "Login successful",
       });
@@ -47,6 +60,7 @@ const loginController = async (req: Request, res: Response) => {
 
   } catch (error) {
     return errorHandler.handleServerError(res);
+    
   }
 }
 

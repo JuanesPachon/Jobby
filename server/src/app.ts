@@ -3,12 +3,14 @@ import express from "express";
 import cors from "cors";
 import helmet from "helmet";
 import authRouter from "./routes/authRoutes.js";
+import cookieParser from "cookie-parser";
 
 const PORT = process.env.PORT ?? 3002;
 const app = express();
 
 app.use(cors());
 app.use(helmet());
+app.use(cookieParser());
 app.use(express.json());
 app.disable("x-powered-by");
 
