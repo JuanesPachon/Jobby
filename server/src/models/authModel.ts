@@ -1,7 +1,7 @@
 import bcrypt from "bcryptjs"
 import pool from "../config/db_config.js";
 import { ResultSetHeader, RowDataPacket } from "mysql2/promise";
-import { DatabaseError, RegisterResult, LoginResult } from "../interfaces/databaseError.js";
+import { DatabaseError, RegisterResult, LoginResult } from "../interfaces/database.interface.js";
 import { User } from "../interfaces/user.interface.js";
 import { Auth } from "../interfaces/auth.interface.js";
 
@@ -75,9 +75,9 @@ const loginUser = async (credentials: Auth): Promise<LoginResult> => {
     try {
        
         const [rows] = await pool.query<RowDataPacket[]>(
-            `SELECT id, email, password_hash, oauth_provider
-             FROM users 
-             WHERE email = ? AND deleted_at IS NULL`,
+            `SELECT id, password_hash
+            FROM users 
+            WHERE email = ? AND deleted_at IS NULL`,
             [credentials.email]
         );
 

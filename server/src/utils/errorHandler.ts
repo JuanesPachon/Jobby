@@ -24,6 +24,10 @@ function handleDuplicateError(res: Response, message = "The resource already exi
   handleError(res, 409, message);
 }
 
+function handleInvalidCredentialsError(res: Response) {
+  handleError(res, 401, "Invalid email or password");
+}
+
 export default {
   handleError,
   handleAuthError,
@@ -31,4 +35,5 @@ export default {
   handleServerError,
   handleNotFoundError,
   handleDuplicateError,
+  handleInvalidCredentialsError
 };

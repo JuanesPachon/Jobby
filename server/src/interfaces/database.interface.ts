@@ -9,3 +9,13 @@ export interface RegisterResult {
     error?: 'duplicate' | 'server' | 'validation';
     message?: string;
 }
+
+export interface LoginResult {
+    success: boolean;
+    error?: 'invalid_credentials' | 'server';
+    message?: string;
+    user?: {
+        id: number;
+        email: string;
+    };
+}
