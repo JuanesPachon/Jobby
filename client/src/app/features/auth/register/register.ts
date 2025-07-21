@@ -1,6 +1,6 @@
 import { Component, inject } from '@angular/core';
 import {FormGroup, FormControl, ReactiveFormsModule, Validators} from '@angular/forms';
-import { UserService } from '../../services/UserService';
+import { AuthService } from '../../../core/services/auth.service';
 import { RegisterRequest } from './models/RegisterRequest';
 
 @Component({
@@ -11,7 +11,7 @@ import { RegisterRequest } from './models/RegisterRequest';
 })
 export class Register {
 
-  private userService = inject(UserService);
+  private userService = inject(AuthService);
   
   signUpForm = new FormGroup({
     firstName: new FormControl('', [Validators.required, Validators.pattern(/^[A-Za-z]+$/)]),

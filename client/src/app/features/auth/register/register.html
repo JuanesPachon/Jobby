@@ -69,7 +69,7 @@
           <img src="https://www.google.com/images/branding/googleg/1x/googleg_standard_color_64dp.png" alt="Google" class="h-4 w-4 mr-2" />
           Iniciar con Google
         </button>
-        <button type="submit" [disabled]="signUpForm.invalid" class="w-full md:w-1/2 border-1 border-black bg-main-blue hover:bg-blue-700 text-white text-sm py-2 rounded-md transition">Crear cuenta</button>
+        <button type="submit" title="Rellena todos los campos correctamente" [disabled]="signUpForm.invalid" class="w-full md:w-1/2 border-1 border-black bg-main-blue hover:bg-blue-700 disabled:bg-gray-400 disabled:border-gray-400 disabled:text-gray-600 disabled:cursor-not-allowed disabled:opacity-60 text-white text-sm py-2 rounded-md transition">Crear cuenta</button>
       </div>
 
       <div class="relative flex items-center justify-center mb-4">
