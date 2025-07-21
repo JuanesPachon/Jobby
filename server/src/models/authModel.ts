@@ -2,11 +2,16 @@ import bcrypt from "bcryptjs"
 import pool from "../config/db_config.js";
 import { ResultSetHeader } from "mysql2/promise";
 import { DatabaseError } from "../interfaces/databaseError.js";
+import { User } from "../interfaces/user.interface.js";
 
-const registerUser = async (user: any) => {
+const registerUser = async (user: User) => {
     try {
 
-        const hashedPassword = await bcrypt.hash(user.password, 10);
+        let hashedPassword: string | null = null;
+
+        if (user.password) {
+            hashedPassword = await bcrypt.hash(user.password, 10);
+        }
     
         const queryValues = [
             user.first_name,
