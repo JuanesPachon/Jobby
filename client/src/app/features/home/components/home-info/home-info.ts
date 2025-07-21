@@ -1,11 +1,12 @@
 import { Component, signal } from '@angular/core';
 import { NgClass } from '@angular/common';
 import { TabInfo } from './tabInfo.interface';
+import { RouterLinkWithHref } from '@angular/router';
 
 @Component({
   selector: 'app-home-info',
   standalone: true,
-  imports: [NgClass],
+  imports: [NgClass, RouterLinkWithHref],
   templateUrl: './home-info.html',
   styleUrls: ['./home-info.css']
 })
