@@ -34,18 +34,17 @@ const loginController = async (req: Request, res: Response) => {
 
       const tokenPayload = {
         sub: response.user.id,
-        iat: Date.now()
       }
 
       const token = jwt.sign(tokenPayload, (process.env.JWT_SECRET as string), {
-        expiresIn: '7d'
+        expiresIn: '14d'
       });
 
       return res.cookie('access_token', token, {
         httpOnly: true,
         secure: process.env.SERVER_PROD === 'true',
         sameSite: 'lax', 
-        maxAge: 7 * 24 * 60 * 60 * 1000
+        maxAge: 14 * 24 * 60 * 60 * 1000
       }).status(200).json({
         success: true,
         message: "Login successful",
@@ -67,4 +66,15 @@ const loginController = async (req: Request, res: Response) => {
   }
 }
 
-export { registerController, loginController };
+const validateTokenController = async (_req: Request, res: Response) => {
+  try {
+    return res.status(200).json({
+      success: true,
+      message: "Token is valid",
+    });
+  } catch (error) {
+    return errorHandler.handleServerError(res);
+  }
+};
+
+export { registerController, loginController, validateTokenController };
