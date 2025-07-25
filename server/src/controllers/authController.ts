@@ -77,4 +77,19 @@ const validateTokenController = async (_req: Request, res: Response) => {
   }
 };
 
-export { registerController, loginController, validateTokenController };
+const logoutController = async (_req: Request, res: Response) => {
+  try {
+    return res.clearCookie('access_token', {
+      httpOnly: true,
+      secure: process.env.SERVER_PROD === 'true',
+      sameSite: 'lax'
+    }).status(200).json({
+      success: true,
+      message: "Logout successful"
+    });
+  } catch (error) {
+    return errorHandler.handleServerError(res);
+  }
+};
+
+export { registerController, loginController, validateTokenController, logoutController };
