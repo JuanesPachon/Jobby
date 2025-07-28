@@ -7,7 +7,7 @@
         
      <!-- Desktop Menu -->
     <div class="hidden lg:flex gap-3">
-      <a class="bg-main-yelllow hover:bg-main-yelllow text-black px-7 py-2 rounded-full font-medium text-sm border-[1px] border-black">
+      <a [routerLink]="'/login'" class="bg-main-yelllow hover:bg-main-yelllow text-black px-7 py-2 rounded-full font-medium text-sm border-[1px] border-black">
         Iniciar sesión
       </a>
       <a [routerLink]="'/register'" class="bg-main-blue hover:bg-main-blue text-white px-7 py-2 rounded-full font-medium text-sm border-[1px] border-black">
@@ -20,7 +20,7 @@
     <div class="lg:hidden fixed top-16 inset-0 bg-black/65 z-11" (click)="toggleMenu()"></div>
 
     <div class="absolute top-16 mt-2 right-4 z-50 bg-white rounded-lg shadow-lg flex flex-col p-2 divide-y">
-      <a class="flex items-center w-full px-4 py-3 text-left font-semibold hover:bg-gray-100">
+      <a [routerLink]="'/login'" class="flex items-center w-full px-4 py-3 text-left font-semibold hover:bg-gray-100">
         <img src="/icons/bar_login.svg" alt="Iniciar sesión" class="h-5 w-5 mr-3" />
         Iniciar sesión
       </a>

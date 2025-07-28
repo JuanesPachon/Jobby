@@ -1,0 +1,44 @@
+<header class="container mx-auto p-3 font-poppins relative">
+  <nav class="flex items-center justify-between px-2">
+    <!-- Logo -->
+    <img src="/images/LOGO/png_sin_fondo/fondo_blanco.png" alt="Jobby Logo" class="h-10 object-contain">
+
+    <!-- Perfil de usuario y botón -->
+    <div class="relative">
+      <div class="flex items-center gap-2 cursor-pointer" (click)="toggleDropdown()">
+        <span class="font-semibold text-gray-800">Jane Doe</span>
+        <img src="/icons/my_profile.svg" alt="Jane Doe's avatar" class="h-8 w-8 rounded-full object-cover">
+      </div>
+
+      <!-- Menú desplegable -->
+      @if (isDropdownOpen()) {
+        <div
+        class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg z-50 flex flex-col p-2 divide-y">
+        <a class="cursor-pointer flex items-center w-full px-4 py-3 text-left font-semibold hover:bg-gray-100">
+          <img src="/icons/my_profile.svg" alt="Mi perfil" class="h-5 w-5 mr-3" />
+          Mi perfil
+        </a>
+        <a class="cursor-pointer flex items-center w-full px-4 py-3 text-left font-semibold hover:bg-gray-100">
+          <img src="/icons/my_tasks.svg" alt="Mis tareas" class="h-5 w-5 mr-3" />
+          Mis tareas
+        </a>
+        <a class="cursor-pointer flex items-center w-full px-4 py-3 text-left font-semibold hover:bg-gray-100">
+          <img src="/icons/chats.svg" alt="Chats" class="h-5 w-5 mr-3" />
+          Chats
+        </a>
+        <a class="cursor-pointer flex items-center w-full px-4 py-3 text-left font-semibold hover:bg-gray-100">
+          <img src="/icons/notifications.svg" alt="Notificaciones" class="h-5 w-5 mr-3" />
+          Notificaciones
+        </a>
+        <a (click)="attemptSignOut()" class="cursor-pointer flex items-center w-full px-4 py-3 text-left font-semibold hover:bg-gray-100">
+          <img src="/icons/log_out.svg" alt="Cerrar sesión" class="h-5 w-5 mr-3" />
+          Cerrar sesión
+        </a>
+      </div>}
+    </div>
+  </nav>
+
+  <!-- Fondo oscurecido -->
+  @if (isDropdownOpen()) { <div class="fixed inset-0 bg-black/50 z-40" (click)="toggleDropdown()"></div>
+  }
+</header>

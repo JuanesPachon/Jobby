@@ -1,0 +1,79 @@
+<div class="min-h-screen sm:flex sm:items-center sm:justify-center font-poppins bg-cover bg-center bg-[url('/images/WebP/dashboard_inicio_sesion.webp')]">
+  <main class="bg-white sm:rounded-2xl shadow-xl p-6 md:p-6 pb-3 w-full sm:max-w-xl sm:mt-8 sm:mb-8 2xl:mt-0 2xl:mb-0 relative min-h-screen sm:min-h-0 flex flex-col justify-center">
+    
+    <a [routerLink]="'/'" class="absolute top-7 left-7">
+      <img src="/icons/return-pg_icon.svg" alt="Atrás" class="w-7 h-7 md:w-7 md:h-7">
+    </a>
+
+    <a class="absolute top-7 right-7">
+      <img src="/icons/help_icon_2.svg" alt="Ayuda" class="w-7 h-7 md:w-7 md:h-7">
+    </a>
+
+    <div class="flex-grow flex flex-col justify-center py-6 md:py-0">
+      <div class="mb-5 md:mt-4 md:mb-4 text-center">
+        <img src="/images/LOGO/png_sin_fondo/fondo_blanco.png" alt="Jobby Logo" class="mx-auto h-16 md:h-14" />
+      </div>
+
+      <h2 class="text-2xl md:text-2xl font-semibold text-center text-gray-800 mb-6 md:mb-6">Inicio de sesión</h2>
+
+      <form id="loginForm" [formGroup]="loginForm" (ngSubmit)="attemptLogin($event)">
+        <div class="mb-5 md:mb-4">
+          <label for="email" class="text-sm md:text-sm text-black block mb-1.5 md:mb-1">Correo *</label>
+          <input id="email" name="email" type="email" class="w-full px-3.5 md:px-3 py-2.5 md:py-2 text-sm md:text-sm border border-gray-400 rounded-md focus:ring-2 focus:ring-black focus:outline-none" formControlName="email" required
+          [ngClass]="loginForm.get('email')?.invalid && loginForm.get('email')?.touched ? 'border-red-600 focus:ring-red-600' : 'border-gray-400 focus:ring-black'">
+          @if (loginForm.get('email')?.hasError('required') && loginForm.get('email')?.touched) {
+            <small class="text-red-600">Este campo es obligatorio</small>
+          }
+        </div>
+
+        <div class="mb-3 md:mb-2">
+          <label for="password" class="text-sm md:text-sm text-black block mb-1.5 md:mb-1">Contraseña *</label>
+          <input id="password" name="password" type="password"  class="w-full px-3.5 md:px-3 py-2.5 md:py-2 text-sm md:text-sm border border-gray-400 rounded-md focus:ring-2 focus:ring-black focus:outline-none" formControlName="password" required
+          [ngClass]="loginForm.get('password')?.invalid && loginForm.get('password')?.touched ? 'border-red-600 focus:ring-red-600' : 'border-gray-400 focus:ring-black'">
+          @if (loginForm.get('password')?.hasError('required') && loginForm.get('password')?.touched) {
+            <small class="text-red-600">Este campo es obligatorio</small>
+          }
+        </div>
+
+        <div class="text-right mb-5 md:mb-4">
+          <a  class="text-xs md:text-xs text-blue-600 hover:underline cursor-pointer">¿Ha olvidado su contraseña?</a>
+        </div>
+
+        @if (authError()) {
+          <div class="text-center mb-3">
+            <span class="text-red-600"> {{authErrorMessage()}} </span>
+          </div>
+        }
+
+        <button type="submit" [disabled]="loginForm.invalid || isLoading()" class="w-full border-1 mb-5 md:mb-4 cursor-pointer border-black bg-main-blue hover:bg-blue-700 disabled:bg-gray-400 disabled:border-gray-400 disabled:text-gray-600 disabled:cursor-not-allowed disabled:opacity-60 text-white text-sm md:text-sm py-2.5 md:py-2 rounded-xl transition">
+          {{ isLoading() ? 'Cargando...' : 'Iniciar sesión' }}
+        </button>
+
+        <button type="button" class="w-full mb-5 md:mb-4 flex items-center justify-center cursor-pointer bg-white border-1 border-black text-black text-sm md:text-sm py-2.5 md:py-2 rounded-xl transition hover:bg-gray-50">
+          <img src="https://www.google.com/images/branding/googleg/1x/googleg_standard_color_64dp.png" alt="Google" class="w-5 md:w-5 h-5 md:h-5 mr-2.5 md:mr-2">
+          Iniciar con Google
+        </button>
+      </form>
+            
+      <div class="relative flex items-center justify-center mb-3 md:mb-2">
+        <div class="flex-grow border-t border-gray-400"></div>
+        <div class="mx-3 md:mx-3 bg-white rounded-full w-8 md:w-8 h-8 md:h-8 flex items-center justify-center">
+          <div class="w-1 md:w-1 h-1 md:h-1 bg-gray-400 rounded-full"></div>
+        </div>
+        <div class="flex-grow border-t border-gray-400"></div>
+      </div>
+
+      <p class="text-center text-sm md:text-sm mb-5 md:mb-4">¿No tienes una cuenta?</p>
+      <a [routerLink]="'/register'"  class="block w-full mx-auto text-center border-1 border-black bg-main-yelllow hover:bg-yellow-500 text-sm md:text-sm py-2.5 md:py-2 rounded-xl transition">
+        Crear una cuenta
+      </a>
+    
+    </div>
+
+    <div class="mt-6 md:mt-6 border-t border-gray-400 pt-3 md:pt-3 flex items-center justify-between">
+      <p class="text-xs md:text-xs text-black">© ADSO - 2025</p>
+      <img src="/images/LOGO/png_sin_fondo/fondo_blanco.png" alt="Jobby Logo" class="h-5 sm:h-6" />
+    </div>
+
+  </main>
+</div>
