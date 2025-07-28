@@ -1,10 +1,10 @@
 import { NgClass } from '@angular/common';
 import { Component, signal } from '@angular/core';
-import { RouterLinkWithHref } from '@angular/router';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-home-navbar',
-  imports: [NgClass, RouterLinkWithHref],
+  imports: [NgClass, RouterLink],
   templateUrl: './home-navbar.html',
   styleUrl: './home-navbar.css'
 })
