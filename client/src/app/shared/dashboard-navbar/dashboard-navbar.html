@@ -11,10 +11,9 @@
       </div>
 
       <!-- Menú desplegable -->
-      <div 
-        *ngIf="isDropdownOpen"
-        class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg z-50 flex flex-col p-2 divide-y"
-      >
+      @if (isDropdownOpen()) {
+        <div
+        class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg z-50 flex flex-col p-2 divide-y">
         <a class="cursor-pointer flex items-center w-full px-4 py-3 text-left font-semibold hover:bg-gray-100">
           <img src="/icons/my_profile.svg" alt="Mi perfil" class="h-5 w-5 mr-3" />
           Mi perfil
@@ -31,21 +30,15 @@
           <img src="/icons/notifications.svg" alt="Notificaciones" class="h-5 w-5 mr-3" />
           Notificaciones
         </a>
-        <a class="cursor-pointer flex items-center w-full px-4 py-3 text-left font-semibold hover:bg-gray-100">
+        <a (click)="attemptSignOut()" class="cursor-pointer flex items-center w-full px-4 py-3 text-left font-semibold hover:bg-gray-100">
           <img src="/icons/log_out.svg" alt="Cerrar sesión" class="h-5 w-5 mr-3" />
           Cerrar sesión
         </a>
-      </div>
+      </div>}
     </div>
   </nav>
 
   <!-- Fondo oscurecido -->
-  <div 
-    *ngIf="isDropdownOpen" 
-    class="fixed inset-0 bg-black/50 z-40" 
-    (click)="closeDropdown()"
-  ></div>
+  @if (isDropdownOpen()) { <div class="fixed inset-0 bg-black/50 z-40" (click)="toggleDropdown()"></div>
+  }
 </header>
-
-   
-

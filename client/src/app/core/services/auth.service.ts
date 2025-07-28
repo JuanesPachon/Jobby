@@ -24,4 +24,10 @@ export class AuthService {
       withCredentials: true
     });
   }
+  
+  attemptSignOut(): Observable<any> {
+    return this.http.post<any>(`${environment.apiUrl}/auth/logout`, {}, {
+      withCredentials: true
+    });
+  }
 }
