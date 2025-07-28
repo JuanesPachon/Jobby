@@ -1,4 +1,11 @@
 export interface Auth {
     email: string;
-    password_hash?: string | null;
+    password: string | null;
+}
+
+export interface AuthenticatedRequest extends Request {
+  user?: {
+    sub: string;
+    iat: number;
+  };
 }

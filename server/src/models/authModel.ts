@@ -1,12 +1,18 @@
 import bcrypt from "bcryptjs"
 import pool from "../config/db_config.js";
-import { ResultSetHeader } from "mysql2/promise";
-import { DatabaseError } from "../interfaces/databaseError.js";
+import { ResultSetHeader, RowDataPacket } from "mysql2/promise";
+import { DatabaseError, RegisterResult, LoginResult } from "../interfaces/database.interface.js";
+import { User } from "../interfaces/user.interface.js";
+import { Auth } from "../interfaces/auth.interface.js";
 
-const registerUser = async (user: any) => {
+const registerUser = async (user: User): Promise<RegisterResult> => {
     try {
 
-        const hashedPassword = await bcrypt.hash(user.password, 10);
+        let hashedPassword: string | null = null;
+
+        if (user.password) {
+            hashedPassword = await bcrypt.hash(user.password, 10);
+        }
     
         const queryValues = [
             user.first_name,
@@ -36,26 +42,87 @@ const registerUser = async (user: any) => {
         if (result.affectedRows > 0) {
             return { 
                 success: true,
+                message: 'User registered successfully',
             };
         } else {
-            throw new Error("there's a problem with the insertion");
+            return {
+                success: false,
+                error: 'server',
+                message: 'Error inserting user into the database'
+            };
         }
 
     } catch (error) {
+        console.error('Error en registerUser:', error);
         
         if (error instanceof Error && (error as DatabaseError).code === 'ER_DUP_ENTRY') {
             return { 
                 success: false, 
-                error: "duplicate",
+                error: 'duplicate',
+                message: 'Email or docNumber are already registered'
             };
         } else {
-            console.log(error);
             return { 
                 success: false, 
-                error: "server",
+                error: 'server',
+                message: 'Internal server error'
             };
         }
     }
 }
 
-export { registerUser };
+const loginUser = async (credentials: Auth): Promise<LoginResult> => {
+    try {
+       
+        const [rows] = await pool.query<RowDataPacket[]>(
+            `SELECT id, password_hash, oauth_provider
+             FROM users 
+             WHERE email = ? AND deleted_at IS NULL`,
+            [credentials.email]
+        );
+
+        if (rows.length === 0) {
+            return {
+                success: false,
+                error: 'invalid_credentials',
+                message: 'Invalid email or password'
+            };
+        }
+
+        const user = rows[0];
+
+        let isPasswordValid: boolean = false;
+
+        if (user.oauth_provider === 'local') {
+            isPasswordValid = await bcrypt.compare(credentials.password as string, user.password_hash);
+        } else {
+            isPasswordValid = true;
+        }
+
+        if (!isPasswordValid) {
+            return {
+                success: false,
+                error: 'invalid_credentials',
+                message: 'Invalid email or password'
+            };
+        }
+
+        return {
+            success: true,
+            message: 'Login successful',
+            user: {
+                id: user.id,
+                email: credentials.email
+            }
+        };
+
+    } catch (error) {
+        return {
+            success: false,
+            error: 'server',
+            message: 'Internal server error'
+        };
+    }
+}
+
+export { registerUser, loginUser };
