@@ -1,17 +1,20 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import {FormGroup, FormControl, ReactiveFormsModule, Validators} from '@angular/forms';
 import { AuthService } from '../../../core/services/auth.service';
 import { RegisterRequest } from './models/RegisterRequest';
+import { NgClass } from '@angular/common';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-register',
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, NgClass],
   templateUrl: './register.html',
   styleUrl: './register.css'
 })
 export class Register {
 
   private userService = inject(AuthService);
+  private router = inject(Router);
   
   signUpForm = new FormGroup({
     firstName: new FormControl('', [Validators.required, Validators.pattern(/^[A-Za-z]+$/)]),
@@ -25,9 +28,14 @@ export class Register {
     termsAndConditions: new FormControl(false, [Validators.requiredTrue])
   });
 
+  authError = signal<Boolean>(false);
+  authErrorMessage = signal<string>('');
+  isLoading = signal<Boolean>(false);
+
   attemptSignUp(event: Event) {
 
     event.preventDefault();
+    this.isLoading.update(value => !value);
 
     if (this.signUpForm.valid) {
       const formData = this.signUpForm.value
@@ -44,16 +52,19 @@ export class Register {
       }
       this.userService.attemptSignUp(registerRequest).subscribe({
         next: (response) => {
-          console.log('Registro exitoso:', response)
+          this.router.navigate(['/login']);
         },
         error: (error) => {
-          console.error('Error al registrar:', error)
+          this.authErrorMessage.set(error.status === 400 ? 'Algo fallo en el formulario, vuelve a intentarlo.' : 
+          error.status === 409 ? 'Ya fue creado un usuario con este correo electrónico o este numero de identificación.' : 'Error en el servidor, por favor intenta más tarde.');
+
+          this.authError.update(value => !value);
+          this.isLoading.update(value => !value);
         }
       });
     } else {
-      console.log('Formulario inválido')
+      this.isLoading.update(value => !value);
     }
-    this.signUpForm.reset();
   }
 
 }
