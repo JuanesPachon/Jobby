@@ -39,6 +39,8 @@
           [ngClass]="signUpForm.get('birthDay')?.invalid && signUpForm.get('birthDay')?.touched ? 'border-red-600 focus:ring-red-600' : 'border-gray-400 focus:ring-black'">
           @if (signUpForm.get('birthDay')?.hasError('required') && signUpForm.get('birthDay')?.touched) {
             <small class="text-red-600">Este campo es obligatorio</small>
+          } @else if (signUpForm.get('birthDay')?.hasError('underAge') && signUpForm.get('birthDay')?.touched) {
+            <small class="text-red-600">Debes ser mayor de edad para registrarte</small>
           }
         </div>
         <div>

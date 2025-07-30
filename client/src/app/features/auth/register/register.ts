@@ -1,5 +1,5 @@
 import { Component, inject, signal } from '@angular/core';
-import {FormGroup, FormControl, ReactiveFormsModule, Validators} from '@angular/forms';
+import {FormGroup, FormControl, ReactiveFormsModule, Validators, AbstractControl, ValidationErrors} from '@angular/forms';
 import { AuthService } from '../../../core/services/auth.service';
 import { RegisterRequest } from './models/RegisterRequest';
 import { NgClass } from '@angular/common';
@@ -15,11 +15,31 @@ export class Register {
 
   private userService = inject(AuthService);
   private router = inject(Router);
+
+  private ageValidator(control: AbstractControl): ValidationErrors | null {
+    if (!control.value) return null;
+    
+    const inputDate = control.value;
+    const [year, month, day] = inputDate.split('-').map(Number);
+    
+    const today = new Date();
+    const currentYear = today.getFullYear();
+    const currentMonth = today.getMonth() + 1;
+    const currentDay = today.getDate();
+    
+    let age = currentYear - year;
+    
+    if (month > currentMonth || (month === currentMonth && day > currentDay)) {
+      age--;
+    }
+    
+    return age >= 18 ? null : { underAge: true };
+  }
   
   signUpForm = new FormGroup({
     firstName: new FormControl('', [Validators.required, Validators.pattern(/^[A-Za-z]+$/)]),
     lastName: new FormControl('', [Validators.required, Validators.pattern(/^[A-Za-z]+$/)]),
-    birthDay: new FormControl('', [Validators.required]),
+    birthDay: new FormControl('', [Validators.required, this.ageValidator.bind(this)]),
     idType: new FormControl('', [Validators.required]),
     idNumber: new FormControl('', [Validators.required, Validators.pattern(/^\d{10}$/)]),
     email: new FormControl('', [Validators.required, Validators.email]),
