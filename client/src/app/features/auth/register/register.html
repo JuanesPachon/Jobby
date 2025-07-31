@@ -1,6 +1,14 @@
-<div class="min-h-screen flex items-center justify-center font-poppins bg-cover bg-center bg-[url('/images/WebP/dashboard_inicio_sesion.webp')]">
+<div class="min-h-screen sm:flex sm:items-center sm:justify-center font-poppins bg-cover bg-center bg-[url('/images/WebP/dashboard_inicio_sesion.webp')]">
 
-  <main class="bg-white sm:rounded-2xl shadow-xl p-6 pb-3 w-full max-w-xl sm:mt-8 sm:mb-8 2xl:mt-0 2xl:mb-0">
+  <main class="bg-white sm:rounded-2xl shadow-xl p-6 md:p-6 pb-2 w-full sm:max-w-xl sm:mt-8 sm:mb-8 2xl:mt-0 2xl:mb-0 relative min-h-screen sm:min-h-0 flex flex-col justify-center">
+
+    <a [routerLink]="'/'" class="absolute top-7 left-7">
+      <img src="/icons/return-pg_icon.svg" alt="Atrás" class="w-7 h-7 md:w-7 md:h-7">
+    </a>
+
+    <a class="absolute top-7 right-7">
+      <img src="/icons/help_icon_2.svg" alt="Ayuda" class="w-7 h-7 md:w-7 md:h-7">
+    </a>
 
     <div class="mb-4 text-center">
       <img src="/images/LOGO/png_sin_fondo/fondo_blanco.png" alt="Jobby Logo" class="mx-auto h-12 md:h-14" />
