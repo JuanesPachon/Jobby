@@ -1,22 +1,45 @@
-import { Component, inject } from '@angular/core';
-import {FormGroup, FormControl, ReactiveFormsModule, Validators} from '@angular/forms';
+import { Component, inject, signal } from '@angular/core';
+import {FormGroup, FormControl, ReactiveFormsModule, Validators, AbstractControl, ValidationErrors} from '@angular/forms';
 import { AuthService } from '../../../core/services/auth.service';
 import { RegisterRequest } from './models/RegisterRequest';
+import { NgClass } from '@angular/common';
+import { Router, RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-register',
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, NgClass, RouterLink],
   templateUrl: './register.html',
   styleUrl: './register.css'
 })
 export class Register {
 
   private userService = inject(AuthService);
+  private router = inject(Router);
+
+  private ageValidator(control: AbstractControl): ValidationErrors | null {
+    if (!control.value) return null;
+    
+    const inputDate = control.value;
+    const [year, month, day] = inputDate.split('-').map(Number);
+    
+    const today = new Date();
+    const currentYear = today.getFullYear();
+    const currentMonth = today.getMonth() + 1;
+    const currentDay = today.getDate();
+    
+    let age = currentYear - year;
+    
+    if (month > currentMonth || (month === currentMonth && day > currentDay)) {
+      age--;
+    }
+    
+    return age >= 18 ? null : { underAge: true };
+  }
   
   signUpForm = new FormGroup({
     firstName: new FormControl('', [Validators.required, Validators.pattern(/^[A-Za-z]+$/)]),
     lastName: new FormControl('', [Validators.required, Validators.pattern(/^[A-Za-z]+$/)]),
-    birthDay: new FormControl('', [Validators.required]),
+    birthDay: new FormControl('', [Validators.required, this.ageValidator.bind(this)]),
     idType: new FormControl('', [Validators.required]),
     idNumber: new FormControl('', [Validators.required, Validators.pattern(/^\d{10}$/)]),
     email: new FormControl('', [Validators.required, Validators.email]),
@@ -25,9 +48,14 @@ export class Register {
     termsAndConditions: new FormControl(false, [Validators.requiredTrue])
   });
 
+  authError = signal<Boolean>(false);
+  authErrorMessage = signal<string>('');
+  isLoading = signal<Boolean>(false);
+
   attemptSignUp(event: Event) {
 
     event.preventDefault();
+    this.isLoading.update(value => !value);
 
     if (this.signUpForm.valid) {
       const formData = this.signUpForm.value
@@ -44,16 +72,19 @@ export class Register {
       }
       this.userService.attemptSignUp(registerRequest).subscribe({
         next: (response) => {
-          console.log('Registro exitoso:', response)
+          this.router.navigate(['/login']);
         },
         error: (error) => {
-          console.error('Error al registrar:', error)
+          this.authErrorMessage.set(error.status === 400 ? 'Algo fallo en el formulario, vuelve a intentarlo.' : 
+          error.status === 409 ? 'Ya fue creado un usuario con este correo electrónico o este numero de identificación.' : 'Error en el servidor, por favor intenta más tarde.');
+
+          this.authError.update(value => !value);
+          this.isLoading.update(value => !value);
         }
       });
     } else {
-      console.log('Formulario inválido')
+      this.isLoading.update(value => !value);
     }
-    this.signUpForm.reset();
   }
 
 }
