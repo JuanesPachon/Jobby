@@ -45,13 +45,15 @@ export class Login {
           this.router.navigate(['/dashboard']);
         },
         error: (error) => {
-          this.authErrorMessage.set(error.status === 401 ? 'Credenciales incorrectas, vuelve a intentarlo' : error.status === 500 ? 'Error del servidor, vuelve a intentarlo mas tarde' : '');
+          this.authErrorMessage.set(error.status === 401 ? 'Credenciales incorrectas, vuelve a intentarlo' : 'Error del servidor, vuelve a intentarlo mas tarde');
           this.authError.update(value => !value);
           this.isLoading.update(value => !value);
         }
       });
 
     } else {
+      this.authErrorMessage.set('Por favor, completa todos los campos requeridos correctamente.');
+      this.authError.update(value => !value);
       this.isLoading.update(value => !value);
     }
   }

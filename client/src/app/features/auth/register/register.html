@@ -124,7 +124,7 @@
 
       @if (authError()) {
           <div class="text-center mb-3">
-            <span class="text-red-600"> {{authErrorMessage()}} </span>
+            <span class="text-red-600 text-sm"> {{authErrorMessage()}} </span>
           </div>
       }
 
@@ -147,7 +147,7 @@
       <div class="text-center mb-4">
         <p class="text-sm mb-2">¿Ya tienes una cuenta?</p>
         <div class="flex justify-center">
-          <a type="button" class="w-full md:w-1/2 border-1 border-black bg-main-yelllow hover:bg-yellow-500 text-sm font-semibold py-2 px-8 rounded-xl transition text-center cursor-pointer">Iniciar Sesión</a>
+          <a [routerLink]="'/login'" type="button" class="w-full border-1 border-black bg-main-yelllow hover:bg-yellow-500 text-sm py-2 px-8 rounded-xl transition text-center cursor-pointer">Iniciar Sesión</a>
         </div>
       </div>
     </form>
