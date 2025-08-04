@@ -11,7 +11,7 @@ import { Router, RouterLink } from '@angular/router';
   templateUrl: './register.html',
   styleUrl: './register.css'
 })
-export class Register {
+export default class Register {
 
   private userService = inject(AuthService);
   private router = inject(Router);

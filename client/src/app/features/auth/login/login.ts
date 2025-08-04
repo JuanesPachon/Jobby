@@ -12,7 +12,7 @@ import { NgClass } from '@angular/common';
   styleUrl: './login.css'
 })
 
-export class Login implements OnInit, OnDestroy {
+export default class Login implements OnInit, OnDestroy {
 
   private authService = inject(AuthService);
   private router = inject(Router);

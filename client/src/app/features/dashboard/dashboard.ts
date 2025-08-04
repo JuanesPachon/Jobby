@@ -6,6 +6,6 @@ import { DashboardNavbar } from '../../shared/dashboard-navbar/dashboard-navbar'
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css'
 })
-export class Dashboard {
+export default class Dashboard {
   
 }

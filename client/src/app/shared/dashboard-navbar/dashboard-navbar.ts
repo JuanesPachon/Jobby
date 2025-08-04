@@ -21,7 +21,7 @@ export class DashboardNavbar {
   attemptSignOut(): void {
     this.authService.attemptSignOut().subscribe({
       next: () => {
-        this.router.navigate(['/login']);
+        this.router.navigate(['/']);
       },
       error: (error) => {
         console.error('Sign out failed');
