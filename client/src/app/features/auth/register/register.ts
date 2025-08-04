@@ -72,6 +72,7 @@ export class Register {
       }
       this.userService.attemptSignUp(registerRequest).subscribe({
         next: (response) => {
+          this.userService.registerNotification.update(value => !value);
           this.router.navigate(['/login']);
         },
         error: (error) => {

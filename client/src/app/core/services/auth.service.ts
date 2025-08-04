@@ -1,5 +1,5 @@
 import { HttpClient } from "@angular/common/http";
-import { inject, Injectable } from "@angular/core";
+import { inject, Injectable, signal } from "@angular/core";
 import { Observable } from "rxjs";
 import { environment } from "../../../environments/environment";
 import { RegisterRequest } from "../../features/auth/register/models/RegisterRequest";
@@ -12,6 +12,9 @@ export class AuthService {
   attemptSignUp(formData: RegisterRequest): Observable<any> {
     return this.http.post<any>(`${environment.apiUrl}/auth/register`, formData)
   }
+
+  registerNotification = signal<Boolean>(false);
+  notificationMessage = signal<string>('Registro exitoso! Tu cuenta ha sido creada correctamente.');
 
   attemptLogin(formData: LoginRequest): Observable<any> {
     return this.http.post<any>(`${environment.apiUrl}/auth/login`, formData, {

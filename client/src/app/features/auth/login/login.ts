@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, OnInit, OnDestroy, computed } from '@angular/core';
 import { AuthService } from '../../../core/services/auth.service';
 import { LoginRequest } from './interfaces/LoginRequest';
 import { Router, RouterLink } from '@angular/router';
@@ -12,10 +12,28 @@ import { NgClass } from '@angular/common';
   styleUrl: './login.css'
 })
 
-export class Login {
+export class Login implements OnInit, OnDestroy {
 
   private authService = inject(AuthService);
   private router = inject(Router);
+  private timeoutId?: number;
+
+  registerNotification = computed(() => this.authService.registerNotification());
+  notificationMessage = signal<string>(this.authService.notificationMessage());
+
+  ngOnInit() {
+    if (this.registerNotification()) {
+      this.timeoutId = window.setTimeout(() => {
+        this.authService.registerNotification.set(false);
+      }, 4000);
+    }
+  }
+
+  ngOnDestroy() {
+    if (this.timeoutId) {
+      clearTimeout(this.timeoutId);
+    }
+  }
 
   loginForm = new FormGroup({
     email: new FormControl('', [Validators.required]),
