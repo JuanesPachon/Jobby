@@ -51,6 +51,12 @@ export default class Register {
   authError = signal<Boolean>(false);
   authErrorMessage = signal<string>('');
   isLoading = signal<Boolean>(false);
+  
+  showPassword = signal<Boolean>(false);
+
+  togglePasswordVisibility() {
+    this.showPassword.update(value => !value);
+  }
 
   attemptSignUp(event: Event) {
 

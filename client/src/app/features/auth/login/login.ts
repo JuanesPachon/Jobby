@@ -43,6 +43,12 @@ export default class Login implements OnInit, OnDestroy {
   isLoading = signal<Boolean>(false);
   authError = signal<Boolean>(false);
   authErrorMessage = signal<string>('');
+  
+  showPassword = signal<Boolean>(false);
+
+  togglePasswordVisibility() {
+    this.showPassword.update(value => !value);
+  }
 
   attemptLogin(event: Event) {
     event.preventDefault();
