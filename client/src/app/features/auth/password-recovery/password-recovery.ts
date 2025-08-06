@@ -6,6 +6,6 @@ import { Component } from '@angular/core';
   templateUrl: './password-recovery.html',
   styleUrl: './password-recovery.css'
 })
-export class PasswordRecovery {
+export default class PasswordRecovery {
 
 }

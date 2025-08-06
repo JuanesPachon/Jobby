@@ -7,4 +7,6 @@ export const routes: Routes = [
     {path: 'register', loadComponent: () => import('./features/auth/register/register')},
     {path: 'login', loadComponent: () => import('./features/auth/login/login')},
     {path: 'dashboard', canActivate: [authGuard], loadComponent: () => import('./features/dashboard/dashboard')},
+    {path: 'recovery', loadComponent: () => import('./features/auth/password-recovery/password-recovery')},
+    
 ];
