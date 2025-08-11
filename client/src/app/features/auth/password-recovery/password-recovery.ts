@@ -11,4 +11,8 @@ import { ResetPassword } from "./components/reset-password/reset-password";
 })
 export default class PasswordRecovery {
   step = signal<number>(1)
+
+  onNextStep(step: number) {
+    this.step.set(step)
+  }
 }
