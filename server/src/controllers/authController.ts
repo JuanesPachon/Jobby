@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import errorHandler from "../utils/errorHandler.js";
-import { loginUser, registerUser, verifyResetCode } from "../models/authModel.js";
+import { loginUser, registerUser, verifyResetCode, resetPassword } from "../models/authModel.js";
+import { ResetTokenPayload } from "../interfaces/resetPassword.interface.js";
 import jwt from "jsonwebtoken";
 
 const registerController = async (req: Request, res: Response) => {
@@ -148,4 +149,57 @@ const verifyCodeController = async (req: Request, res: Response) => {
   }
 };
 
-export { registerController, loginController, validateTokenController, logoutController, verifyCodeController };
+const resetPasswordController = async (req: Request, res: Response) => {
+  try {
+    const resetData = req.body;
+    const resetToken = req.cookies.reset_token;
+
+    if (!resetToken) {
+      return res.status(401).json({
+        success: false,
+        error: "Reset token required. Please verify your code first."
+      });
+    }
+
+    const decoded = jwt.verify(resetToken, process.env.JWT_SECRET as string) as ResetTokenPayload;
+    
+    if (!decoded) {
+      return res.status(400).json({
+        success: false,
+        error: "Invalid or expired reset token"
+      });
+    }
+    
+    if (decoded.purpose !== 'password_reset') {
+      return res.status(400).json({
+        success: false,
+        error: "Invalid token purpose"
+      });
+    }
+
+    const response = await resetPassword(resetData, decoded.userId);
+
+    if (response.success) {
+      return res.clearCookie('reset_token', {
+        httpOnly: true,
+        secure: process.env.SERVER_PROD === 'true',
+        sameSite: 'lax'
+      }).status(200).json({
+        success: true,
+        message: "Password updated successfully",
+      });
+    }
+
+    switch (response.error) {
+      case 'server':
+        return errorHandler.handleServerError(res);
+      default:
+        return errorHandler.handleServerError(res);
+    }
+
+  } catch (error) {
+    return errorHandler.handleServerError(res);
+  }
+};
+
+export { registerController, loginController, validateTokenController, logoutController, verifyCodeController, resetPasswordController };

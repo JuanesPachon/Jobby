@@ -27,3 +27,9 @@ export interface VerifyCodeResult {
     userId?: number;
     resetId?: number;
 }
+
+export interface ResetPasswordResult {
+    success: boolean;
+    error?: 'user_not_found' | 'server' | 'validation';
+    message?: string;
+}
