@@ -125,15 +125,3 @@ export const userValidations = [
       return true;
     }),
 ];
-
-export const loginValidations = [
-  check("email")
-    .notEmpty()
-    .withMessage("Email is required")
-    .isEmail()
-    .withMessage("Please enter a valid email address"),
-
-  check("password")
-    .notEmpty()
-    .withMessage("Password is required"),
-];

@@ -19,3 +19,11 @@ export interface LoginResult {
         email: string;
     };
 }
+
+export interface VerifyCodeResult {
+    success: boolean;
+    error?: 'invalid_code' | 'code_expired' | 'code_used' | 'user_not_found' | 'server';
+    message?: string;
+    userId?: number;
+    resetId?: number;
+}
