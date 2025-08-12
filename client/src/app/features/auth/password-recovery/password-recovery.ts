@@ -14,7 +14,7 @@ export default class PasswordRecovery {
   
   private passwordRecoveryService = inject(passwordRecoveryService);
 
-  step = this.passwordRecoveryService.step();
+  step = this.passwordRecoveryService.step;
 
   onNextStep(step: number) {
     this.passwordRecoveryService.onNextStep(step);

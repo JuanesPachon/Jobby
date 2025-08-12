@@ -1,7 +1,7 @@
 import { Component, inject, output, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { passwordRecoveryService } from '../../services/password-recovery.service';
-import { CodeRequest } from './interfaces/request.code.interface';
+import { CodeRequest } from './interfaces/requestCode.interface';
 import { NgClass } from '@angular/common';
 
 @Component({

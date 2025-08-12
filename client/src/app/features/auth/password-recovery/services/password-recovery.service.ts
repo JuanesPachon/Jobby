@@ -1,8 +1,9 @@
 import { inject, Injectable, signal } from '@angular/core';
 import { Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
-import { CodeRequest } from '../components/request-code/interfaces/request.code.interface';
+import { CodeRequest } from '../components/request-code/interfaces/requestCode.interface';
 import { environment } from '../../../../../environments/environment';
+import { verifyCodeRequest } from '../components/verify-code/interfaces/verifyCode.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -18,8 +19,14 @@ export class passwordRecoveryService {
   }
 
   attemptRequestCode(codeRequest: CodeRequest): Observable<any> {
-  return this.http.post<any>(`${environment}/recoveryotp`, codeRequest, {
-    withCredentials: true
-  })
-}
+    return this.http.post<any>(`${environment.apiUrl}/recoveryotp`, codeRequest, {
+      withCredentials: true
+    })
+  }
+
+   attemptVerifyCode(resetCode: verifyCodeRequest): Observable<any> {
+    return this.http.post<any>(`${environment.apiUrl}/auth/verify-code`, resetCode, {
+      withCredentials: true
+    })
+  }
 }
