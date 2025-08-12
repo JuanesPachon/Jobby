@@ -1,6 +1,6 @@
 import { Component, inject, output, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { RequestCodeService } from './services/request-code.service';
+import { passwordRecoveryService } from '../../services/password-recovery.service';
 import { CodeRequest } from './interfaces/request.code.interface';
 import { NgClass } from '@angular/common';
 
@@ -12,7 +12,7 @@ import { NgClass } from '@angular/common';
 })
 export class RequestCode {
 
-   private requestCodeService = inject(RequestCodeService);
+   private requestCodeService = inject(passwordRecoveryService);
 
   requestCodeForm = new FormGroup({
     email: new FormControl('', [Validators.required, Validators.email]),

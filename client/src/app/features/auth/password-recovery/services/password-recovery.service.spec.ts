@@ -1,13 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 
-import { RequestCodeService } from './request-code.service';
+import { passwordRecoveryService } from './password-recovery.service';
 
 describe('RequestCodeService', () => {
-  let service: RequestCodeService;
+  let service: passwordRecoveryService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
-    service = TestBed.inject(RequestCodeService);
+    service = TestBed.inject(passwordRecoveryService);
   });
 
   it('should be created', () => {

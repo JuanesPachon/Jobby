@@ -1,7 +1,8 @@
-import { Component, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { RequestCode } from "./components/request-code/request-code";
 import { VerifyCode } from "./components/verify-code/verify-code";
 import { ResetPassword } from "./components/reset-password/reset-password";
+import { passwordRecoveryService } from './services/password-recovery.service';
 
 @Component({
   selector: 'app-password-recovery',
@@ -10,9 +11,13 @@ import { ResetPassword } from "./components/reset-password/reset-password";
   styleUrl: './password-recovery.css'
 })
 export default class PasswordRecovery {
-  step = signal<number>(1)
+  
+  private passwordRecoveryService = inject(passwordRecoveryService);
+
+  step = this.passwordRecoveryService.step();
 
   onNextStep(step: number) {
-    this.step.set(step)
+    this.passwordRecoveryService.onNextStep(step);
   }
+
 }
