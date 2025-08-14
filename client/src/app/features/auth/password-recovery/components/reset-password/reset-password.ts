@@ -30,10 +30,16 @@ export class ResetPassword {
     newPassword : new FormControl(``, [Validators.required, Validators.pattern('^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[^A-Za-z\\d]).{8,}$')]),
     confirmPassword : new FormControl("",[Validators.required]),
   }, {validators: [confirmPasswordValidator]})
+
+  showPassword = signal<Boolean>(false);
+
+  togglePasswordVisibility() {
+    this.showPassword.update(value => !value);
+  }
+  
   isLoading = signal<Boolean>(false);
   authError = signal<Boolean>(false)
   authErrorMessage = signal<string>('');
-
   onNextStep = output<number>()
 
   attemptResetPassword(event: Event) {
