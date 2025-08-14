@@ -1,5 +1,14 @@
+export interface VerifyCodeRequest {
+    resetCode: string;
+}
+
 export interface ResetPasswordRequest {
-    email: string;
     newPassword: string;
-    confirmPassword: string;
+}
+
+export interface ResetTokenPayload {
+    userId: number;
+    purpose: string;
+    iat: number;
+    exp: number;
 }

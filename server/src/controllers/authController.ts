@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import errorHandler from "../utils/errorHandler.js";
-import { loginUser, registerUser } from "../models/authModel.js";
+import { loginUser, registerUser, verifyResetCode, resetPassword } from "../models/authModel.js";
+import { ResetTokenPayload } from "../interfaces/resetPassword.interface.js";
 import jwt from "jsonwebtoken";
 
 const registerController = async (req: Request, res: Response) => {
@@ -92,4 +93,113 @@ const logoutController = async (_req: Request, res: Response) => {
   }
 };
 
-export { registerController, loginController, validateTokenController, logoutController };
+const verifyCodeController = async (req: Request, res: Response) => {
+  try {
+    const verifyData = req.body;
+    const response = await verifyResetCode(verifyData);
+
+    if (response.success && response.userId && response.resetId) {
+      const resetToken = jwt.sign(
+        { 
+          userId: response.userId,
+          resetId: response.resetId,
+          purpose: 'password_reset'
+        },
+        process.env.JWT_SECRET as string,
+        { expiresIn: '15m' }
+      );
+
+      return res.cookie('reset_token', resetToken, {
+        httpOnly: true,
+        secure: process.env.SERVER_PROD === 'true',
+        sameSite: 'lax',
+        maxAge: 15 * 60 * 1000
+      }).status(200).json({
+        success: true,
+        message: "Reset code verified successfully",
+      });
+    }
+
+    switch (response.error) {
+      case 'invalid_code':
+        return res.status(400).json({
+          success: false,
+          error: "Invalid reset code"
+        });
+      case 'code_expired':
+        return res.status(400).json({
+          success: false,
+          error: "Reset code has expired"
+        });
+      case 'code_used':
+        return res.status(400).json({
+          success: false,
+          error: "Reset code has already been used"
+        });
+      case 'user_not_found':
+        return errorHandler.handleNotFoundError(res, "User not found");
+      case 'server':
+        return errorHandler.handleServerError(res);
+      default:
+        return errorHandler.handleServerError(res);
+    }
+
+  } catch (error) {
+    return errorHandler.handleServerError(res);
+  }
+};
+
+const resetPasswordController = async (req: Request, res: Response) => {
+  try {
+    const resetData = req.body;
+    const resetToken = req.cookies.reset_token;
+
+    if (!resetToken) {
+      return res.status(401).json({
+        success: false,
+        error: "Reset token required. Please verify your code first."
+      });
+    }
+
+    const decoded = jwt.verify(resetToken, process.env.JWT_SECRET as string) as ResetTokenPayload;
+    
+    if (!decoded) {
+      return res.status(400).json({
+        success: false,
+        error: "Invalid or expired reset token"
+      });
+    }
+    
+    if (decoded.purpose !== 'password_reset') {
+      return res.status(400).json({
+        success: false,
+        error: "Invalid token purpose"
+      });
+    }
+
+    const response = await resetPassword(resetData, decoded.userId);
+
+    if (response.success) {
+      return res.clearCookie('reset_token', {
+        httpOnly: true,
+        secure: process.env.SERVER_PROD === 'true',
+        sameSite: 'lax'
+      }).status(200).json({
+        success: true,
+        message: "Password updated successfully",
+      });
+    }
+
+    switch (response.error) {
+      case 'server':
+        return errorHandler.handleServerError(res);
+      default:
+        return errorHandler.handleServerError(res);
+    }
+
+  } catch (error) {
+    return errorHandler.handleServerError(res);
+  }
+};
+
+export { registerController, loginController, validateTokenController, logoutController, verifyCodeController, resetPasswordController };
