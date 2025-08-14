@@ -1,1 +1,27 @@
-<p>verify-code works!</p>
+<p class="text-center py-3">Compruebe su correo electronico, se envío un código de verificación de 6 digitos</p>
+
+<form id="verifyCodeForm" [formGroup]="verifyCodeForm" (ngsubmit)="attemptVerifyCode($event)">
+  <div class="mb-5 md:mb-4">
+    <label for="code" class="text-sm md:text-sm text-black block mb-1.5 md:mb-1">Codigo:</label>
+    <input id="code" name="code" type="text"
+      class="w-full px-3.5 md:px-3 py-2.5 md:py-2 text-sm md:text-sm border rounded-md focus:ring-2 focus:ring-black focus:outline-none"
+      formControlName="resetCode" required>
+  </div>
+
+  @if (authError()) {
+    <div class="text-center mb-3">
+      <span class="text-red-600 text-sm"> {{authErrorMessage()}} </span>
+    </div>
+  }
+
+  <button type="submit" [disabled]="verifyCodeForm.invalid || isLoading()" class="w-full border-1 mb-5 md:mb-4 cursor-pointer border-black bg-main-blue hover:bg-blue-600 disabled:bg-gray-400 disabled:border-gray-400 disabled:text-gray-600 disabled:cursor-not-allowed disabled:opacity-60 text-white text-sm md:text-sm py-2.5 md:py-2 rounded-xl transition">
+    {{ isLoading() ? 'Cargando...' : 'Enviar' }}
+  </button>
+
+
+</form>
+
+<button type="submit" (click)="resendCode()"
+    class="w-full border-1 mb-5 md:mb-4 cursor-pointer border-black bg-main-yelllow hover:bg-yellow-500 text-black text-sm md:text-sm py-2.5 md:py-2 rounded-xl transition">Reenviar
+    codigo
+  </button>
