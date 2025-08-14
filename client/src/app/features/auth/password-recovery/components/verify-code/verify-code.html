@@ -14,7 +14,7 @@
     </div>
   }
 
-  <button type="submit" [disabled]="verifyCodeForm.invalid || isLoading()" class="w-full border-1 mb-5 md:mb-4 cursor-pointer border-black bg-main-blue hover:bg-blue-700 disabled:bg-gray-400 disabled:border-gray-400 disabled:text-gray-600 disabled:cursor-not-allowed disabled:opacity-60 text-white text-sm md:text-sm py-2.5 md:py-2 rounded-xl transition">
+  <button type="submit" [disabled]="verifyCodeForm.invalid || isLoading()" class="w-full border-1 mb-5 md:mb-4 cursor-pointer border-black bg-main-blue hover:bg-blue-600 disabled:bg-gray-400 disabled:border-gray-400 disabled:text-gray-600 disabled:cursor-not-allowed disabled:opacity-60 text-white text-sm md:text-sm py-2.5 md:py-2 rounded-xl transition">
     {{ isLoading() ? 'Cargando...' : 'Enviar' }}
   </button>
 
