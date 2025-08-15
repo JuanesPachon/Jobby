@@ -213,8 +213,8 @@ const resetPasswordController = async (req: Request, res: Response) => {
 
 const resetPasswordRequestController = async (_req: Request, res: Response) => {
   try {
-    const [users]  = await pool.query<RowDataPacket[]>(`select email, id, first_name from users where email = '${_req.body.email}';`)
-    if (!users) {
+    const [users]  = await pool.query<RowDataPacket[]>(`SELECT email, id, first_name FROM users WHERE email = ?`, [_req.body.email])
+    if (users.length === 0) {
       const response : GeneralResponse = {message: "Email invalido"}
       return res.status(400).json(response) 
     }else {

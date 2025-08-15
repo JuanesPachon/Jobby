@@ -10,13 +10,12 @@ const saveResetPassword = async (newResetPassword: ResetPassword): Promise<boole
             newResetPassword.reset_code,
             newResetPassword.expires_at,
             newResetPassword.created_at,
-            newResetPassword.used_at
         ];
         
         const [result] = await pool.query<ResultSetHeader>(
             `INSERT INTO password_resets (
-            user_id, reset_code, birth_date, expires_at, created_at
-            ) VALUES (?, ?, ?, ?, ?)`,
+            user_id, reset_code, expires_at, created_at
+            ) VALUES (?, ?,?, ?)`,
             queryValues
         );
 
