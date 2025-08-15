@@ -20,7 +20,7 @@ export class passwordRecoveryService {
   }
 
   attemptRequestCode(codeRequest: CodeRequest): Observable<any> {
-    return this.http.post<any>(`${environment.apiUrl}/user/recoveryotp`, codeRequest, {
+    return this.http.post<any>(`${environment.apiUrl}/auth/recoveryotp`, codeRequest, {
       withCredentials: true
     })
   }

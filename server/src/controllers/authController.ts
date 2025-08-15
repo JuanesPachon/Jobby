@@ -211,24 +211,26 @@ const resetPasswordController = async (req: Request, res: Response) => {
 };
 
 
-const resetPasswordRequestController = async (_req: Request, res: Response) => {
+const requestCodeController = async (_req: Request, res: Response) => {
   try {
     const [users]  = await pool.query<RowDataPacket[]>(`SELECT email, id, first_name FROM users WHERE email = ?`, [_req.body.email])
     if (users.length === 0) {
-      const response : GeneralResponse = {message: "Email invalido"}
+      const response : GeneralResponse = {
+        success: false,
+        message: "Invalid email"
+      }
       return res.status(400).json(response) 
-    }else {
+    } else {
       const userData = users[0];
-      //15 min configured
-      var expiresAt = new Date(new Date().getTime()+ 15*60*100);
+      var expiresAt = new Date(new Date().getTime()+ 15*60*1000);
       
       const newResetPassword: ResetPassword = {
         user_id: userData.id,
-        reset_code: Math.floor(Math.random()*(10000000-0+1)),
+        reset_code: Math.floor(Math.random() * 900000) + 100000,
         expires_at: expiresAt,
         created_at: new Date()
       }
-      //Reset password is saved
+
       const resetPasswordSaved = await saveResetPassword(newResetPassword);
       if (!resetPasswordSaved) {
         throw new Error("Error trying to reset password")
@@ -239,18 +241,72 @@ const resetPasswordRequestController = async (_req: Request, res: Response) => {
           to: userData.email,
           subject: "Recuperación de contraseña",
         }
-          //todo send email
-          const mailTemplate = `<div><h2>Hola ${mailData.userName},</h2></div>
-          <div><p>tu codigo para recuperer contrase;a es: <b>${mailData.code}</b></p></div>`
 
-          const info = await mailService.sendMail(mailData.to, mailData.subject, "", mailTemplate);
-          console.info('mail result:', info);
-          if (!info) {
-            throw new Error("Error trying to send email")
-          }
-          return res.status(200).json({
-            message: "Email sent successfully",
-          });
+        const imageUrl = process.env.IMAGE_URL || '';
+
+        const mailTemplate = `
+          <body style="margin: 0; padding: 0; font-family: 'Arial', sans-serif; background-color: #f4f4f4;">
+            <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 10px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+              
+              <div style="text-align: center; padding:10px 0; background: #000000; border-radius: 10px 10px 0 0;">
+                <img src="${imageUrl}/storage/v1/object/public/trekangle-files/jobby.png" alt="Jobby Logo" style="width: 100%; height: 80px; object-fit: contain;">
+              </div>
+              
+              <div style="padding: 40px 30px;">
+                <h2 style="color: #333333; font-size: 24px; margin-bottom: 20px;">¡Hola ${mailData.userName}!</h2>
+                
+                <p style="color: #000000; font-size: 16px; line-height: 1.6; margin-bottom: 30px;">
+                  Hemos recibido una solicitud para restablecer la contraseña de tu cuenta en Jobby. 
+                  Si no solicitaste este cambio, puedes ignorar este correo de forma segura.
+                </p>
+                
+                <div style="text-align: center; margin: 40px 0;">
+                  <p style="color: #000000; font-size: 18px; font-weight: bold; margin-bottom: 15px;">Tu código de verificación es:</p>
+                  
+                  <div style="display: inline-block; background: #000000; padding: 20px 30px; border-radius: 10px; margin: 20px 0; border: 2px solid #333333;">
+                    <span style="color: #ffffff; font-size: 32px; font-weight: bold; letter-spacing: 4px; font-family: 'Courier New', monospace;">
+                      ${mailData.code}
+                    </span>
+                  </div>
+                  
+                  <p style="color: #000000; font-size: 14px; margin-top: 15px;">
+                    ⏰ Este código expira en 15 minutos
+                  </p>
+                </div>
+                
+                <div style="background-color: #f8f9ff; border-left: 4px solid #000000; padding: 20px; border-radius: 5px; margin: 30px 0;">
+                  <h3 style="color: #333333; font-size: 16px; margin-bottom: 10px;">📋 Instrucciones:</h3>
+                  <ol style="color: #666666; font-size: 14px; line-height: 1.5; margin: 0; padding-left: 20px;">
+                    <li>Regresa a la página de recuperación de contraseña</li>
+                    <li>Ingresa el código de 6 dígitos mostrado arriba</li>
+                    <li>Crea tu nueva contraseña segura</li>
+                  </ol>
+                </div>
+                
+              </div>
+              
+              <div style="background-color: #000000; padding: 30px; text-align: center; border-radius: 0 0 10px 10px; border-top: 1px solid #333333;">
+                <p style="color: #ffffff; font-size: 14px; margin: 0 0 10px 0;">
+                  © 2025 Jobby. Todos los derechos reservados.
+                </p>
+                <p style="color: #cccccc; font-size: 12px; margin: 0;">
+                  Este es un correo automático, por favor no respondas a este mensaje.
+                </p>
+              </div>
+              
+            </div>
+          </body>
+        `
+
+        const info = await mailService.sendMail(mailData.to, mailData.subject, "", mailTemplate);
+
+        if (!info) {
+          throw new Error("Error trying to send email")
+        }
+        return res.status(200).json({
+          success: true,
+          message: "Email sent successfully",
+        });
       }
     }
     
@@ -259,4 +315,4 @@ const resetPasswordRequestController = async (_req: Request, res: Response) => {
   }
 };
 
-export { registerController, loginController, validateTokenController, logoutController, resetPasswordController as userController, resetPasswordRequestController, verifyCodeController };
+export { registerController, loginController, validateTokenController, logoutController, resetPasswordController, requestCodeController, verifyCodeController };
