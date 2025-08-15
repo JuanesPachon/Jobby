@@ -25,7 +25,7 @@ export class passwordRecoveryService {
     })
   }
 
-   attemptVerifyCode(resetCode: verifyCodeRequest): Observable<any> {
+  attemptVerifyCode(resetCode: verifyCodeRequest): Observable<any> {
     return this.http.post<any>(`${environment.apiUrl}/auth/verify-code`, resetCode, {
       withCredentials: true
     })

@@ -18,14 +18,14 @@ export default class Login implements OnInit, OnDestroy {
   private router = inject(Router);
   private timeoutId?: number;
 
-  registerNotification = computed(() => this.authService.registerNotification());
+  authNotification = computed(() => this.authService.authNotification());
   notificationMessage = signal<string>(this.authService.notificationMessage());
 
   ngOnInit() {
-    if (this.registerNotification()) {
+    if (this.authNotification()) {
       this.timeoutId = window.setTimeout(() => {
-        this.authService.registerNotification.set(false);
-      }, 4000);
+        this.authService.authNotification.set(false);
+      }, 5000);
     }
   }
 

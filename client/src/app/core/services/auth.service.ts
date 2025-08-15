@@ -13,8 +13,8 @@ export class AuthService {
     return this.http.post<any>(`${environment.apiUrl}/auth/register`, formData)
   }
 
-  registerNotification = signal<Boolean>(false);
-  notificationMessage = signal<string>('Registro exitoso! Tu cuenta ha sido creada correctamente.');
+  authNotification = signal<Boolean>(false);
+  notificationMessage = signal<string>('');
 
   attemptLogin(formData: LoginRequest): Observable<any> {
     return this.http.post<any>(`${environment.apiUrl}/auth/login`, formData, {

@@ -4,6 +4,7 @@ import { AbstractControl, FormControl, FormGroup, ReactiveFormsModule, Validatio
 import { NewPasswordRequest } from './interfaces/newPassword.interface';
 import { Router } from '@angular/router';
 import { NgClass } from '@angular/common';
+import { AuthService } from '../../../../../core/services/auth.service';
 
 const confirmPasswordValidator: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
     const newPassword = control.get('newPassword')
@@ -24,6 +25,7 @@ const confirmPasswordValidator: ValidatorFn = (control: AbstractControl): Valida
 export class ResetPassword {
 
   private passwordRecoveryService = inject(passwordRecoveryService);
+  private authService = inject(AuthService);
   private router = inject(Router)
 
   newPasswordForm = new FormGroup ({
@@ -58,6 +60,8 @@ export class ResetPassword {
       this.passwordRecoveryService.attemptResetPassword(NewPassword).subscribe({
         next: (response) => {
           this.isLoading.set(false);
+          this.authService.authNotification.update(value => !value);
+          this.authService.notificationMessage.set('Se ha actualizado tu contraseña correctamente.');
           this.router.navigate([`/login`])
           this.onNextStep.emit(1)
         },

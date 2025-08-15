@@ -78,7 +78,8 @@ export default class Register {
       }
       this.userService.attemptSignUp(registerRequest).subscribe({
         next: (response) => {
-          this.userService.registerNotification.update(value => !value);
+          this.userService.authNotification.update(value => !value);
+          this.userService.notificationMessage.set('Registro exitoso! Tu cuenta ha sido creada correctamente.');
           this.router.navigate(['/login']);
         },
         error: (error) => {
