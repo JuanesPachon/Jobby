@@ -1,9 +1,10 @@
 import bcrypt from "bcryptjs"
 import pool from "../config/db_config.js";
 import { ResultSetHeader, RowDataPacket } from "mysql2/promise";
-import { DatabaseError, RegisterResult, LoginResult } from "../interfaces/database.interface.js";
+import { DatabaseError, RegisterResult, LoginResult, ResetPasswordResult, VerifyCodeResult } from "../interfaces/database.interface.js";
 import { User } from "../interfaces/user.interface.js";
 import { Auth } from "../interfaces/auth.interface.js";
+import { ResetPasswordRequest, VerifyCodeRequest } from "../interfaces/resetPassword.interface.js";
 
 const registerUser = async (user: User): Promise<RegisterResult> => {
     try {
@@ -125,4 +126,97 @@ const loginUser = async (credentials: Auth): Promise<LoginResult> => {
     }
 }
 
-export { registerUser, loginUser };
+const verifyResetCode = async (verifyData: VerifyCodeRequest): Promise<VerifyCodeResult> => {
+    try {
+        const [resetRows] = await pool.query<RowDataPacket[]>(
+            `SELECT id, user_id, expires_at, used_at 
+             FROM password_resets 
+             WHERE reset_code = ? 
+             ORDER BY created_at DESC 
+             LIMIT 1`,
+            [verifyData.resetCode]
+        );
+
+        if (resetRows.length === 0) {
+            return {
+                success: false,
+                error: 'invalid_code',
+                message: 'Invalid reset code'
+            };
+        }
+
+        const resetRecord = resetRows[0];
+
+        if (resetRecord.used_at) {
+            return {
+                success: false,
+                error: 'code_used',
+                message: 'Reset code has already been used'
+            };
+        }
+
+        const now = new Date();
+        const expiresAt = new Date(resetRecord.expires_at);
+        
+        if (now > expiresAt) {
+            return {
+                success: false,
+                error: 'code_expired',
+                message: 'Reset code has expired'
+            };
+        }
+
+        await pool.query<ResultSetHeader>(
+            `UPDATE password_resets SET used_at = NOW() WHERE id = ?`,
+            [resetRecord.id]
+        );
+
+        return {
+            success: true,
+            message: 'Reset code verified successfully',
+            userId: resetRecord.user_id,
+            resetId: resetRecord.id
+        };
+
+    } catch (error) {
+        console.error('Error en verifyResetCode:', error);
+        return {
+            success: false,
+            error: 'server',
+            message: 'Internal server error'
+        };
+    }
+}
+
+const resetPassword = async (resetData: ResetPasswordRequest, userId: number): Promise<ResetPasswordResult> => {
+    try {
+        const hashedPassword = await bcrypt.hash(resetData.newPassword, 10);
+
+        const [result] = await pool.query<ResultSetHeader>(
+            `UPDATE users SET password_hash = ?, updated_at = NOW() WHERE id = ? AND deleted_at IS NULL`,
+            [hashedPassword, userId]
+        );
+
+        if (result.affectedRows > 0) {
+            return {
+                success: true,
+                message: 'Password updated successfully'
+            };
+        } else {
+            return {
+                success: false,
+                error: 'server',
+                message: 'Error updating password'
+            };
+        }
+
+    } catch (error) {
+        return {
+            success: false,
+            error: 'server',
+            message: 'Internal server error'
+        };
+    }
+}
+
+export { registerUser, loginUser, verifyResetCode, resetPassword };

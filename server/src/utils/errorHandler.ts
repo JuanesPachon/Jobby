@@ -16,8 +16,8 @@ function handleServerError(res: Response) {
   handleError(res, 500, { success: false, error: "The server encountered an error" });
 }
 
-function handleNotFoundError(res: Response) {
-  handleError(res, 404, { success: false, error: `Resource not found` });
+function handleNotFoundError(res: Response, message = "Resource not found") {
+  handleError(res, 404, { success: false, error: message });
 }
 
 function handleDuplicateError(res: Response, message = "The resource already exists") {
