@@ -21,4 +21,8 @@ export default class PasswordRecovery {
     this.passwordRecoveryService.onNextStep(step);
   }
 
+  navigateToLogin() {
+    this.step.set(1);
+  }
+
 }

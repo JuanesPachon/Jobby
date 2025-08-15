@@ -47,7 +47,7 @@ export class ResetPassword {
 
     if (this.newPasswordForm.valid) {
 
-      this.isLoading.update(value => !value);
+      this.isLoading.set(true);
 
       const formData = this.newPasswordForm.value;
 
@@ -57,28 +57,29 @@ export class ResetPassword {
 
       this.passwordRecoveryService.attemptResetPassword(NewPassword).subscribe({
         next: (response) => {
+          this.isLoading.set(false);
           this.router.navigate([`/login`])
+          this.onNextStep.emit(1)
         },
         error: (error) => {
 
           if(error.error.errors){
             this.authErrorMessage.set("La contraseña tiene un formato inválido ");
-            this.authError.update(value => !value);
-            this.isLoading.update(value => !value);
+            this.authError.set(true);
+            this.isLoading.set(false);
           }
           else{
              this.authErrorMessage.set(error.status === 400 ?"No se ha validado ningún código,intentalo de nuevo" :"Error interno al procesar la solicitud, vuelve a intentarlo mas tarde " );
-            this.authError.update(value => !value);
-            this.isLoading.update(value => !value);
+            this.authError.set(true);
+            this.isLoading.set(false);
 
           }
         }
       });
 
     } else {
-      this.authErrorMessage.set('Por favor, Completa el campo de código de verifiación');
-      this.authError.update(value => !value);
-      this.isLoading.update(value => !value);
+      this.authErrorMessage.set('Por favor, completa todos los campos requeridos correctamente');
+      this.authError.set(true);
     }
   }
   

@@ -29,7 +29,7 @@ export class RequestCode {
 
     if (this.requestCodeForm.valid) {
 
-      this.isLoading.update(value => !value);
+      this.isLoading.set(true);
 
       const formData = this.requestCodeForm.value;
 
@@ -39,19 +39,19 @@ export class RequestCode {
 
       this.requestCodeService.attemptRequestCode(requestCode).subscribe({
         next: (response) => {
+          this.isLoading.set(false);
           this.onNextStep.emit(2)
         },
         error: (error) => {
-          this.authErrorMessage.set(error.status === 400 ? 'Credenciales incorrectas, vuelve a intentarlo' : 'Error al procesar la solicitud, vuelve a intentarlo mas tarde');
-          this.authError.update(value => !value);
-          this.isLoading.update(value => !value);
+          this.authErrorMessage.set(error.status === 400 ? 'Correo no registrado, vuelve a intentarlo' : 'Error al procesar la solicitud, vuelve a intentarlo mas tarde');
+          this.authError.set(true);
+          this.isLoading.set(false);
         }
       });
 
     } else {
       this.authErrorMessage.set('Por favor, ingresa un correo válido.');
-      this.authError.update(value => !value);
-      this.isLoading.update(value => !value);
+      this.authError.set(true);
     }
   }
 }

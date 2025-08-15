@@ -13,14 +13,14 @@ export class passwordRecoveryService {
   
   private http = inject(HttpClient);
 
-  step = signal<number>(1)
+  step = signal<number>(1);
 
   onNextStep(step: number): void {
     this.step.set(step)
   }
 
   attemptRequestCode(codeRequest: CodeRequest): Observable<any> {
-    return this.http.post<any>(`${environment.apiUrl}/recoveryotp`, codeRequest, {
+    return this.http.post<any>(`${environment.apiUrl}/user/recoveryotp`, codeRequest, {
       withCredentials: true
     })
   }
@@ -32,7 +32,7 @@ export class passwordRecoveryService {
   }
 
   attemptResetPassword(newPassword: NewPasswordRequest): Observable<any> {
-    return this.http.post<any>(`${environment.apiUrl}/auth/reset-passaword`, newPassword, {
+    return this.http.post<any>(`${environment.apiUrl}/auth/reset-password`, newPassword, {
       withCredentials: true
     })
   }
