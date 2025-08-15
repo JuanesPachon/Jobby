@@ -22,3 +22,22 @@ export const authGuard: CanActivateFn = (route, state) => {
     })
   );
 };
+
+export const nonAuthGuard: CanActivateFn = (route, state) => {
+  const authService = inject(AuthService);
+  const router = inject(Router);
+
+  return authService.validateToken().pipe(
+    map((response) => {
+      if (response.success) {
+        router.navigate(['/dashboard']);
+        return false;
+      } else {
+        return true;
+      }
+    }),
+    catchError(() => {
+      return of(true);
+    })
+  );
+};

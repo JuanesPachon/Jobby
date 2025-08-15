@@ -1,12 +1,11 @@
 import { Routes } from '@angular/router';
-import { authGuard } from './core/guards/auth.guard';
 import { Home } from './features/home/home';
+import { authGuard, nonAuthGuard } from './core/guards/auth.guard';
 
 export const routes: Routes = [
-    {path: '', component: Home},
-    {path: 'register', loadComponent: () => import('./features/auth/register/register')},
-    {path: 'login', loadComponent: () => import('./features/auth/login/login')},
+    {path: '', canActivate: [nonAuthGuard],component: Home},
+    {path: 'register', canActivate: [nonAuthGuard],loadComponent: () => import('./features/auth/register/register')},
+    {path: 'login', canActivate: [nonAuthGuard],loadComponent: () => import('./features/auth/login/login')},
     {path: 'dashboard', canActivate: [authGuard], loadComponent: () => import('./features/dashboard/dashboard')},
-    {path: 'recovery', loadComponent: () => import('./features/auth/password-recovery/password-recovery')},
-    
+    {path: 'recovery', canActivate: [nonAuthGuard],loadComponent: () => import('./features/auth/password-recovery/password-recovery')},
 ];
