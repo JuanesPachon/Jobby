@@ -29,10 +29,6 @@ export class AuthService {
   }
 
   isAuthenticated(): Observable<boolean> {
-    if (!this.hasLocalToken()) {
-      return of(false);
-    }
-
     return this.validateToken().pipe(
       timeout(2000),
       map((response) => response.success),
@@ -90,7 +86,7 @@ export class AuthService {
     );
   }
 
-  private clearTokenCache(): void {
+  clearTokenCache(): void {
     this.tokenValidationCache = null;
     this.cacheExpiry = 0;
   }

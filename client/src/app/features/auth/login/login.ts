@@ -55,7 +55,7 @@ export default class Login implements OnInit, OnDestroy {
 
     if (this.loginForm.valid) {
 
-      this.isLoading.update(value => !value);
+      this.isLoading.set(true);
 
       const formData = this.loginForm.value;
 
@@ -66,19 +66,20 @@ export default class Login implements OnInit, OnDestroy {
 
       this.authService.attemptLogin(loginRequest).subscribe({
         next: (response) => {
+          this.authService.clearTokenCache();
           this.router.navigate(['/dashboard']);
         },
         error: (error) => {
           this.authErrorMessage.set(error.status === 401 ? 'Credenciales incorrectas, vuelve a intentarlo' : 'Error del servidor, vuelve a intentarlo mas tarde');
-          this.authError.update(value => !value);
-          this.isLoading.update(value => !value);
+          this.authError.set(true);
+          this.isLoading.set(false);
         }
       });
 
     } else {
       this.authErrorMessage.set('Por favor, completa todos los campos requeridos correctamente.');
-      this.authError.update(value => !value);
-      this.isLoading.update(value => !value);
+      this.authError.set(true);
+      this.isLoading.set(false);
     }
   }
 }
