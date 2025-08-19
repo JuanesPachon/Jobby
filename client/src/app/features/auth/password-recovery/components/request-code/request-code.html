@@ -10,6 +10,8 @@
 
       @if (requestCodeForm.get('email')?.hasError('required') && requestCodeForm.get('email')?.touched) {
         <small class="text-red-600">Este campo es obligatorio</small>
+      } @else if (requestCodeForm.get('email')?.hasError('email')) {
+        <small class="text-red-600">Por favor, ingresa un correo electrónico válido</small>
       }
       
   </div>
