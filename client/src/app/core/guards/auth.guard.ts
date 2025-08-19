@@ -7,6 +7,11 @@ export const authGuard: CanActivateFn = (route, state) => {
   const authService = inject(AuthService);
   const router = inject(Router);
 
+  if (!authService.hasLocalToken()) {
+    router.navigate(['/login']);
+    return false;
+  }
+
   return authService.validateToken().pipe(
     map((response) => {
       if (response.success) {
@@ -26,6 +31,11 @@ export const authGuard: CanActivateFn = (route, state) => {
 export const nonAuthGuard: CanActivateFn = (route, state) => {
   const authService = inject(AuthService);
   const router = inject(Router);
+
+  if (!authService.hasLocalToken()) {
+    console.log('🌐 No local token - allowing access to public route');
+    return true;
+  }
 
   return authService.validateToken().pipe(
     map((response) => {
