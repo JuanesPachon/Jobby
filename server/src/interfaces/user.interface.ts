@@ -1,5 +1,33 @@
 import { Auth } from "./auth.interface.js";
 
+export interface UserSkill {
+  skill_id: number;
+  skill_name: string; // del JOIN con skills
+}
+
+export interface UserDocument {
+  id: number;
+  file_url: string;
+  uploaded_at: Date;
+}
+
+export interface UserExperience {
+  id: number;
+  title: string;
+  location?: string;
+  start_date?: Date;
+  end_date?: Date;
+  created_at: Date;
+  updated_at: Date;
+}
+
+export interface UserProfile {
+  photo_url?: string;
+  description?: string;
+  created_at: Date;
+  updated_at: Date;
+}
+
 export interface User extends Auth {
   id?: number;
   first_name: string;
@@ -16,4 +44,8 @@ export interface User extends Auth {
   created_at?: Date;
   updated_at?: Date;
   deleted_at?: Date | null;
+  profile?: UserProfile;
+  experiences?: UserExperience[];
+  skills?: UserSkill[];
+  documents?: UserDocument[];
 }
