@@ -23,13 +23,13 @@ const registerController = async (req: Request, res: Response) => {
         message: "User registered successfully",
       });
     } else if (response.error === "duplicate") {
-      return errorHandler.handleDuplicateError(res);
+      return errorHandler.handleDuplicateError(res, "User already exists");
     } else {
-      return errorHandler.handleServerError(res);
+      return errorHandler.handleServerError(res, "Internal server error during registration");
     }
 
   } catch (error) {
-    return errorHandler.handleServerError(res);
+    return errorHandler.handleServerError(res, "Internal server error during registration");
   }
 };
 
@@ -64,13 +64,13 @@ const loginController = async (req: Request, res: Response) => {
       case 'invalid_credentials':
         return errorHandler.handleInvalidCredentialsError(res);
       case 'server':
-        return errorHandler.handleServerError(res);
+        return errorHandler.handleServerError(res, "Internal server error during login");
       default:
-        return errorHandler.handleServerError(res);
+        return errorHandler.handleServerError(res, "Internal server error during login");
     }
 
   } catch (error) {
-    return errorHandler.handleServerError(res);
+    return errorHandler.handleServerError(res, "Login process failed");
     
   }
 }
@@ -82,7 +82,7 @@ const validateTokenController = async (_req: Request, res: Response) => {
       message: "Token is valid",
     });
   } catch (error) {
-    return errorHandler.handleServerError(res);
+    return errorHandler.handleServerError(res, "Internal server error during token validation");
   }
 };
 
@@ -97,7 +97,7 @@ const logoutController = async (_req: Request, res: Response) => {
       message: "Logout successful"
     });
   } catch (error) {
-    return errorHandler.handleServerError(res);
+    return errorHandler.handleServerError(res, "Internal server error during logout");
   }
 };
 
@@ -130,30 +130,21 @@ const verifyCodeController = async (req: Request, res: Response) => {
 
     switch (response.error) {
       case 'invalid_code':
-        return res.status(400).json({
-          success: false,
-          error: "Invalid reset code"
-        });
+        return errorHandler.handleValidationError(res, "Invalid reset code");
       case 'code_expired':
-        return res.status(400).json({
-          success: false,
-          error: "Reset code has expired"
-        });
+        return errorHandler.handleValidationError(res, "Reset code has expired");
       case 'code_used':
-        return res.status(400).json({
-          success: false,
-          error: "Reset code has already been used"
-        });
+        return errorHandler.handleValidationError(res, "Reset code has already been used");
       case 'user_not_found':
         return errorHandler.handleNotFoundError(res, "User not found");
       case 'server':
-        return errorHandler.handleServerError(res);
+        return errorHandler.handleServerError(res, "Internal server error during code verification");
       default:
-        return errorHandler.handleServerError(res);
+        return errorHandler.handleServerError(res, "Internal server error during code verification");
     }
 
   } catch (error) {
-    return errorHandler.handleServerError(res);
+    return errorHandler.handleServerError(res, "Internal server error during code verification");
   }
 };
 
@@ -172,17 +163,11 @@ const resetPasswordController = async (req: Request, res: Response) => {
     const decoded = jwt.verify(resetToken, process.env.JWT_SECRET as string) as ResetTokenPayload;
     
     if (!decoded) {
-      return res.status(400).json({
-        success: false,
-        error: "Invalid or expired reset token"
-      });
+      return errorHandler.handleValidationError(res, "Invalid or expired reset token");
     }
     
     if (decoded.purpose !== 'password_reset') {
-      return res.status(400).json({
-        success: false,
-        error: "Invalid token purpose"
-      });
+      return errorHandler.handleValidationError(res, "Invalid token purpose");
     }
 
     const response = await resetPassword(resetData, decoded.userId);
@@ -200,13 +185,13 @@ const resetPasswordController = async (req: Request, res: Response) => {
 
     switch (response.error) {
       case 'server':
-        return errorHandler.handleServerError(res);
+        return errorHandler.handleServerError(res, "Internal server error during password reset");
       default:
-        return errorHandler.handleServerError(res);
+        return errorHandler.handleServerError(res, "Internal server error during password reset");
     }
 
   } catch (error) {
-    return errorHandler.handleServerError(res);
+    return errorHandler.handleServerError(res, "Internal server error during password reset");
   }
 };
 
@@ -311,7 +296,7 @@ const requestCodeController = async (_req: Request, res: Response) => {
     }
     
   } catch (error) {
-    return errorHandler.handleServerError(res);
+    return errorHandler.handleServerError(res, "Internal server error during code request");
   }
 };
 

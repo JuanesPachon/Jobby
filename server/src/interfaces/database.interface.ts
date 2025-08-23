@@ -1,3 +1,5 @@
+import { User } from "./user.interface.js";
+
 export interface DatabaseError extends Error {
     code?: string;
     errno?: number;
@@ -32,4 +34,11 @@ export interface ResetPasswordResult {
     success: boolean;
     error?: 'user_not_found' | 'server' | 'validation';
     message?: string;
+}
+
+export interface getUserByIdResult {
+    success: boolean;
+    error?: 'user_not_found' | 'server';
+    message?: string;
+    user?: User;
 }
