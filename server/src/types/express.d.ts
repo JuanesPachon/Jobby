@@ -1,3 +1,5 @@
+import { IMulterFile } from "../interfaces/multer.interface.ts";
+
 declare global {
   namespace Express {
     interface Request {
@@ -5,6 +7,7 @@ declare global {
         sub: string;
         iat: number;
       };
+      file?: IMulterFile;
     }
   }
 }

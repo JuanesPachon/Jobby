@@ -227,14 +227,14 @@ const requestCodeController = async (_req: Request, res: Response) => {
           subject: "Recuperación de contraseña",
         }
 
-        const imageUrl = process.env.IMAGE_URL || '';
+        const imageUrl = process.env.SUPABASE_URL || '';
 
         const mailTemplate = `
           <body style="margin: 0; padding: 0; font-family: 'Arial', sans-serif; background-color: #f4f4f4;">
             <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 10px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
               
               <div style="text-align: center; padding:10px 0; background: #000000; border-radius: 10px 10px 0 0;">
-                <img src="${imageUrl}/storage/v1/object/public/trekangle-files/jobby.png" alt="Jobby Logo" style="width: 100%; height: 80px; object-fit: contain;">
+                <img src="${imageUrl}/storage/v1/object/public/Jobby_files/jobby.png" alt="Jobby Logo" style="width: 100%; height: 80px; object-fit: contain;">
               </div>
               
               <div style="padding: 40px 30px;">
