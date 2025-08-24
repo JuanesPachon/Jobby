@@ -1,8 +1,8 @@
 import { Auth } from "./auth.interface.js";
 
 export interface UserSkill {
-  skill_id: number;
-  skill_name: string; // del JOIN con skills
+  id: number;
+  skill_name: string;
 }
 
 export interface UserDocument {

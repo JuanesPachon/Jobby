@@ -42,3 +42,17 @@ export interface getUserByIdResult {
     message?: string;
     user?: User;
 }
+
+export interface UpdateProfileResult {
+    success: boolean;
+    error?: 'user_not_found' | 'validation_error' | 'server';
+    message?: string;
+    data?: {
+        updated_user?: boolean;
+        updated_profile?: boolean;
+        experiences_processed?: number;
+        skills_processed?: number;
+        documents_processed?: number;
+        user?: User;
+    };
+}
