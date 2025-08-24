@@ -8,18 +8,39 @@ const supabaseClient = createClient(supabaseUrl, supabaseKey);
 
 const storage = multer.memoryStorage();
 
-const fileFilter = (_req: Request, file: Express.Multer.File, cb: FileFilterCallback): void => {
-  if (file.mimetype.startsWith("image/")) {
-    cb(null, true);
-  } else {
-    const error = new Error("File is not in a valid format") as any;
-    cb(error, false);
-  }
+const combinedFileFilter = (_req: Request, file: Express.Multer.File, cb: FileFilterCallback): void => {
+    if (file.fieldname === "photoUrl") {
+        if (file.mimetype.startsWith("image/")) {
+            cb(null, true);
+        } else {
+            const error = new Error(
+                "Profile photo must be an image file"
+            ) as any;
+            error.statusCode = 400;
+            cb(error, false);
+        }
+    } else if (file.fieldname === "documents") {
+        if (file.mimetype === "application/pdf") {
+            cb(null, true);
+        } else {
+            const error = new Error("Documents must be PDF files") as any;
+            error.statusCode = 400;
+            cb(error, false);
+        }
+    } else {
+        const error = new Error("Unexpected field") as any;
+        error.statusCode = 400;
+        cb(error, false);
+    }
 };
 
-const upload = multer({
-  storage: storage,
-  fileFilter: fileFilter,
+const uploadCombined = multer({
+    storage: storage,
+    fileFilter: combinedFileFilter,
+    limits: {
+        fileSize: 10 * 1024 * 1024,
+        files: 4,
+    },
 });
 
-export { upload, supabaseClient };
+export { uploadCombined, supabaseClient };
