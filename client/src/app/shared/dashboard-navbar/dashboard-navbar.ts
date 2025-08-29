@@ -1,11 +1,11 @@
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { AuthService } from './../../core/services/auth.service';
 import { Component, inject, signal } from '@angular/core';
 
 @Component({
   selector: 'app-dashboard-navbar',
   standalone: true,
-  imports: [],
+  imports: [RouterLink],
   templateUrl: './dashboard-navbar.html',
   styleUrl: './dashboard-navbar.css'
 })

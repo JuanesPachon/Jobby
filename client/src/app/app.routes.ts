@@ -8,4 +8,5 @@ export const routes: Routes = [
     {path: 'login', canActivate: [nonAuthGuard],loadComponent: () => import('./features/auth/login/login')},
     {path: 'dashboard', canActivate: [authGuard], loadComponent: () => import('./features/dashboard/dashboard')},
     {path: 'recovery', canActivate: [nonAuthGuard],loadComponent: () => import('./features/auth/password-recovery/password-recovery')},
+    {path: 'profile', canActivate: [authGuard],loadComponent: () => import('./features/user/user-profile/user-profile')},
 ];
