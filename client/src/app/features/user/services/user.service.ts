@@ -13,5 +13,8 @@ export class UserService {
     return this.http.get<any>(`${this.apiUrl}/user/profile` ,
     { withCredentials: true });
   }
+  editUserProfile(): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/user/profile` ,
+    { withCredentials: true });
 }
-
+}
