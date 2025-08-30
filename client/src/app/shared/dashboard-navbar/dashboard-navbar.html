@@ -1,11 +1,16 @@
-<header class="container mx-auto p-3 font-poppins relative">
-  <nav class="flex items-center justify-between px-2">
-    <img src="/images/LOGO/png_sin_fondo/fondo_blanco.png" alt="Jobby Logo" class="h-10 object-contain">
+<header class="w-full p-3 font-poppins relative bg-white border-b-2">
+  <nav class="container mx-auto flex items-center justify-between px-2">
+    <a [routerLink]="'/dashboard'">
+      <img src="/images/LOGO/png_sin_fondo/fondo_blanco.png" alt="Jobby Logo" class="h-10 object-contain">
+    </a>
 
     <div class="relative">
       <div class="flex items-center gap-2 cursor-pointer" (click)="toggleDropdown()">
-        <span class="font-semibold text-gray-800">Jane Doe</span>
-        <img src="/icons/my_profile.svg" alt="Jane Doe's avatar" class="h-8 w-8 rounded-full object-cover">
+        <span class="font-semibold text-gray-800">{{ getUserFullName() }}</span>
+        <img [src]="getPhotoUrl(userData.profile?.photo_url)" [alt]="getUserFullName() + ' avatar'" class="h-8 w-8 rounded-full object-cover">
+        <svg class="w-4 h-4 text-black transition-transform" [class.rotate-180]="isDropdownOpen()" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+        </svg>
       </div>
 
       @if (isDropdownOpen()) {

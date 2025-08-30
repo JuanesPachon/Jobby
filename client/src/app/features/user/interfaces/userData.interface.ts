@@ -16,7 +16,9 @@ export interface Profile {
   photo_url: string
   description: string
   created_at: string
-  updated_at: string
+  updated_at: string,
+  education: string,
+  current_location: string
 }
 
 export interface Experience {
