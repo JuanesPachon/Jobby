@@ -18,9 +18,11 @@ export default class UserProfile implements OnInit {
   loading: boolean = true;
   error: string | null = null;
   private userService = inject(UserService);
+  
   ngOnInit(): void {
     this.loadUserProfile();
   }
+  
   loadUserProfile() {
     this.userService.getUserProfile().subscribe({
       next: (response) => {
@@ -34,4 +36,7 @@ export default class UserProfile implements OnInit {
     });
   }
 
+  getPhotoUrl(photoPath: string | null | undefined): string {
+    return this.userService.getPhotoUrl(photoPath);
+  }
 }
