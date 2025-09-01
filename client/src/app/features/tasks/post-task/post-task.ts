@@ -6,6 +6,6 @@ import { Component } from '@angular/core';
   templateUrl: './post-task.html',
   styleUrl: './post-task.css'
 })
-export class PostTask {
+export default class PostTask {
 
 }
