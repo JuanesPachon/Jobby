@@ -1,8 +1,9 @@
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from './../../core/services/auth.service';
 import { UserService } from '../../features/user/services/user.service';
-import { Component, inject, signal, OnInit } from '@angular/core';
+import { Component, inject, signal, OnInit, OnDestroy } from '@angular/core';
 import { UserData } from '../../features/user/interfaces/userData.interface';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-dashboard-navbar',
@@ -11,27 +12,48 @@ import { UserData } from '../../features/user/interfaces/userData.interface';
   templateUrl: './dashboard-navbar.html',
   styleUrl: './dashboard-navbar.css'
 })
-export class DashboardNavbar implements OnInit {
+export class DashboardNavbar implements OnInit, OnDestroy {
   private authService = inject(AuthService);
   private router = inject(Router);
   private userService = inject(UserService);
   
   isDropdownOpen = signal<boolean>(false);
   userData: UserData = {};
+  private userDataSubscription?: Subscription;
 
   ngOnInit(): void {
     this.loadUserData();
   }
 
+  ngOnDestroy(): void {
+    if (this.userDataSubscription) {
+      this.userDataSubscription.unsubscribe();
+    }
+  }
+
   loadUserData(): void {
-    this.userService.getUserProfile().subscribe({
-      next: (response) => {
-        this.userData = response.data;
-      },
-      error: (error) => {
-        console.error('Error loading user data:', error);
+    const cachedData = this.userService.getCurrentUserData();
+    if (cachedData) {
+      this.userData = cachedData;
+    }
+
+    this.userDataSubscription = this.userService.userData$.subscribe({
+      next: (data) => {
+        if (data) {
+          this.userData = data;
+        }
       }
     });
+
+    if (!cachedData) {
+      this.userService.getUserProfile().subscribe({
+        next: (response) => {
+        },
+        error: (error) => {
+          console.error('Error loading user data:', error);
+        }
+      });
+    }
   }
 
   toggleDropdown(): void {
@@ -49,6 +71,7 @@ export class DashboardNavbar implements OnInit {
   attemptSignOut(): void {
     this.authService.attemptSignOut().subscribe({
       next: () => {
+        this.userService.clearUserData();
         this.router.navigate(['/']);
       },
       error: (error) => {

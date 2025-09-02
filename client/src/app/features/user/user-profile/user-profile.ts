@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, inject, OnInit, signal, OnDestroy } from '@angular/core';
 import { DashboardNavbar } from '../../../shared/dashboard-navbar/dashboard-navbar';
 import { RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
@@ -12,6 +12,7 @@ import { EditDocuments } from './components/edit-documents/edit-documents';
 import { DeleteConfirmationModal } from './components/delete-confirmation-modal/delete-confirmation-modal';
 import { EditPhoto } from "./components/edit-photo/edit-photo";
 import { EditBasicInfo } from './components/edit-basic-info/edit-basic-info';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-user-profile',
@@ -32,28 +33,51 @@ import { EditBasicInfo } from './components/edit-basic-info/edit-basic-info';
   templateUrl: './user-profile.html',
   styleUrl: './user-profile.css',
 })
-export default class UserProfile implements OnInit {
+export default class UserProfile implements OnInit, OnDestroy {
 
   private userService = inject(UserService);
 
   userData: UserData = {};
   loading = signal<boolean>(true);
   error = signal<string>('');
+  private userDataSubscription?: Subscription;
 
   ngOnInit(): void {
     this.loadUserProfile();
   }
 
+  ngOnDestroy(): void {
+    if (this.userDataSubscription) {
+      this.userDataSubscription.unsubscribe();
+    }
+  }
+
   loadUserProfile() {
-    this.userService.getUserProfile().subscribe({
-      next: (response) => {
-        this.userData = response.data;
-        this.loading.set(false);
-      },
-      error: () => {
-        this.loading.set(false);
-      },
+    const cachedData = this.userService.getCurrentUserData();
+    if (cachedData) {
+      this.userData = cachedData;
+      this.loading.set(false);
+    }
+
+    this.userDataSubscription = this.userService.userData$.subscribe({
+      next: (data) => {
+        if (data) {
+          this.userData = data;
+          this.loading.set(false);
+        }
+      }
     });
+
+    if (!cachedData) {
+      this.userService.getUserProfile().subscribe({
+        next: (response) => {
+        },
+        error: (error) => {
+          this.loading.set(false);
+          this.error.set('Error al cargar el perfil');
+        },
+      });
+    }
   }
 
   getPhotoUrl(photoPath: string | null | undefined): string {
