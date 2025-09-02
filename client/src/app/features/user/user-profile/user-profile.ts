@@ -10,6 +10,8 @@ import { EditExperiences } from './components/edit-experiences/edit-experiences'
 import { EditSkills } from './components/edit-skills/edit-skills';
 import { EditDocuments } from './components/edit-documents/edit-documents';
 import { DeleteConfirmationModal } from './components/delete-confirmation-modal/delete-confirmation-modal';
+import { EditPhoto } from "./components/edit-photo/edit-photo";
+import { EditBasicInfo } from './components/edit-basic-info/edit-basic-info';
 
 @Component({
   selector: 'app-user-profile',
@@ -23,8 +25,10 @@ import { DeleteConfirmationModal } from './components/delete-confirmation-modal/
     EditExperiences,
     EditSkills,
     EditDocuments,
-    DeleteConfirmationModal
-  ],
+    DeleteConfirmationModal,
+    EditPhoto,
+    EditBasicInfo
+],
   templateUrl: './user-profile.html',
   styleUrl: './user-profile.css',
 })
@@ -57,6 +61,7 @@ export default class UserProfile implements OnInit {
   }
   
   //Description
+
   isEditingDescription = signal<boolean>(false);
 
   toggleEditDescription(): void {
@@ -64,6 +69,7 @@ export default class UserProfile implements OnInit {
   }
 
   //Experiences Modal
+
   isExperienceModalOpen = signal<boolean>(false);
   selectedExperience = signal<Experience | null>(null);
 
@@ -78,6 +84,7 @@ export default class UserProfile implements OnInit {
   }
 
   // Skills Modal
+
   isSkillsModalOpen = signal<boolean>(false);
 
   openSkillsModal(): void {
@@ -89,6 +96,7 @@ export default class UserProfile implements OnInit {
   }
 
   // Documents Modal
+
   isDocumentsModalOpen = signal<boolean>(false);
 
   openDocumentsModal(): void {
@@ -98,6 +106,30 @@ export default class UserProfile implements OnInit {
   closeDocumentsModal(): void {
     this.isDocumentsModalOpen.set(false);
   }
+
+  // Photo Modal
+  isPhotoModalOpen = signal<boolean>(false);
+
+  openPhotoModal(): void {
+    this.isPhotoModalOpen.set(true);
+  }
+
+  closePhotoModal(): void {
+    this.isPhotoModalOpen.set(false);
+  }
+
+  // Basic Info Modal
+  isBasicInfoModalOpen = signal<boolean>(false);
+
+  openBasicInfoModal(): void {
+    this.isBasicInfoModalOpen.set(true);
+  }
+
+  closeBasicInfoModal(): void {
+    this.isBasicInfoModalOpen.set(false);
+  }
+
+  // Delete Confirmation Modal
 
   isDeleteModalOpen = signal<boolean>(false);
   deleteResourceType = signal<string>('');
@@ -126,4 +158,5 @@ export default class UserProfile implements OnInit {
     this.deleteResourceId.set(null);
     this.pendingDeleteAction.set(null);
   }
+
 }

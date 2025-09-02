@@ -26,7 +26,7 @@
                   <div class="relative">
                     <img [src]="getPhotoUrl(userData.profile?.photo_url)" 
                         [alt]="userData.first_name + ' ' + userData.last_name" class="w-24 h-24 sm:w-32 sm:h-32 rounded-full border-4 border-white shadow-lg object-cover">
-                    <button class="absolute bottom-2 right-2 bg-white rounded-full p-2 shadow-md hover:bg-gray-50 border border-black">
+                    <button class="absolute bottom-1 right-1 md:bottom-2 md:right-2 bg-white rounded-full p-2 shadow-md hover:bg-gray-300 border border-black cursor-pointer" (click)="openPhotoModal()">
                       <svg class="w-4 h-4 md:w-5 md:h-5 text-gray-600" fill="currentColor" viewBox="0 0 20 20">
                         <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"></path>
                       </svg>
@@ -46,7 +46,7 @@
                       <span class="text-sm text-gray-600">5.0 (23 calificaciones)</span>
                     </div>
                   </div>
-                  <button class="text-gray-600 hover:text-gray-800">
+                  <button class="text-gray-600 hover:text-gray-800 cursor-pointer" (click)="openBasicInfoModal()">
                     <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                       <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"></path>
                     </svg>
@@ -95,10 +95,21 @@
                 </button>
               </div>
               @if (isEditingDescription()) {
-                <textarea class="w-full border border-black rounded-lg p-3 text-sm text-black focus:outline-none focus:ring-2 focus:ring-black-500 resize-none font-inter"  rows="6">{{userData.profile?.description}}</textarea>
-                <div class="flex justify-end space-x-3 mt-3">
-                  <button class="border-2 border-black rounded-xl p-2 px-7 text-black hover:bg-gray-300 cursor-pointer transition-all">Cancelar</button>
-                  <button class="bg-main-blue rounded-xl p-2 px-7 text-white hover:bg-blue-600 transition-all cursor-pointer">Guardar</button>
+                <textarea class="w-full border border-black rounded-lg p-3 text-black focus:outline-none focus:ring-2 focus:ring-black-500 resize-none font-inter"  rows="6">{{userData.profile?.description}}</textarea>
+                <div class="flex justify-end space-x-3 pt-4">
+                  <button 
+                    type="button"
+                    (click)="toggleEditDescription()"
+                    class="hover:bg-gray-300 px-9 py-2 rounded-full font-medium text-sm border-[1px] border-black cursor-pointer"
+                  >
+                    Cancelar
+                  </button>
+                  <button 
+                    type="submit" 
+                    class="bg-main-blue hover:bg-blue-600 text-white px-9 py-2 rounded-full font-medium text-sm border-[1px] border-black cursor-pointer"
+                  >
+                    Guardar
+                  </button>
                 </div>
               } @else {
                 <p class="text-gray-600 leading-relaxed font-inter">
@@ -121,7 +132,7 @@
                   <div class="flex items-center space-x-3">
                     <div class="w-2 h-2 bg-blue-600 rounded-full"></div>
                     <div class="flex-1">
-                      <h4 class="font-medium text-gray-900">{{ experience.title }}</h4>
+                      <h4 class="font-medium text-gray-900">{{ experience.title + " - " + experience.location }}</h4>
                       <p class="text-sm text-gray-600 font-inter">{{ experience.start_date | date:'dd-MM-yyyy' }} - {{ experience.end_date ? (experience.end_date | date:'dd-MM-yyyy') : 'Actualmente' }}</p>
                     </div>
                     <div class="flex items-center space-x-2">
@@ -280,16 +291,15 @@
 }
 
 @if (isExperienceModalOpen()) {
-  <app-edit-experiences 
-    [experienceData]="selectedExperience()"
-    (close)="closeExperienceModal()"/>
+  <app-edit-experiences [experienceData]="selectedExperience()" (close)="closeExperienceModal()"/>
 } @else if (isSkillsModalOpen()) {
   <app-edit-skills (close)="closeSkillsModal()"/>
 } @else if (isDocumentsModalOpen()) {
   <app-edit-documents (close)="closeDocumentsModal()"/>
+} @else if (isPhotoModalOpen()) {
+  <app-edit-photo (close)="closePhotoModal()"/>
+} @else if (isBasicInfoModalOpen()) {
+  <app-edit-basic-info [userData]="userData" (close)="closeBasicInfoModal()"/>
 } @else if (isDeleteModalOpen()) {
-  <app-delete-confirmation-modal
-    [resourceType]="deleteResourceType()"
-    [resourceName]="deleteResourceName()"
-    (cancel)="closeDeleteModal()"/>
+  <app-delete-confirmation-modal [resourceType]="deleteResourceType()" [resourceName]="deleteResourceName()" (cancel)="closeDeleteModal()"/>
 }

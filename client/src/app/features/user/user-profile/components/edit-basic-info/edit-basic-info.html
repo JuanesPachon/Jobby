@@ -1,0 +1,77 @@
+@if (userData()) {
+  <div class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 font-poppins" (click)="onOverlayClick($event)">
+    <div class="bg-white rounded-2xl shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+      <div class="flex items-center justify-between p-6 pb-2 border-b border-gray-200">
+        <h2 class="text-2xl font-semibold text-gray-900">Editar información básica</h2>
+        <button class="text-gray-400 hover:text-gray-800 transition-colors cursor-pointer" (click)="closeModal()">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+
+      <div class="p-6">
+        <form class="space-y-6">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label class="block text-sm font-medium text-gray-900 mb-2">Correo electrónico:</label>
+              <input 
+                type="email" 
+                [value]="userData()?.email || ''"
+                class="w-full placeholder:text-gray-500 px-3.5 md:px-3 py-2.5 md:py-2 text-sm md:text-sm border border-gray-400 rounded-md focus:ring-2 focus:ring-black focus:outline-none transition-all"
+                placeholder="ejemplo@correo.com"
+              >
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-900 mb-2">Teléfono:</label>
+              <input 
+                type="text" 
+                [value]="userData()?.phone || ''"
+                class="w-full placeholder:text-gray-500 px-3.5 md:px-3 py-2.5 md:py-2 text-sm md:text-sm border border-gray-400 rounded-md focus:ring-2 focus:ring-black focus:outline-none transition-all [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                placeholder="Ej. 3001234567"
+                inputmode="numeric"
+                pattern="[0-9]*"
+              >
+            </div>
+          </div>  
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label class="block text-sm font-medium text-gray-900 mb-2">Educación:</label>
+              <input 
+                type="text" 
+                [value]="userData()?.profile?.education || ''"
+                class="w-full placeholder:text-gray-500 px-3.5 md:px-3 py-2.5 md:py-2 text-sm md:text-sm border border-gray-400 rounded-md focus:ring-2 focus:ring-black focus:outline-none transition-all"
+                placeholder="Ej. Ingeniero de Software"
+              >
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-900 mb-2">Ubicación actual:</label>
+              <input 
+                type="text" 
+                [value]="userData()?.profile?.current_location || ''"
+                class="w-full px-3.5 placeholder:text-gray-500 md:px-3 py-2.5 md:py-2 text-sm md:text-sm border border-gray-400 rounded-md focus:ring-2 focus:ring-black focus:outline-none transition-all"
+                placeholder="Ej. Bogotá, Colombia"
+              >
+            </div>
+          </div>
+
+          <div class="flex justify-end space-x-3 pt-4">
+            <button 
+              type="button"
+              (click)="closeModal()"
+              class="hover:bg-gray-300 px-9 py-2 rounded-full font-medium text-sm border-[1px] border-black cursor-pointer"
+            >
+              Cancelar
+            </button>
+            <button 
+              type="submit" 
+              class="bg-main-blue hover:bg-blue-600 text-white px-9 py-2 rounded-full font-medium text-sm border-[1px] border-black cursor-pointer"
+            >
+              Guardar
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+}
