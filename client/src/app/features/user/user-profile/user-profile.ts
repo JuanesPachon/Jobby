@@ -3,12 +3,13 @@ import { DashboardNavbar } from '../../../shared/dashboard-navbar/dashboard-navb
 import { RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { UserService } from '../services/user.service';
-import { UserData, Experience } from '../interfaces/userData.interface';
+import { UserData, Experience, Skill, Document } from '../interfaces/userData.interface';
 import { UserProfileSkeletonComponent } from './components/user-profile-skeleton';
 import { UserProfileErrorComponent } from './components/user-profile-error';
 import { EditExperiences } from './components/edit-experiences/edit-experiences';
 import { EditSkills } from './components/edit-skills/edit-skills';
 import { EditDocuments } from './components/edit-documents/edit-documents';
+import { DeleteConfirmationModal } from './components/delete-confirmation-modal/delete-confirmation-modal';
 
 @Component({
   selector: 'app-user-profile',
@@ -21,7 +22,8 @@ import { EditDocuments } from './components/edit-documents/edit-documents';
     UserProfileErrorComponent,
     EditExperiences,
     EditSkills,
-    EditDocuments
+    EditDocuments,
+    DeleteConfirmationModal
   ],
   templateUrl: './user-profile.html',
   styleUrl: './user-profile.css',
@@ -95,5 +97,33 @@ export default class UserProfile implements OnInit {
 
   closeDocumentsModal(): void {
     this.isDocumentsModalOpen.set(false);
+  }
+
+  isDeleteModalOpen = signal<boolean>(false);
+  deleteResourceType = signal<string>('');
+  deleteResourceName = signal<string>('');
+  deleteResourceId = signal<number | null>(null);
+  pendingDeleteAction = signal<'experience' | 'skill' | 'document' | null>(null);
+
+  openDeleteModal(type: 'experience' | 'skill' | 'document', resourceName: string, resourceId: number): void {
+    const typeNames = {
+      'experience': 'la experiencia',
+      'skill': 'la habilidad',
+      'document': 'el documento'
+    };
+    
+    this.deleteResourceType.set(typeNames[type]);
+    this.deleteResourceName.set(resourceName);
+    this.deleteResourceId.set(resourceId);
+    this.pendingDeleteAction.set(type);
+    this.isDeleteModalOpen.set(true);
+  }
+
+  closeDeleteModal(): void {
+    this.isDeleteModalOpen.set(false);
+    this.deleteResourceType.set('');
+    this.deleteResourceName.set('');
+    this.deleteResourceId.set(null);
+    this.pendingDeleteAction.set(null);
   }
 }
