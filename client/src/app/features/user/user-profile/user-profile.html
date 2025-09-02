@@ -144,8 +144,8 @@
             <div class="bg-white rounded-xl shadow-sm border border-black p-6">
               <div class="flex items-center justify-between mb-3">
                 <h3 class="text-lg font-semibold text-gray-900">Habilidades</h3>
-                <button class="text-gray-600 hover:text-gray-800">
-                  <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                <button class="text-gray-600 hover:text-gray-800 cursor-pointer" (click)="openSkillsModal()">
+                  <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
                     <path d="M10 5a1 1 0 011 1v3h3a1 1 0 010 2h-3v3a1 1 0 01-2 0v-3H6a1 1 0 010-2h3V6a1 1 0 011-1z"></path>
                   </svg>
                 </button>
@@ -167,8 +167,8 @@
             <div class="bg-white rounded-xl shadow-sm border border-black p-6">
               <div class="flex items-center justify-between mb-3">
                 <h3 class="text-lg font-semibold text-gray-900">Documentos adjuntos</h3>
-                <button class="text-gray-600 hover:text-gray-800">
-                  <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                <button class="text-gray-600 hover:text-gray-800 cursor-pointer" (click)="openDocumentsModal()">
+                  <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
                     <path d="M10 5a1 1 0 011 1v3h3a1 1 0 010 2h-3v3a1 1 0 01-2 0v-3H6a1 1 0 010-2h3V6a1 1 0 011-1z"></path>
                   </svg>
                 </button>
@@ -283,4 +283,8 @@
   <app-edit-experiences 
     [experienceData]="selectedExperience()"
     (close)="closeExperienceModal()"/>
+} @else if (isSkillsModalOpen()) {
+  <app-edit-skills (close)="closeSkillsModal()"/>
+} @else if (isDocumentsModalOpen()) {
+  <app-edit-documents (close)="closeDocumentsModal()"/>
 }

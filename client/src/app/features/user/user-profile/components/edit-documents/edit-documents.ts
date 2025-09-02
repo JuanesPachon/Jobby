@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, output } from '@angular/core';
 
 @Component({
   selector: 'app-edit-documents',
@@ -7,5 +7,17 @@ import { Component } from '@angular/core';
   styleUrl: './edit-documents.css'
 })
 export class EditDocuments {
+
+  close = output();
+
+  closeModal(): void {
+    this.close.emit();
+  }
+
+  onOverlayClick(event: Event): void {
+    if (event.target === event.currentTarget) {
+      this.closeModal();
+    }
+  }
 
 }

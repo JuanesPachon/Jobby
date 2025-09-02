@@ -7,6 +7,8 @@ import { UserData, Experience } from '../interfaces/userData.interface';
 import { UserProfileSkeletonComponent } from './components/user-profile-skeleton';
 import { UserProfileErrorComponent } from './components/user-profile-error';
 import { EditExperiences } from './components/edit-experiences/edit-experiences';
+import { EditSkills } from './components/edit-skills/edit-skills';
+import { EditDocuments } from './components/edit-documents/edit-documents';
 
 @Component({
   selector: 'app-user-profile',
@@ -17,13 +19,15 @@ import { EditExperiences } from './components/edit-experiences/edit-experiences'
     CommonModule,
     UserProfileSkeletonComponent,
     UserProfileErrorComponent,
-    EditExperiences
+    EditExperiences,
+    EditSkills,
+    EditDocuments
   ],
   templateUrl: './user-profile.html',
   styleUrl: './user-profile.css',
 })
 export default class UserProfile implements OnInit {
-  
+
   private userService = inject(UserService);
 
   userData: UserData = {};
@@ -69,5 +73,27 @@ export default class UserProfile implements OnInit {
   closeExperienceModal(): void {
     this.isExperienceModalOpen.set(false);
     this.selectedExperience.set(null);
+  }
+
+  // Skills Modal
+  isSkillsModalOpen = signal<boolean>(false);
+
+  openSkillsModal(): void {
+    this.isSkillsModalOpen.set(true);
+  }
+
+  closeSkillsModal(): void {
+    this.isSkillsModalOpen.set(false);
+  }
+
+  // Documents Modal
+  isDocumentsModalOpen = signal<boolean>(false);
+
+  openDocumentsModal(): void {
+    this.isDocumentsModalOpen.set(true);
+  }
+
+  closeDocumentsModal(): void {
+    this.isDocumentsModalOpen.set(false);
   }
 }
