@@ -14,7 +14,7 @@ export interface UserDocument {
 export interface UserExperience {
   id: number;
   title: string;
-  location?: string;
+  company?: string;
   start_date?: Date;
   end_date?: Date;
   created_at: Date;

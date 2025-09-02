@@ -49,7 +49,7 @@ const getUserById = async (userId: number): Promise<getUserByIdResult> => {
             `SELECT 
                 id,
                 title,
-                location,
+                company,
                 start_date,
                 end_date,
                 created_at,
@@ -93,7 +93,7 @@ const getUserById = async (userId: number): Promise<getUserByIdResult> => {
         user.experiences = experienceRows.map(row => ({
             id: row.id,
             title: row.title,
-            location: row.location,
+            company: row.company,
             start_date: row.start_date,
             end_date: row.end_date,
             created_at: row.created_at,
@@ -168,7 +168,7 @@ const getUserByIdFiltered = async (userId: number): Promise<getUserByIdResult> =
             `SELECT 
                 id,
                 title,
-                location,
+                company,
                 start_date,
                 end_date,
                 created_at,
@@ -212,7 +212,7 @@ const getUserByIdFiltered = async (userId: number): Promise<getUserByIdResult> =
         user.experiences = experienceRows.map(row => ({
             id: row.id,
             title: row.title,
-            location: row.location,
+            company: row.company,
             start_date: row.start_date,
             end_date: row.end_date,
             created_at: row.created_at,
@@ -327,51 +327,59 @@ const updateUserProfile = async (userId: number, updateData: UpdateProfileReques
         if (updateData.experiences && updateData.experiences.length > 0) {
             for (const exp of updateData.experiences) {
                 switch (exp.action) {
-                    case 'add':
+                    case "add":
                         await connection.query(
-                            'INSERT INTO experiences (user_id, title, location, start_date, end_date) VALUES (?, ?, ?, ?, ?)',
-                            [userId, exp.title, exp.location, exp.start_date, exp.end_date]
+                            "INSERT INTO experiences (user_id, title, company, start_date, end_date) VALUES (?, ?, ?, ?, ?)",
+                            [
+                                userId,
+                                exp.title,
+                                exp.company,
+                                exp.start_date,
+                                exp.end_date,
+                            ]
                         );
                         experiencesProcessed++;
                         break;
-                    
-                    case 'update':
+
+                    case "update":
                         if (exp.id) {
                             const updateFields: string[] = [];
                             const updateValues: any[] = [];
 
                             if (exp.title) {
-                                updateFields.push('title = ?');
+                                updateFields.push("title = ?");
                                 updateValues.push(exp.title);
                             }
-                            if (exp.location !== undefined) {
-                                updateFields.push('location = ?');
-                                updateValues.push(exp.location);
+                            if (exp.company !== undefined) {
+                                updateFields.push("company = ?");
+                                updateValues.push(exp.company);
                             }
                             if (exp.start_date !== undefined) {
-                                updateFields.push('start_date = ?');
+                                updateFields.push("start_date = ?");
                                 updateValues.push(exp.start_date);
                             }
                             if (exp.end_date !== undefined) {
-                                updateFields.push('end_date = ?');
+                                updateFields.push("end_date = ?");
                                 updateValues.push(exp.end_date);
                             }
 
                             if (updateFields.length > 0) {
                                 updateValues.push(exp.id, userId);
                                 await connection.query(
-                                    `UPDATE experiences SET ${updateFields.join(', ')}, updated_at = CURRENT_TIMESTAMP WHERE id = ? AND user_id = ?`,
+                                    `UPDATE experiences SET ${updateFields.join(
+                                        ", "
+                                    )}, updated_at = CURRENT_TIMESTAMP WHERE id = ? AND user_id = ?`,
                                     updateValues
                                 );
                                 experiencesProcessed++;
                             }
                         }
                         break;
-                    
-                    case 'delete':
+
+                    case "delete":
                         if (exp.id) {
                             await connection.query(
-                                'DELETE FROM experiences WHERE id = ? AND user_id = ?',
+                                "DELETE FROM experiences WHERE id = ? AND user_id = ?",
                                 [exp.id, userId]
                             );
                             experiencesProcessed++;
@@ -385,18 +393,18 @@ const updateUserProfile = async (userId: number, updateData: UpdateProfileReques
         if (updateData.skills && updateData.skills.length > 0) {
             for (const skill of updateData.skills) {
                 switch (skill.action) {
-                    case 'add':
+                    case "add":
                         await connection.query(
-                            'INSERT INTO user_skills (user_id, skill_name) VALUES (?, ?)',
+                            "INSERT INTO user_skills (user_id, skill_name) VALUES (?, ?)",
                             [userId, skill.skill_name]
                         );
                         skillsProcessed++;
                         break;
-                    
-                    case 'delete':
+
+                    case "delete":
                         if (skill.id) {
                             await connection.query(
-                                'DELETE FROM user_skills WHERE id = ? AND user_id = ?',
+                                "DELETE FROM user_skills WHERE id = ? AND user_id = ?",
                                 [skill.id, userId]
                             );
                             skillsProcessed++;
@@ -410,52 +418,62 @@ const updateUserProfile = async (userId: number, updateData: UpdateProfileReques
         if (updateData.documents && updateData.documents.length > 0) {
             for (const doc of updateData.documents) {
                 switch (doc.action) {
-                    case 'add':
+                    case "add":
                         if (doc.file_url) {
                             await connection.query(
-                                'INSERT INTO user_documents (user_id, file_url) VALUES (?, ?)',
+                                "INSERT INTO user_documents (user_id, file_url) VALUES (?, ?)",
                                 [userId, doc.file_url]
                             );
                             documentsProcessed++;
                         }
                         break;
-                    
-                    case 'delete':
+
+                    case "delete":
                         if (doc.id) {
-                            const [documentRows] = await connection.query<RowDataPacket[]>(
-                                'SELECT file_url FROM user_documents WHERE id = ? AND user_id = ? AND deleted_at IS NULL',
+                            const [documentRows] = await connection.query<
+                                RowDataPacket[]
+                            >(
+                                "SELECT file_url FROM user_documents WHERE id = ? AND user_id = ? AND deleted_at IS NULL",
                                 [doc.id, userId]
                             );
 
                             if (documentRows.length > 0) {
                                 const fileUrl = documentRows[0].file_url;
-                                
+
                                 await connection.query(
-                                    'DELETE FROM user_documents WHERE id = ? AND user_id = ?',
+                                    "DELETE FROM user_documents WHERE id = ? AND user_id = ?",
                                     [doc.id, userId]
                                 );
-                                
-                                if (fileUrl && fileUrl.trim() !== '') {
+
+                                if (fileUrl && fileUrl.trim() !== "") {
                                     try {
                                         let filePath = fileUrl;
-                                        
-                                        if (fileUrl.includes('supabase')) {
-                                            const urlParts = fileUrl.split('/');
-                                            filePath = urlParts[urlParts.length - 1];
+
+                                        if (fileUrl.includes("supabase")) {
+                                            const urlParts = fileUrl.split("/");
+                                            filePath =
+                                                urlParts[urlParts.length - 1];
                                         }
 
-                                        const { error } = await supabaseClient.storage
-                                            .from('Jobby_files')
-                                            .remove([filePath]);
+                                        const { error } =
+                                            await supabaseClient.storage
+                                                .from("Jobby_files")
+                                                .remove([filePath]);
 
                                         if (error) {
-                                            console.log('No se pudo eliminar el documento de Supabase:', error);
+                                            console.log(
+                                                "No se pudo eliminar el documento de Supabase:",
+                                                error
+                                            );
                                         }
                                     } catch (supabaseError) {
-                                        console.log('Error al eliminar documento de Supabase:', supabaseError);
+                                        console.log(
+                                            "Error al eliminar documento de Supabase:",
+                                            supabaseError
+                                        );
                                     }
                                 }
-                                
+
                                 documentsProcessed++;
                             }
                         }

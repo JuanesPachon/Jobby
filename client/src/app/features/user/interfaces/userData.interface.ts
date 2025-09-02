@@ -24,7 +24,7 @@ export interface Profile {
 export interface Experience {
   id: number
   title: string
-  location: string
+  company: string
   start_date: string
   end_date?: string
   created_at: string

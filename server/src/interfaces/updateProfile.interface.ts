@@ -13,7 +13,7 @@ export interface ExperienceOperation {
     action: 'add' | 'update' | 'delete';
     id?: number;
     title?: string;
-    location?: string;
+    company?: string;
     start_date?: string;
     end_date?: string;
 }
