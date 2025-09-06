@@ -1,0 +1,24 @@
+export interface Task {
+  id?: number;
+  creator_id: number;
+  selected_user_id?: number | null;
+  title: string;
+  description: string;
+  city: string;
+  neighborhood?: string;
+  duration_days: number;
+  salary: number;
+  status?: 'available' | 'in_progress' | 'completed' | 'cancelled';
+  created_at?: Date;
+  updated_at?: Date;
+  deleted_at?: Date | null;
+}
+
+export interface CreateTaskRequest {
+  title: string;
+  description: string;
+  city: string;
+  neighborhood?: string;
+  duration_days: number;
+  salary: number;
+}
