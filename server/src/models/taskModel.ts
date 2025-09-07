@@ -1,7 +1,7 @@
 import pool from "../config/db_config.js";
-import { ResultSetHeader } from "mysql2/promise";
+import { ResultSetHeader, RowDataPacket } from "mysql2/promise";
 import { CreateTaskRequest } from "../interfaces/task.interface.js";
-import { CreateTaskResult } from "../interfaces/database.interface.js";
+import { CreateTaskResult, GetTaskByIdResult } from "../interfaces/database.interface.js";
 
 const createTask = async (creator_id: number, taskData: CreateTaskRequest): Promise<CreateTaskResult> => {
     try {
@@ -80,4 +80,53 @@ const createTask = async (creator_id: number, taskData: CreateTaskRequest): Prom
     }
 };
 
-export { createTask };
+const getTaskById = async (taskId: number): Promise<GetTaskByIdResult> => {
+    try {
+        const [taskRows] = await pool.query<RowDataPacket[]>(
+            `SELECT *
+            FROM tasks 
+            WHERE id = ? AND deleted_at IS NULL`,
+            [taskId]
+        );
+
+        if (taskRows.length === 0) {
+            return {
+                success: false,
+                error: 'task_not_found',
+                message: 'Task not found'
+            };
+        }
+
+        const task = taskRows[0];
+
+        return {
+            success: true,
+            message: 'Task retrieved successfully',
+            task: {
+                id: task.id,
+                creator_id: task.creator_id,
+                selected_user_id: task.selected_user_id,
+                title: task.title,
+                description: task.description,
+                city: task.city,
+                neighborhood: task.neighborhood,
+                duration_days: task.duration_days,
+                salary: task.salary,
+                status: task.status,
+                created_at: task.created_at,
+                updated_at: task.updated_at,
+                deleted_at: task.deleted_at
+            }
+        };
+
+    } catch (error: any) {
+        console.error('Error getting task: ', error);
+        return {
+            success: false,
+            error: 'server',
+            message: 'Internal server error while retrieving task'
+        };
+    }
+};
+
+export { createTask, getTaskById };

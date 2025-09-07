@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import errorHandler from "../utils/errorHandler.js";
-import { createTask } from "../models/taskModel.js";
+import { createTask, getTaskById } from "../models/taskModel.js";
 import { CreateTaskRequest } from "../interfaces/task.interface.js";
 
 const createTaskController = async (req: Request, res: Response) => {
@@ -38,4 +38,31 @@ const createTaskController = async (req: Request, res: Response) => {
   }
 };
 
-export { createTaskController };
+const getTaskByIdController = async (req: Request, res: Response) => {
+  try {
+    const taskId = req.params.id;
+
+    const taskIdNumber = parseInt(taskId, 10);
+    const response = await getTaskById(taskIdNumber);
+
+    if (response.success && response.task) {
+      return res.status(200).json({
+        success: true,
+        message: response.message,
+        data: response.task
+      });
+    } else if (response.error === 'task_not_found') {
+      return errorHandler.handleNotFoundError(res, response.message);
+    } else if (response.error === 'server') {
+      return errorHandler.handleServerError(res, response.message);
+    } else {
+      return errorHandler.handleServerError(res, response.message);
+    }
+
+  } catch (error) {
+    console.error('Error in getTaskByIdController:', error);
+    return errorHandler.handleServerError(res, "Internal server error while retrieving task");
+  }
+};
+
+export { createTaskController, getTaskByIdController };

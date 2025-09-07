@@ -76,3 +76,24 @@ export interface CreateTaskResult {
         updated_at: Date;
     };
 }
+
+export interface GetTaskByIdResult {
+    success: boolean;
+    error?: 'task_not_found' | 'server';
+    message?: string;
+    task?: {
+        id: number;
+        creator_id: number;
+        selected_user_id?: number | null;
+        title: string;
+        description: string;
+        city: string;
+        neighborhood?: string | null;
+        duration_days: number;
+        salary: number;
+        status: 'available' | 'in_progress' | 'completed' | 'cancelled';
+        created_at: Date;
+        updated_at: Date;
+        deleted_at?: Date | null;
+    };
+}
