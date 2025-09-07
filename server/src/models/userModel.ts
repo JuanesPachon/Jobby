@@ -38,6 +38,8 @@ const getUserById = async (userId: number): Promise<getUserByIdResult> => {
             `SELECT 
                 photo_url,
                 description,
+                education,
+                current_location,
                 created_at,
                 updated_at
             FROM profiles 
@@ -85,6 +87,8 @@ const getUserById = async (userId: number): Promise<getUserByIdResult> => {
             user.profile = {
                 photo_url: profileRows[0].photo_url,
                 description: profileRows[0].description,
+                education: profileRows[0].education,
+                current_location: profileRows[0].current_location,
                 created_at: profileRows[0].created_at,
                 updated_at: profileRows[0].updated_at
             } as UserProfile;
@@ -157,6 +161,8 @@ const getUserByIdFiltered = async (userId: number): Promise<getUserByIdResult> =
             `SELECT 
                 photo_url,
                 description,
+                education,
+                current_location,
                 created_at,
                 updated_at
             FROM profiles 
@@ -204,6 +210,8 @@ const getUserByIdFiltered = async (userId: number): Promise<getUserByIdResult> =
             user.profile = {
                 photo_url: profileRows[0].photo_url,
                 description: profileRows[0].description,
+                education: profileRows[0].education,
+                current_location: profileRows[0].current_location,
                 created_at: profileRows[0].created_at,
                 updated_at: profileRows[0].updated_at
             } as UserProfile;
@@ -287,7 +295,7 @@ const updateUserProfile = async (userId: number, updateData: UpdateProfileReques
             updatedUser = true;
         }
 
-        if (updateData.description !== undefined || photoUrl) {
+        if (updateData.description !== undefined || photoUrl || updateData.education !== undefined || updateData.current_location !== undefined) {
             const [existingProfile] = await connection.query<RowDataPacket[]>(
                 'SELECT user_id FROM profiles WHERE user_id = ?',
                 [userId]
@@ -305,6 +313,14 @@ const updateUserProfile = async (userId: number, updateData: UpdateProfileReques
                     profileFields.push('photo_url = ?');
                     profileValues.push(photoUrl);
                 }
+                if (updateData.education !== undefined) {
+                    profileFields.push('education = ?');
+                    profileValues.push(updateData.education);
+                }
+                if (updateData.current_location !== undefined) {
+                    profileFields.push('current_location = ?');
+                    profileValues.push(updateData.current_location);
+                }
 
                 if (profileFields.length > 0) {
                     profileValues.push(userId);
@@ -316,8 +332,8 @@ const updateUserProfile = async (userId: number, updateData: UpdateProfileReques
                 }
             } else {
                 await connection.query(
-                    'INSERT INTO profiles (user_id, description, photo_url) VALUES (?, ?, ?)',
-                    [userId, updateData.description || null, photoUrl || null]
+                    'INSERT INTO profiles (user_id, description, photo_url, education, current_location) VALUES (?, ?, ?, ?, ?)',
+                    [userId, updateData.description || null, photoUrl || null, updateData.education || null, updateData.current_location || null]
                 );
                 updatedProfile = true;
             }

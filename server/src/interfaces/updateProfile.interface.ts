@@ -3,6 +3,8 @@ export interface UpdateProfileRequest {
     last_name?: string;
     email?: string;
     phone?: string;
+    education: string;
+    current_location: string;
     description?: string;
     experiences?: ExperienceOperation[];
     skills?: SkillOperation[];

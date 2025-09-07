@@ -1,4 +1,4 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { tap, catchError } from 'rxjs/operators';
@@ -16,6 +16,9 @@ export class UserService {
   public userData$ = this.userDataSubject.asObservable();
   
   private isLoading = false;
+
+  userNotification = signal<Boolean>(false);
+  notificationMessage = signal<string>('');
   
   getUserProfile(): Observable<any> {
     if (this.userDataSubject.value) {
@@ -42,11 +45,6 @@ export class UserService {
   clearUserData(): void {
     this.userDataSubject.next(null);
   }
-  
-  editUserProfile(): Observable<any> {
-    return this.http.post<any>(`${this.apiUrl}/user/profile` ,
-    { withCredentials: true });
-  }
 
   getPhotoUrl(photoPath: string | null | undefined): string {
     if (!photoPath) {
@@ -54,4 +52,23 @@ export class UserService {
     }
     return `${environment.supabaseStorageUrl}/${photoPath}`;
   }
+
+  editUserProfile(updateData: any): Observable<any> {
+    return this.http.patch<any>(`${this.apiUrl}/user/profile`, updateData, 
+    { withCredentials: true }).pipe(
+      tap(response => {
+        if (response.success && response.data?.user) {
+          this.userDataSubject.next(response.data.user);
+          
+          this.notificationMessage.set('La información se actualizó exitosamente');
+          this.userNotification.set(true);
+          
+          setTimeout(() => {
+            this.userNotification.set(false);
+          }, 4000);
+        }
+      })
+    );
+  }
+
 }

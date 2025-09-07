@@ -42,6 +42,9 @@ export default class UserProfile implements OnInit, OnDestroy {
   error = signal<string>('');
   private userDataSubscription?: Subscription;
 
+  get userNotification() { return this.userService.userNotification; }
+  get notificationMessage() { return this.userService.notificationMessage; }
+
   ngOnInit(): void {
     this.loadUserProfile();
   }
