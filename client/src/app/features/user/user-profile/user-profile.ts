@@ -13,6 +13,7 @@ import { DeleteConfirmationModal } from './components/delete-confirmation-modal/
 import { EditPhoto } from "./components/edit-photo/edit-photo";
 import { EditBasicInfo } from './components/edit-basic-info/edit-basic-info';
 import { Subscription } from 'rxjs';
+import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-user-profile',
@@ -28,7 +29,8 @@ import { Subscription } from 'rxjs';
     EditDocuments,
     DeleteConfirmationModal,
     EditPhoto,
-    EditBasicInfo
+    EditBasicInfo,
+    ReactiveFormsModule
 ],
   templateUrl: './user-profile.html',
   styleUrl: './user-profile.css',
@@ -45,6 +47,11 @@ export default class UserProfile implements OnInit, OnDestroy {
   get userNotification() { return this.userService.userNotification; }
   get notificationMessage() { return this.userService.notificationMessage; }
 
+  descriptionControl = new FormControl('', [Validators.maxLength(500)]);
+  isLoadingDescription = signal<boolean>(false);
+  hasErrorDescription = signal<boolean>(false);
+  errorMessageDescription = signal<string>('');
+
   ngOnInit(): void {
     this.loadUserProfile();
   }
@@ -60,6 +67,7 @@ export default class UserProfile implements OnInit, OnDestroy {
     if (cachedData) {
       this.userData = cachedData;
       this.loading.set(false);
+      this.descriptionControl.setValue(cachedData.profile?.description || '');
     }
 
     this.userDataSubscription = this.userService.userData$.subscribe({
@@ -67,6 +75,7 @@ export default class UserProfile implements OnInit, OnDestroy {
         if (data) {
           this.userData = data;
           this.loading.set(false);
+          this.descriptionControl.setValue(data.profile?.description || '');
         }
       }
     });
@@ -93,6 +102,35 @@ export default class UserProfile implements OnInit, OnDestroy {
 
   toggleEditDescription(): void {
     this.isEditingDescription.update((value) => !value);
+  }
+
+  saveDescription(): void {
+    if (this.descriptionControl.valid && !this.isLoadingDescription()) {
+      this.isLoadingDescription.set(true);
+      this.hasErrorDescription.set(false);
+      this.errorMessageDescription.set('');
+
+      const descriptionValue = this.descriptionControl.value || '';
+      const updateData = {
+        description: descriptionValue
+      };
+
+      this.userService.editUserProfile(updateData).subscribe({
+        next: (response) => {
+          this.isLoadingDescription.set(false);
+          this.isEditingDescription.set(false);
+        },
+        error: (error) => {
+          this.errorMessageDescription.set('Error al actualizar la descripción, inténtelo nuevamente más tarde.');
+          this.hasErrorDescription.set(true);
+          this.isLoadingDescription.set(false);
+        },
+      });
+    } else {
+      this.descriptionControl.markAsTouched();
+      this.errorMessageDescription.set('Por favor, completa el campo correctamente.');
+      this.hasErrorDescription.set(true);
+    }
   }
 
   //Experiences Modal
