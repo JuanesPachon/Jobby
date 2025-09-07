@@ -13,17 +13,40 @@
       <form class="space-y-6">
         <div class="grid grid-cols-1 gap-6">
           <div>
-            <label class="block text-sm font-medium text-gray-900 mb-2">Habilidad:</label>
+            <label class="block text-sm font-medium text-gray-900 mb-2">Habilidad *:</label>
             <input 
               type="text" 
-              class="w-full placeholder:text-gray-500 px-3.5 md:px-3 py-2.5 md:py-2 text-sm md:text-sm border border-gray-400 rounded-md focus:ring-2 focus:ring-black focus:outline-none transition-all"
+              [formControl]="skillNameControl"
+              class="w-full placeholder:text-gray-500 px-3.5 md:px-3 py-2.5 md:py-2 text-sm md:text-sm border rounded-md focus:ring-2 focus:outline-none transition-all"
+              [ngClass]="skillNameControl.invalid && skillNameControl.touched ? 'border-red-600 focus:ring-red-600' : 'border-gray-400 focus:ring-black'"
               placeholder="Ej. Manejo del tiempo"
+              [disabled]="isLoading()"
             >
+            @if (skillNameControl.hasError('required') && skillNameControl.touched) {
+              <small class="text-red-600">Este campo es obligatorio</small>
+            }
+            @if (skillNameControl.hasError('minlength') && skillNameControl.touched) {
+              <small class="text-red-600">Mínimo 2 caracteres</small>
+            }
+            @if (skillNameControl.hasError('maxlength') && skillNameControl.touched) {
+              <small class="text-red-600">Máximo 50 caracteres</small>
+            }
           </div>
         </div>
+
+        @if (hasError()) {
+          <div class="text-center">
+            <span class="text-red-600 text-sm">{{ errorMessage() }}</span>
+          </div>
+        }
         <div class="flex justify-end pt-2">
-          <button type="submit" class="bg-main-blue hover:bg-blue-600 text-white px-9 py-2 rounded-xl font-medium text-sm border-[1px] border-black cursor-pointer">
-            Agregar
+          <button 
+            (click)="onSubmit()"
+            type="button" 
+            [disabled]="isLoading()"
+            class="bg-main-blue hover:bg-blue-600 disabled:bg-gray-400 disabled:border-gray-400 disabled:text-gray-600 disabled:cursor-not-allowed disabled:opacity-60 text-white px-9 py-2 rounded-full font-medium text-sm border-[1px] border-black cursor-pointer transition"
+          >
+            {{ isLoading() ? 'Cargando...' : 'Agregar' }}
           </button>
         </div>
       </form>
