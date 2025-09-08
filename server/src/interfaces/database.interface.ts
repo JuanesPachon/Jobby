@@ -95,5 +95,52 @@ export interface GetTaskByIdResult {
         created_at: Date;
         updated_at: Date;
         deleted_at?: Date | null;
+        creator: {
+            id: number;
+            first_name: string | null;
+            last_name: string | null;
+            photo_url: string | null;
+        };
+        selected_user?: {
+            id: number;
+            first_name: string | null;
+            last_name: string | null;
+            photo_url: string | null;
+        } | null;
+    };
+}
+
+export interface GetTasksResult {
+    success: boolean;
+    error?: 'server';
+    message?: string;
+    data?: {
+        tasks: {
+            id: number;
+            creator_id: number;
+            selected_user_id?: number | null;
+            title: string;
+            description: string;
+            city: string;
+            neighborhood?: string | null;
+            duration_days: number;
+            salary: number;
+            status: 'available' | 'in_progress' | 'completed' | 'cancelled';
+            created_at: Date;
+            updated_at: Date;
+            creator: {
+                id: number;
+                first_name: string | null;
+                last_name: string | null;
+                photo_url: string | null;
+            };
+            selected_user?: {
+                id: number;
+                first_name: string | null;
+                last_name: string | null;
+                photo_url: string | null;
+            } | null;
+        }[];
+        total: number;
     };
 }

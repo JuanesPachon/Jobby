@@ -22,3 +22,10 @@ export interface CreateTaskRequest {
   duration_days: number;
   salary: number;
 }
+
+export interface GetTasksFilters {
+  position?: string; 
+  city?: string; 
+  limit?: number; 
+  page?: number;
+}
