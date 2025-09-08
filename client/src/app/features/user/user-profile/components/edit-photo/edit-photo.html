@@ -57,7 +57,7 @@
           <button 
             type="button"
             (click)="onSubmit()"
-            [disabled]="isLoading()"
+            [disabled]="isLoading() || photoControl.invalid"
             class="bg-main-blue hover:bg-blue-600 disabled:bg-gray-400 disabled:border-gray-400 disabled:text-gray-600 disabled:cursor-not-allowed disabled:opacity-60 text-white px-9 py-2 rounded-full font-medium text-sm border-[1px] border-black cursor-pointer transition"
           >
             {{ isLoading() ? 'Subiendo...' : 'Cambiar foto' }}

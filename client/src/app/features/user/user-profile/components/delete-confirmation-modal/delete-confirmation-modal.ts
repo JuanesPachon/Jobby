@@ -1,4 +1,4 @@
-import { Component, input, output } from '@angular/core';
+import { Component, input, output, signal } from '@angular/core';
 
 @Component({
   selector: 'app-delete-confirmation-modal',
@@ -10,15 +10,19 @@ export class DeleteConfirmationModal {
   
   resourceType = input<string>('');
   resourceName = input<string>('');
+  isDeleting = signal<boolean>(false);
   
   confirm = output<void>();
   cancel = output<void>();
 
   onConfirm(): void {
+    if (this.isDeleting()) return;
+    this.isDeleting.set(true);
     this.confirm.emit();
   }
 
   onCancel(): void {
+    if (this.isDeleting()) return;
     this.cancel.emit();
   }
 

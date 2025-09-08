@@ -172,18 +172,4 @@ export const updateProfileValidations = [
     .withMessage("Document ID is required for delete action")
     .isInt({ min: 1 })
     .withMessage("Document ID must be a positive integer"),
-
-
-  body().custom((body: any) => {
-    const hasBasicData = body.first_name || body.last_name || body.email || body.phone || body.description;
-    const hasExperiences = body.experiences && body.experiences.length > 0;
-    const hasSkills = body.skills && body.skills.length > 0;
-    const hasDocuments = body.documents && body.documents.length > 0;
-    
-    if (!hasBasicData && !hasExperiences && !hasSkills && !hasDocuments) {
-      throw new Error("At least one field must be provided to update the profile");
-    }
-    
-    return true;
-  })
 ];

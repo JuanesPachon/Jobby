@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal, OnDestroy } from '@angular/core';
+import { Component, inject, OnInit, signal, OnDestroy, ViewChild } from '@angular/core';
 import { DashboardNavbar } from '../../../shared/dashboard-navbar/dashboard-navbar';
 import { RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
@@ -38,6 +38,7 @@ import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 export default class UserProfile implements OnInit, OnDestroy {
 
   private userService = inject(UserService);
+  @ViewChild(DeleteConfirmationModal) deleteModal?: DeleteConfirmationModal;
 
   userData: UserData = {};
   loading = signal<boolean>(true);
@@ -222,6 +223,55 @@ export default class UserProfile implements OnInit, OnDestroy {
     this.deleteResourceName.set('');
     this.deleteResourceId.set(null);
     this.pendingDeleteAction.set(null);
+    if (this.deleteModal) {
+      this.deleteModal.isDeleting.set(false);
+    }
+  }
+
+  confirmDelete(): void {
+    const resourceId = this.deleteResourceId();
+    const action = this.pendingDeleteAction();
+    
+    if (!resourceId || !action) return;
+
+    let updateData: any = {};
+
+    switch (action) {
+      case 'experience':
+        updateData = {
+          experiences: [{
+            action: 'delete',
+            id: resourceId
+          }]
+        };
+        break;
+      case 'skill':
+        updateData = {
+          skills: [{
+            action: 'delete',
+            id: resourceId
+          }]
+        };
+        break;
+      case 'document':
+        updateData = {
+          documents: [{
+            action: 'delete',
+            id: resourceId
+          }]
+        };
+        break;
+    }
+
+    this.userService.editUserProfile(updateData).subscribe({
+      next: (response) => {
+        this.closeDeleteModal();
+      },
+      error: (error) => {
+        console.error('Error deleting resource:', error);
+        this.closeDeleteModal();
+      }
+    });
   }
 
 }
