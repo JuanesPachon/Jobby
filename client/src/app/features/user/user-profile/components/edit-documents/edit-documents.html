@@ -1,7 +1,7 @@
 <div class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 font-poppins" (click)="onOverlayClick($event)">
   <div class="bg-white rounded-2xl shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
     <div class="flex items-center justify-between p-6 pb-2 border-b border-gray-200">
-      <h2 class="text-2xl font-semibold text-gray-900">Documento</h2>
+      <h2 class="text-2xl font-semibold text-gray-900">Subir Documento</h2>
       <button class="text-gray-400 hover:text-gray-600 transition-colors cursor-pointer" (click)="closeModal()">
         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
@@ -10,29 +10,55 @@
     </div>
 
     <div class="p-6">
-      <form class="space-y-6">
+      <form class="space-y-2" enctype="multipart/form-data">
         <div class="grid grid-cols-1 gap-6">
-        <div>
+          <div>
             <label class="block text-sm font-medium text-gray-900 mb-2">
-            Documento: 
-            <span class="text-gray-500 font-normal">(Solo formato PDF)</span>
+              Documento *: 
+              <span class="text-gray-500 font-normal">(Solo formato PDF, máximo 10MB)</span>
             </label>
             <div class="relative">
-            <input 
+              <input 
                 type="file" 
-                class="w-full px-3.5 md:px-3 py-2.5 md:py-2 text-sm md:text-sm border border-gray-400 rounded-md focus:ring-2 focus:ring-black focus:outline-none cursor-pointer"
-            >
-            <span class="absolute inset-y-0 right-3 flex items-center pointer-events-none">
+                accept=".pdf"
+                (change)="onFileSelected($event)"
+                [disabled]="isLoading()"
+                class="w-full px-3.5 md:px-3 py-2.5 md:py-2 text-sm md:text-sm border border-gray-400 rounded-md focus:ring-2 focus:ring-black focus:outline-none cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+              <span class="absolute inset-y-0 right-3 flex items-center pointer-events-none">
                 <svg class="w-5 h-5 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 4h10a2 2 0 012 2v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6a2 2 0 012-2zm0 0v4h10V4"/>
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 4h10a2 2 0 012 2v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6a2 2 0 012-2zm0 0v4h10V4"/>
                 </svg>
-            </span>
+              </span>
             </div>
+            @if (documentControl.hasError('required') && documentControl.touched) {
+              <small class="text-red-600">Este campo es obligatorio</small>
+            }
+            @if (selectedFileName()) {
+              <div class="mt-2 flex items-center text-sm text-gray-600">
+                <svg class="w-4 h-4 mr-1 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                </svg>
+                Archivo seleccionado: {{ selectedFileName() }}
+              </div>
+            }
+          </div>
         </div>
-        </div>
-        <div class="flex justify-end pt-4">
-          <button type="submit" class="bg-main-blue hover:bg-blue-600 text-white px-9 py-2 rounded-full font-medium text-sm border-[1px] border-black cursor-pointer">
-            Agregar
+
+        @if (hasError()) {
+          <div class="text-center">
+            <span class="text-red-600 text-sm">{{ errorMessage() }}</span>
+          </div>
+        }
+
+        <div class="flex justify-end pt-2">
+          <button 
+            type="button"
+            (click)="onSubmit()"
+            [disabled]="isLoading()"
+            class="bg-main-blue hover:bg-blue-600 disabled:bg-gray-400 disabled:border-gray-400 disabled:text-gray-600 disabled:cursor-not-allowed disabled:opacity-60 text-white px-9 py-2 rounded-full font-medium text-sm border-[1px] border-black cursor-pointer transition"
+          >
+            {{ isLoading() ? 'Cargando...' : 'Agregar' }}
           </button>
         </div>
       </form>
