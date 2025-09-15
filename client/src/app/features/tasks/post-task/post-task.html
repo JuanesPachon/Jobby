@@ -3,7 +3,7 @@
   <app-dashboard-navbar/>
 
   <!-- Navbar debajo -->
-  <nav class="w-full bg-white flex justify-center border-t border-b">
+  <div class="w-full bg-white flex justify-center">
     <a
       [routerLink]="'/dashboard'"
       class="flex items-center justify-center w-1/2 px-6 py-3 border-r hover:bg-gray-100"
@@ -18,7 +18,7 @@
     </a>
     <a
       routerLink="/post-task"
-      class="flex items-center justify-center w-1/2 px-6 py-3 border-b-2 border-main-blue font-semibold text-main-blue"
+      class="flex items-center justify-center w-1/2 px-6 py-3 bg-blue-100"
     >
       <!-- Aquí va la ruta del ícono -->
       <img
@@ -28,13 +28,13 @@
       />
       Publicar
     </a>
-  </nav>
+  </div>
 
   <!-- Imagen de fondo con título -->
   <section class="relative h-[200px] w-full flex items-center justify-center">
     <!-- Aquí va la ruta de la imagen -->
     <img
-      src="/images/WebP/imag-postular_tarea.png"
+      src="/images/WebP/banner_search_task_background.webp"
       alt="Imagen de fondo"
       class="absolute inset-0 w-full h-full object-cover"
     />
@@ -45,8 +45,8 @@
   </section>
 
   <!-- Formulario -->
-  <section class="flex justify-center py-10 px-4">
-    <form class="bg-white rounded-md shadow p-6 w-full max-w-lg border border-black">
+  <section class="flex justify-center py-10 px-4 container mx-auto">
+    <form class="bg-white rounded-md shadow p-6 max-w-3xl w-full border border-black">
       <h2 class="text-center font-semibold mb-4">Datos de la tarea</h2>
       <hr class="mb-6" />
 
