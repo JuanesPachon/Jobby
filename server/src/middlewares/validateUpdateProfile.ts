@@ -29,6 +29,16 @@ export const updateProfileValidations = [
     .isNumeric()
     .withMessage("Phone number must contain only numbers"),
 
+  check("occupation")
+    .optional()
+    .isLength({ min: 2, max: 150 })
+    .withMessage("Occupation must be between 2 and 150 characters"),
+
+  check("current_location")
+    .optional()
+    .isLength({ min: 2, max: 100 })
+    .withMessage("Current location must be between 2 and 100 characters"),
+
   check("description")
     .optional()
     .isLength({ max: 500 })

@@ -36,7 +36,7 @@ export class EditBasicInfo implements OnInit {
         Validators.minLength(10),
         Validators.maxLength(10),
       ]),
-      education: new FormControl(this.userData()?.profile?.education || '', [
+      occupation: new FormControl(this.userData()?.profile?.occupation || '', [
         Validators.maxLength(100),
       ]),
       current_location: new FormControl(
@@ -58,7 +58,7 @@ export class EditBasicInfo implements OnInit {
       const updateData = {
         email: formValue.email || '',
         phone: formValue.phone || '',
-        education: formValue.education || '',
+        occupation: formValue.occupation || '',
         current_location: formValue.current_location || ''
       };
 

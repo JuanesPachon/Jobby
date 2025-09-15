@@ -24,6 +24,8 @@ export interface UserExperience {
 export interface UserProfile {
   photo_url?: string;
   description?: string;
+  occupation?: string;
+  current_location?: string;
   created_at: Date;
   updated_at: Date;
 }

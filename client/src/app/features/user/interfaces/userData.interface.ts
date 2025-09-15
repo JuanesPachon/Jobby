@@ -17,7 +17,7 @@ export interface Profile {
   description: string
   created_at: string
   updated_at: string
-  education?: string
+  occupation?: string
   current_location?: string
 }
 
