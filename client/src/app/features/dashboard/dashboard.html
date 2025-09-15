@@ -1,85 +1,120 @@
-<app-dashboard-navbar />
+<div class="min-h-screen flex flex-col">
+  <app-dashboard-navbar />
 
-<div class="w-full bg-white flex justify-center border-t border-b font-poppins">
-  <a
-    [routerLink]="'/dashboard'"
-    class="flex items-center justify-center w-1/2 px-6 py-3 border-b-2 border-main-blue font-semibold text-main-blue"
-  >
-    <!-- Aquí va la ruta del ícono -->
-    <img src="/icons/file_icon.svg" alt="Icono postular" class="w-5 h-5 mr-2" />
-    Postular
-  </a>
-  <a
-    [routerLink]="'/post-task'"
-    class="flex items-center justify-center w-1/2 px-6 py-3 border-l hover:bg-gray-100"
-  >
-    <!-- Aquí va la ruta del ícono -->
-    <img
-      src="/icons/sticky_icon.svg"
-      alt="Icono publicar"
-      class="w-5 h-5 mr-2"
-    />
-    Publicar
-  </a>
-</div>
-
-<section class="relative  w-full    h-64 md:h-72 ">
-  
-  <img
-    src="/images/WebP/Dashboard_postular.png"
-    alt="Imagen de fondo"
-    class="absolute inset-0 w-full h-full object-cover"
-  />
-  <div class="absolute inset-0 bg-black/50"></div>
   <div
-    class="relative z-10 flex flex-col md:flex-col gap-2 justify-center items-center h-full px-4 font-poppins "
+    class="w-full bg-white flex justify-center border-t border-b font-poppins"
   >
-    <div class="w-full md:w-1/3">
-      <p class="text-white text-base  font-semibold mb-2">Cargo:</p>
-      <input
-        type="text"
-        placeholder="Cargo u ocupación"
-        class="px-3.5 md:px-3 py-2.5 md:py-2 text-sm md:text-sm border border-gray-400 rounded-md focus:ring-2 focus:ring-black focus:outline-none w-full bg-white"
-      />
-    </div>
-
-    <div class="w-full md:w-1/3">
-      <p class="text-white text-base  font-semibold mb-2">Ubicación:</p>
-      <input
-        type="text"
-        placeholder="Ubicación"
-        class="px-3.5 md:px-3 py-2.5 md:py-2 text-sm md:text-sm border border-gray-400 rounded-md focus:ring-2 focus:ring-black focus:outline-none w-full bg-white"
-      />
-    </div>
-
-    <button
-      type="submit"
-      class="bg-main-blue hover:bg-main-blue text-white px-7 py-2 rounded-full font-medium text-sm border-[1px] border-black w-full md:w-1/3 mt-4 font-inter"
+    <a
+      [routerLink]="'/dashboard'"
+      class="flex items-center justify-center w-1/2 px-6 py-3 bg-blue-100"
     >
-      Buscar Tarea
-    </button>
+      <img
+        src="/icons/file_icon.svg"
+        alt="Icono postular"
+        class="w-5 h-5 mr-2"
+      />
+      Postular
+    </a>
+    <a
+      [routerLink]="'/task'"
+      class="flex items-center justify-center w-1/2 px-6 py-3 border-l hover:bg-gray-100"
+    >
+      <img
+        src="/icons/sticky_icon.svg"
+        alt="Icono publicar"
+        class="w-5 h-5 mr-2"
+      />
+      Publicar
+    </a>
   </div>
-</section>
 
-<section class="py-10 px-4 font-poppins">
-  <h2 class="text-center font-semibold mb-6 text-lg">Tareas destacadas</h2>
-
-  <div class="grid grid-cols-1 md:grid-cols-2  gap-6 max-w-4xl mx-auto place-items-center">
-    @for (card of [1, 2, 3, 4]; track $index) {
-    <app-task-card />
-    }
-  </div>
-</section>
-
-<footer class="w-full border-t border-black">
-  <div
-    class="mx-auto pt-3 pb-3 flex items-center justify-between px-4 container"
-  >
-    <p class="text-xs md:text-xs text-black">© ADSO - 2025</p>
+  <section class="relative w-full h-64 md:h-72">
     <img
-      src="/images/LOGO/png_sin_fondo/fondo_blanco.png"
-      alt="Jobby Logo"
-      class="h-5 sm:h-6"
+      src="/images/WebP/Dashboard_postular.png"
+      alt="Imagen de fondo"
+      class="absolute inset-0 w-full h-full object-cover"
     />
+    <div class="absolute inset-0 bg-black/30"></div>
+    <div
+      class="relative z-10 flex flex-col md:flex-col gap-2 justify-center items-center h-full px-4 font-poppins max-w-2xl mx-auto md:max-w-none"
+    >
+      <div class="w-full md:w-1/3">
+        <p class="text-white text-base font-semibold mb-2">Cargo:</p>
+        <input
+          type="text"
+          placeholder="Cargo u ocupación"
+          class="px-3.5 md:px-3 py-2.5 md:py-2 text-sm md:text-sm border border-gray-400 rounded-md focus:ring-2 focus:ring-black focus:outline-none w-full bg-white"
+        />
+      </div>
+
+      <div class="w-full md:w-1/3">
+        <p class="text-white text-base font-semibold mb-2">Ubicación:</p>
+        <input
+          type="text"
+          placeholder="Ubicación"
+          class="px-3.5 md:px-3 py-2.5 md:py-2 text-sm md:text-sm border border-gray-400 rounded-md focus:ring-2 focus:ring-black focus:outline-none w-full bg-white"
+        />
+      </div>
+
+      <button
+        type="submit"
+        class="bg-main-blue hover:bg-main-blue text-white px-7 py-2 rounded-full font-medium text-sm border-[1px] border-black w-full md:w-1/3 mt-4 font-inter"
+      >
+        Buscar Tarea
+      </button>
+    </div>
+  </section>
+
+  <div class="flex-1 flex">
+    <section class="py-10 font-poppins container mx-auto px-4 md:px-20 w-full">
+      <h2 class="text-center font-semibold mb-6 text-2xl">Tareas destacadas</h2>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mx-auto mb-8">
+        @for (card of [1, 2, 3, 4]; track $index) {
+        <app-task-card />
+        }
+      </div>
+
+      <div class="container mx-auto mt-15">
+        <div class="bg-white rounded-xl shadow-sm border border-black overflow-hidden">
+          <div class="relative h-48 sm:h-56 lg:h-48">
+            <img
+              src="/images/WebP/background_collage_for_registration_login17.webp"
+              alt="Jobby Premium"
+              class="w-full h-full object-cover"
+            />
+            <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
+            <div class="absolute inset-0 flex items-center justify-center px-4 sm:justify-start sm:pl-6 lg:pl-8">
+              <div class="text-center sm:text-left">
+                <h3 class="text-white font-semibold text-xl sm:text-2xl lg:text-xl mb-2">
+                  Jobby premium
+                </h3>
+                <p class="text-white text-sm sm:text-base lg:text-sm mb-4 max-w-xs sm:max-w-sm">
+                  Descubre ventajas exclusivas y optimiza la búsqueda de tareas
+                </p>
+                <button
+                  class="bg-[#EBC636] text-gray-900 px-6 py-2 sm:px-8 sm:py-3 lg:px-6 lg:py-2 rounded-lg font-medium hover:bg-yellow-500 transition-colors text-sm sm:text-base lg:text-sm"
+                >
+                  Próximamente...
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
   </div>
-</footer>
+
+  <footer class="w-full border-t border-black mt-auto">
+    <div
+      class="mx-auto pt-3 pb-3 flex items-center justify-between px-4 container"
+    >
+      <p class="text-xs md:text-xs text-black">© ADSO - 2025</p>
+      <img
+        src="/images/LOGO/png_sin_fondo/fondo_blanco.png"
+        alt="Jobby Logo"
+        class="h-5 sm:h-6"
+      />
+    </div>
+  </footer>
+</div>
