@@ -21,6 +21,7 @@ export class EditExperiences implements OnInit {
   isLoading = signal<boolean>(false);
   hasError = signal<boolean>(false);
   errorMessage = signal<string>('');
+  currentlyWorking = signal<boolean>(false);
 
   experienceForm!: FormGroup;
 
@@ -30,6 +31,10 @@ export class EditExperiences implements OnInit {
 
   private initializeForm(): void {
     const experience = this.experienceData();
+    
+    if (experience && !experience.end_date) {
+      this.currentlyWorking.set(true);
+    }
     
     this.experienceForm = new FormGroup({
       title: new FormControl(experience?.title || '', [
@@ -66,6 +71,18 @@ export class EditExperiences implements OnInit {
     return date ? date.split('T')[0] : '';
   }
 
+  onCurrentlyWorkingChange(event: Event): void {
+    const target = event.target as HTMLInputElement;
+    this.currentlyWorking.set(target.checked);
+    
+    if (target.checked) {
+      this.experienceForm.get('end_date')?.setValue('');
+      this.experienceForm.get('end_date')?.disable();
+    } else {
+      this.experienceForm.get('end_date')?.enable();
+    }
+  }
+
   onSubmit(): void {
     if (this.experienceForm.valid && !this.isLoading()) {
       this.isLoading.set(true);
@@ -75,11 +92,13 @@ export class EditExperiences implements OnInit {
       const formValue = this.experienceForm.value;
       const experience = this.experienceData();
       
-      if (formValue.end_date && formValue.start_date) {
+      const endDate = this.currentlyWorking() ? null : formValue.end_date;
+      
+      if (endDate && formValue.start_date) {
         const startDate = new Date(formValue.start_date);
-        const endDate = new Date(formValue.end_date);
+        const endDateObj = new Date(endDate);
         
-        if (endDate <= startDate) {
+        if (endDateObj <= startDate) {
           this.errorMessage.set('La fecha de fin debe ser posterior a la fecha de inicio.');
           this.hasError.set(true);
           this.isLoading.set(false);
@@ -96,7 +115,7 @@ export class EditExperiences implements OnInit {
           title: formValue.title,
           company: formValue.company,
           start_date: formValue.start_date,
-          end_date: formValue.end_date || null
+          end_date: endDate
         };
       } else {
         experienceOperation = {
@@ -104,7 +123,7 @@ export class EditExperiences implements OnInit {
           title: formValue.title,
           company: formValue.company,
           start_date: formValue.start_date,
-          end_date: formValue.end_date || null
+          end_date: endDate
         };
       }
 
