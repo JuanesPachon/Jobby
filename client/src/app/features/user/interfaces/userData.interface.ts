@@ -17,12 +17,14 @@ export interface Profile {
   description: string
   created_at: string
   updated_at: string
+  occupation?: string
+  current_location?: string
 }
 
 export interface Experience {
   id: number
   title: string
-  location: string
+  company: string
   start_date: string
   end_date?: string
   created_at: string

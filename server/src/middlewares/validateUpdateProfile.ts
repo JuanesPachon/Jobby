@@ -29,6 +29,16 @@ export const updateProfileValidations = [
     .isNumeric()
     .withMessage("Phone number must contain only numbers"),
 
+  check("occupation")
+    .optional()
+    .isLength({ min: 2, max: 150 })
+    .withMessage("Occupation must be between 2 and 150 characters"),
+
+  check("current_location")
+    .optional()
+    .isLength({ min: 2, max: 100 })
+    .withMessage("Current location must be between 2 and 100 characters"),
+
   check("description")
     .optional()
     .isLength({ max: 500 })
@@ -61,19 +71,22 @@ export const updateProfileValidations = [
 
   body("experiences.*.title")
     .if(body("experiences.*.action").isIn(['add', 'update']))
-    .optional()
+    .notEmpty()
+    .withMessage("Experience title is required")
     .isLength({ min: 2, max: 100 })
     .withMessage("Experience title must be between 2 and 100 characters"),
 
-  body("experiences.*.location")
+  body("experiences.*.company")
     .if(body("experiences.*.action").isIn(['add', 'update']))
-    .optional()
+    .notEmpty()
+    .withMessage("Company is required")
     .isLength({ min: 2, max: 100 })
-    .withMessage("Experience location must be between 2 and 100 characters"),
+    .withMessage("Company name must be between 2 and 100 characters"),
 
   body("experiences.*.start_date")
     .if(body("experiences.*.action").isIn(['add', 'update']))
-    .optional()
+    .notEmpty()
+    .withMessage("Start date is required")
     .isDate()
     .withMessage("Start date must be a valid date")
     .custom((value: string) => {
@@ -90,24 +103,28 @@ export const updateProfileValidations = [
   body("experiences.*.end_date")
     .if(body("experiences.*.action").isIn(['add', 'update']))
     .optional()
-    .isDate()
-    .withMessage("End date must be a valid date")
-    .custom((value: string, { req }) => {
-      if (value) {
-        const endDate = new Date(value);
-        const today = new Date();
-        
-        if (endDate > today) {
-          throw new Error("End date cannot be in the future");
-        }
+    .custom((value: any, { req }) => {
+      if (value === null || value === undefined || value === '') {
+        return true;
+      }
+    
+      if (!value || isNaN(Date.parse(value))) {
+        throw new Error("End date must be a valid date or null for current job");
+      }
+      
+      const endDate = new Date(value);
+      const today = new Date();
+      
+      if (endDate > today) {
+        throw new Error("End date cannot be in the future");
+      }
 
-        const experiences = req.body.experiences || [];
-        const currentExperience = experiences.find((exp: any) => exp.end_date === value);
-        if (currentExperience && currentExperience.start_date) {
-          const startDate = new Date(currentExperience.start_date);
-          if (endDate <= startDate) {
-            throw new Error("End date must be after start date");
-          }
+      const experiences = req.body.experiences || [];
+      const currentExperience = experiences.find((exp: any) => exp.end_date === value);
+      if (currentExperience && currentExperience.start_date) {
+        const startDate = new Date(currentExperience.start_date);
+        if (endDate <= startDate) {
+          throw new Error("End date must be after start date");
         }
       }
       
@@ -172,18 +189,4 @@ export const updateProfileValidations = [
     .withMessage("Document ID is required for delete action")
     .isInt({ min: 1 })
     .withMessage("Document ID must be a positive integer"),
-
-
-  body().custom((body: any) => {
-    const hasBasicData = body.first_name || body.last_name || body.email || body.phone || body.description;
-    const hasExperiences = body.experiences && body.experiences.length > 0;
-    const hasSkills = body.skills && body.skills.length > 0;
-    const hasDocuments = body.documents && body.documents.length > 0;
-    
-    if (!hasBasicData && !hasExperiences && !hasSkills && !hasDocuments) {
-      throw new Error("At least one field must be provided to update the profile");
-    }
-    
-    return true;
-  })
 ];

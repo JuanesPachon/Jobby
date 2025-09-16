@@ -3,6 +3,8 @@ export interface UpdateProfileRequest {
     last_name?: string;
     email?: string;
     phone?: string;
+    occupation: string;
+    current_location: string;
     description?: string;
     experiences?: ExperienceOperation[];
     skills?: SkillOperation[];
@@ -13,7 +15,7 @@ export interface ExperienceOperation {
     action: 'add' | 'update' | 'delete';
     id?: number;
     title?: string;
-    location?: string;
+    company?: string;
     start_date?: string;
     end_date?: string;
 }
