@@ -11,4 +11,5 @@ export const routes: Routes = [
     {path: 'profile', canActivate: [authGuard],loadComponent: () => import('./features/user/user-profile/user-profile')},
     {path: 'task', canActivate: [authGuard],loadComponent: () => import('./features/tasks/post-task/post-task')},
     {path: 'task/:id', canActivate: [authGuard],loadComponent: () => import('./features/tasks/task-detail/task-detail')},
+    {path: 'task-result', canActivate: [authGuard],loadComponent: () => import('./features/tasks/tasks-result/tasks-result')},
 ];
