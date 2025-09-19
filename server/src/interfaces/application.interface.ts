@@ -23,6 +23,13 @@ export interface ApplicationWithApplicantInfo {
   avatar_url?: string;
 }
 
+export interface SelectedUserInfo {
+  id: number;
+  first_name: string;
+  last_name: string;
+  avatar_url?: string;
+}
+
 export interface TaskWithApplications {
   id: number;
   creator_id: number;
@@ -37,4 +44,5 @@ export interface TaskWithApplications {
   created_at: Date;
   updated_at: Date;
   applications: ApplicationWithApplicantInfo[];
+  selected_user?: SelectedUserInfo | null;
 }

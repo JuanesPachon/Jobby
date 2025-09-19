@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
 import errorHandler from "../utils/errorHandler.js";
-import { createTask, getTaskById, getTasks, getUserTasks, getTaskWithApplications } from "../models/taskModel.js";
+import { createTask, getTaskById, getTasks, getUserTasks, getTaskWithApplications, selectApplicant, deselectApplicant, startTask } from "../models/taskModel.js";
 import { createApplication } from "../models/applicationModel.js";
-import { CreateTaskRequest, GetTasksFilters } from "../interfaces/task.interface.js";
+import { CreateTaskRequest, GetTasksFilters, SelectApplicantRequest } from "../interfaces/task.interface.js";
 
 const createTaskController = async (req: Request, res: Response) => {
   try {
@@ -208,11 +208,154 @@ const applyToTaskController = async (req: Request, res: Response) => {
   }
 };
 
+const selectApplicantController = async (req: Request, res: Response) => {
+  try {
+    const creator_id = req.user?.sub;
+    
+    if (!creator_id) {
+      return errorHandler.handleAuthError(res, "User not authenticated");
+    }
+
+    const creatorIdNumber = parseInt(creator_id, 10);
+    
+    if (isNaN(creatorIdNumber)) {
+      return errorHandler.handleValidationError(res, "Invalid user ID");
+    }
+
+    const taskId = req.params.id;
+    const taskIdNumber = parseInt(taskId, 10);
+
+    if (isNaN(taskIdNumber)) {
+      return errorHandler.handleValidationError(res, "Invalid task ID");
+    }
+
+    const { applicant_id }: SelectApplicantRequest = req.body;
+    const applicantIdNumber = parseInt(applicant_id.toString(), 10);
+
+    if (isNaN(applicantIdNumber)) {
+      return errorHandler.handleValidationError(res, "Invalid applicant ID");
+    }
+
+    const response = await selectApplicant(taskIdNumber, creatorIdNumber, applicantIdNumber);
+
+    if (response.success) {
+      return res.status(200).json(response);
+    } else if (response.error === 'task_not_found') {
+      return errorHandler.handleNotFoundError(res, response.message);
+    } else if (response.error === 'unauthorized') {
+      return errorHandler.handleAuthError(res, response.message);
+    } else if (response.error === 'applicant_not_found') {
+      return errorHandler.handleNotFoundError(res, response.message);
+    } else if (response.error === 'task_not_available') {
+      return errorHandler.handleValidationError(res, response.message);
+    } else if (response.error === 'already_selected') {
+      return errorHandler.handleValidationError(res, response.message);
+    } else {
+      return errorHandler.handleServerError(res, response.message);
+    }
+
+  } catch (error) {
+    console.error('Error in selectApplicantController:', error);
+    return errorHandler.handleServerError(res, "Internal server error during applicant selection");
+  }
+};
+
+const deselectApplicantController = async (req: Request, res: Response) => {
+  try {
+    const creator_id = req.user?.sub;
+    
+    if (!creator_id) {
+      return errorHandler.handleAuthError(res, "User not authenticated");
+    }
+
+    const creatorIdNumber = parseInt(creator_id, 10);
+    
+    if (isNaN(creatorIdNumber)) {
+      return errorHandler.handleValidationError(res, "Invalid user ID");
+    }
+
+    const taskId = req.params.id;
+    const taskIdNumber = parseInt(taskId, 10);
+
+    if (isNaN(taskIdNumber)) {
+      return errorHandler.handleValidationError(res, "Invalid task ID");
+    }
+
+    const response = await deselectApplicant(taskIdNumber, creatorIdNumber);
+
+    if (response.success) {
+      return res.status(200).json(response);
+    } else if (response.error === 'task_not_found') {
+      return errorHandler.handleNotFoundError(res, response.message);
+    } else if (response.error === 'unauthorized') {
+      return errorHandler.handleAuthError(res, response.message);
+    } else if (response.error === 'applicant_not_found') {
+      return errorHandler.handleNotFoundError(res, response.message);
+    } else if (response.error === 'task_not_available') {
+      return errorHandler.handleValidationError(res, response.message);
+    } else if (response.error === 'already_selected') {
+      return errorHandler.handleValidationError(res, response.message);
+    } else {
+      return errorHandler.handleServerError(res, response.message);
+    }
+
+  } catch (error) {
+    console.error('Error in deselectApplicantController:', error);
+    return errorHandler.handleServerError(res, "Internal server error during applicant deselection");
+  }
+};
+
+const startTaskController = async (req: Request, res: Response) => {
+  try {
+    const creator_id = req.user?.sub;
+    
+    if (!creator_id) {
+      return errorHandler.handleAuthError(res, "User not authenticated");
+    }
+
+    const creatorIdNumber = parseInt(creator_id, 10);
+    
+    if (isNaN(creatorIdNumber)) {
+      return errorHandler.handleValidationError(res, "Invalid user ID");
+    }
+
+    const taskId = req.params.id;
+    const taskIdNumber = parseInt(taskId, 10);
+
+    if (isNaN(taskIdNumber)) {
+      return errorHandler.handleValidationError(res, "Invalid task ID");
+    }
+
+    const response = await startTask(taskIdNumber, creatorIdNumber);
+
+    if (response.success) {
+      return res.status(200).json(response);
+    } else if (response.error === 'task_not_found') {
+      return errorHandler.handleNotFoundError(res, response.message);
+    } else if (response.error === 'unauthorized') {
+      return errorHandler.handleAuthError(res, response.message);
+    } else if (response.error === 'task_not_available') {
+      return errorHandler.handleValidationError(res, response.message);
+    } else if (response.error === 'already_selected') {
+      return errorHandler.handleValidationError(res, response.message);
+    } else {
+      return errorHandler.handleServerError(res, response.message);
+    }
+
+  } catch (error) {
+    console.error('Error in startTaskController:', error);
+    return errorHandler.handleServerError(res, "Internal server error during task start");
+  }
+};
+
 export { 
   createTaskController, 
   getTaskByIdController, 
   getTasksController, 
   getMyTasksController, 
   getTaskApplicationsController,
-  applyToTaskController 
+  applyToTaskController,
+  selectApplicantController,
+  deselectApplicantController,
+  startTaskController
 };

@@ -187,3 +187,39 @@ export interface GetTaskWithApplicationsResult {
     message?: string;
     data?: TaskWithApplications;
 }
+
+export interface SelectApplicantResult {
+    success: boolean;
+    error?: 'task_not_found' | 'unauthorized' | 'applicant_not_found' | 'task_not_available' | 'already_selected' | 'server';
+    message?: string;
+    data?: {
+        task_id: number;
+        selected_user_id: number;
+        task_status: 'available' | 'in_progress';
+        application_status: 'selected';
+        updated_at: Date;
+    };
+}
+
+export interface DeselectApplicantResult {
+    success: boolean;
+    error?: 'task_not_found' | 'unauthorized' | 'task_not_available' | 'already_selected' | 'applicant_not_found' | 'server';
+    message?: string;
+    data?: {
+        task_id: number;
+        task_status: 'available';
+        updated_at: Date;
+    };
+}
+
+export interface StartTaskResult {
+    success: boolean;
+    error?: 'task_not_found' | 'unauthorized' | 'task_not_available' | 'already_selected' | 'server';
+    message?: string;
+    data?: {
+        task_id: number;
+        selected_user_id: number;
+        task_status: 'in_progress';
+        updated_at: Date;
+    };
+}

@@ -29,3 +29,7 @@ export interface GetTasksFilters {
   limit?: number; 
   page?: number;
 }
+
+export interface SelectApplicantRequest {
+  applicant_id: number;
+}

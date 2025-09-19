@@ -2,7 +2,7 @@ import pool from "../config/db_config.js";
 import { ResultSetHeader, RowDataPacket } from "mysql2/promise";
 import { CreateTaskRequest, GetTasksFilters } from "../interfaces/task.interface.js";
 import { TaskWithApplications } from "../interfaces/application.interface.js";
-import { CreateTaskResult, GetTaskByIdResult, GetTasksResult, GetUserTasksResult, GetTaskWithApplicationsResult } from "../interfaces/database.interface.js";
+import { CreateTaskResult, GetTaskByIdResult, GetTasksResult, GetUserTasksResult, GetTaskWithApplicationsResult, SelectApplicantResult, DeselectApplicantResult, StartTaskResult } from "../interfaces/database.interface.js";
 
 const createTask = async (creator_id: number, taskData: CreateTaskRequest): Promise<CreateTaskResult> => {
     try {
@@ -319,6 +319,30 @@ const getTaskWithApplications = async (task_id: number, creator_id: number): Pro
 
         const task = taskRows[0];
 
+        let selectedUser = null;
+        if (task.selected_user_id) {
+            const [selectedUserRows] = await pool.query<RowDataPacket[]>(
+                `SELECT 
+                    id,
+                    first_name,
+                    last_name,
+                    avatar_url
+                FROM users 
+                WHERE id = ?`,
+                [task.selected_user_id]
+            );
+
+            if (selectedUserRows.length > 0) {
+                const userRow = selectedUserRows[0];
+                selectedUser = {
+                    id: userRow.id,
+                    first_name: userRow.first_name,
+                    last_name: userRow.last_name,
+                    avatar_url: userRow.avatar_url
+                };
+            }
+        }
+
         const [applicationRows] = await pool.query<RowDataPacket[]>(
             `SELECT 
                 a.id,
@@ -362,7 +386,8 @@ const getTaskWithApplications = async (task_id: number, creator_id: number): Pro
             status: task.status,
             created_at: task.created_at,
             updated_at: task.updated_at,
-            applications: applications
+            applications: applications,
+            selected_user: selectedUser
         };
 
         return {
@@ -381,4 +406,316 @@ const getTaskWithApplications = async (task_id: number, creator_id: number): Pro
     }
 };
 
-export { createTask, getTaskById, getTasks, getUserTasks, getTaskWithApplications };
+const selectApplicant = async (task_id: number, creator_id: number, applicant_id: number): Promise<SelectApplicantResult> => {
+    const connection = await pool.getConnection();
+    
+    try {
+        await connection.beginTransaction();
+
+        const [taskRows] = await connection.query<RowDataPacket[]>(
+            'SELECT id, creator_id, status, selected_user_id FROM tasks WHERE id = ? AND creator_id = ? AND deleted_at IS NULL',
+            [task_id, creator_id]
+        );
+
+        if (taskRows.length === 0) {
+            await connection.rollback();
+            return {
+                success: false,
+                error: 'task_not_found',
+                message: 'Task not found or you are not authorized to select applicants'
+            };
+        }
+
+        const task = taskRows[0];
+
+        if (task.status !== 'available') {
+            await connection.rollback();
+            return {
+                success: false,
+                error: 'task_not_available',
+                message: 'Task is not available for applicant selection'
+            };
+        }
+
+        if (task.selected_user_id !== null) {
+            await connection.rollback();
+            return {
+                success: false,
+                error: 'already_selected',
+                message: 'This task already has a selected applicant'
+            };
+        }
+
+        const [applicationRows] = await connection.query<RowDataPacket[]>(
+            'SELECT id, status FROM applications WHERE task_id = ? AND applicant_id = ?',
+            [task_id, applicant_id]
+        );
+
+        if (applicationRows.length === 0) {
+            await connection.rollback();
+            return {
+                success: false,
+                error: 'applicant_not_found',
+                message: 'The specified user has not applied to this task'
+            };
+        }
+
+        const application = applicationRows[0];
+
+        if (application.status !== 'applied') {
+            await connection.rollback();
+            return {
+                success: false,
+                error: 'applicant_not_found',
+                message: 'The application is not in a valid state for selection'
+            };
+        }
+
+        const [taskUpdateResult] = await connection.query<ResultSetHeader>(
+            'UPDATE tasks SET selected_user_id = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?',
+            [applicant_id, task_id]
+        );
+
+        if (taskUpdateResult.affectedRows === 0) {
+            await connection.rollback();
+            return {
+                success: false,
+                error: 'server',
+                message: 'Failed to update task'
+            };
+        }
+
+        const [appUpdateResult] = await connection.query<ResultSetHeader>(
+            'UPDATE applications SET status = ?, status_changed_at = CURRENT_TIMESTAMP WHERE id = ?',
+            ['selected', application.id]
+        );
+
+        if (appUpdateResult.affectedRows === 0) {
+            await connection.rollback();
+            return {
+                success: false,
+                error: 'server',
+                message: 'Failed to update application'
+            };
+        }
+
+        await connection.commit();
+
+        const currentDate = new Date();
+        return {
+            success: true,
+            message: 'Applicant selected successfully',
+            data: {
+                task_id: task_id,
+                selected_user_id: applicant_id,
+                task_status: 'available',
+                application_status: 'selected',
+                updated_at: currentDate
+            }
+        };
+
+    } catch (error: any) {
+        await connection.rollback();
+        console.error('Error in selectApplicant:', error);
+        return {
+            success: false,
+            error: 'server',
+            message: 'Internal server error while selecting applicant'
+        };
+    } finally {
+        connection.release();
+    }
+};
+
+const deselectApplicant = async (task_id: number, creator_id: number): Promise<DeselectApplicantResult> => {
+    const connection = await pool.getConnection();
+    
+    try {
+        await connection.beginTransaction();
+
+        const [taskRows] = await connection.query<RowDataPacket[]>(
+            'SELECT id, creator_id, status, selected_user_id FROM tasks WHERE id = ? AND creator_id = ? AND deleted_at IS NULL',
+            [task_id, creator_id]
+        );
+
+        if (taskRows.length === 0) {
+            await connection.rollback();
+            return {
+                success: false,
+                error: 'task_not_found',
+                message: 'Task not found or you are not authorized to deselect applicants'
+            };
+        }
+
+        const task = taskRows[0];
+
+        if (task.status !== 'available') {
+            await connection.rollback();
+            return {
+                success: false,
+                error: 'task_not_available',
+                message: 'Cannot deselect applicant from a task that is not available'
+            };
+        }
+
+        if (task.selected_user_id === null) {
+            await connection.rollback();
+            return {
+                success: false,
+                error: 'already_selected',
+                message: 'No applicant is currently selected for this task'
+            };
+        }
+
+        const [applicationRows] = await connection.query<RowDataPacket[]>(
+            'SELECT id, status FROM applications WHERE task_id = ? AND applicant_id = ? AND status = ?',
+            [task_id, task.selected_user_id, 'selected']
+        );
+
+        if (applicationRows.length === 0) {
+            await connection.rollback();
+            return {
+                success: false,
+                error: 'applicant_not_found',
+                message: 'Selected application not found or is in invalid state'
+            };
+        }
+
+        const application = applicationRows[0];
+
+        const [taskUpdateResult] = await connection.query<ResultSetHeader>(
+            'UPDATE tasks SET selected_user_id = NULL, updated_at = CURRENT_TIMESTAMP WHERE id = ?',
+            [task_id]
+        );
+
+        if (taskUpdateResult.affectedRows === 0) {
+            await connection.rollback();
+            return {
+                success: false,
+                error: 'server',
+                message: 'Failed to update task'
+            };
+        }
+
+        const [appUpdateResult] = await connection.query<ResultSetHeader>(
+            'UPDATE applications SET status = ?, status_changed_at = CURRENT_TIMESTAMP WHERE id = ?',
+            ['applied', application.id]
+        );
+
+        if (appUpdateResult.affectedRows === 0) {
+            await connection.rollback();
+            return {
+                success: false,
+                error: 'server',
+                message: 'Failed to update application'
+            };
+        }
+
+        await connection.commit();
+
+        const currentDate = new Date();
+        return {
+            success: true,
+            message: 'Applicant deselected successfully',
+            data: {
+                task_id: task_id,
+                task_status: 'available',
+                updated_at: currentDate
+            }
+        };
+
+    } catch (error: any) {
+        await connection.rollback();
+        console.error('Error in deselectApplicant:', error);
+        return {
+            success: false,
+            error: 'server',
+            message: 'Internal server error while deselecting applicant'
+        };
+    } finally {
+        connection.release();
+    }
+};
+
+const startTask = async (task_id: number, creator_id: number): Promise<StartTaskResult> => {
+    const connection = await pool.getConnection();
+    
+    try {
+        await connection.beginTransaction();
+
+        const [taskRows] = await connection.query<RowDataPacket[]>(
+            'SELECT id, creator_id, status, selected_user_id FROM tasks WHERE id = ? AND creator_id = ? AND deleted_at IS NULL',
+            [task_id, creator_id]
+        );
+
+        if (taskRows.length === 0) {
+            await connection.rollback();
+            return {
+                success: false,
+                error: 'task_not_found',
+                message: 'Task not found or you are not authorized to start this task'
+            };
+        }
+
+        const task = taskRows[0];
+
+        if (task.status !== 'available') {
+            await connection.rollback();
+            return {
+                success: false,
+                error: 'task_not_available',
+                message: 'Task is not available to be started'
+            };
+        }
+
+        if (task.selected_user_id === null) {
+            await connection.rollback();
+            return {
+                success: false,
+                error: 'already_selected',
+                message: 'Cannot start task without a selected applicant'
+            };
+        }
+
+        const [taskUpdateResult] = await connection.query<ResultSetHeader>(
+            'UPDATE tasks SET status = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?',
+            ['in_progress', task_id]
+        );
+
+        if (taskUpdateResult.affectedRows === 0) {
+            await connection.rollback();
+            return {
+                success: false,
+                error: 'server',
+                message: 'Failed to start task'
+            };
+        }
+
+        await connection.commit();
+
+        const currentDate = new Date();
+        return {
+            success: true,
+            message: 'Task started successfully',
+            data: {
+                task_id: task_id,
+                selected_user_id: task.selected_user_id,
+                task_status: 'in_progress',
+                updated_at: currentDate
+            }
+        };
+
+    } catch (error: any) {
+        await connection.rollback();
+        console.error('Error in startTask:', error);
+        return {
+            success: false,
+            error: 'server',
+            message: 'Internal server error while starting task'
+        };
+    } finally {
+        connection.release();
+    }
+};
+
+export { createTask, getTaskById, getTasks, getUserTasks, getTaskWithApplications, selectApplicant, deselectApplicant, startTask };

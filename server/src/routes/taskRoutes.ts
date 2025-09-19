@@ -5,11 +5,15 @@ import {
   getTasksController, 
   getMyTasksController, 
   getTaskApplicationsController,
-  applyToTaskController 
+  applyToTaskController,
+  selectApplicantController,
+  deselectApplicantController,
+  startTaskController
 } from "../controllers/taskController.js";
 import errorsIsEmpty from "../middlewares/errorIsEmpty.js";
 import { createTaskValidations } from "../middlewares/validateTask.js";
 import { createApplicationValidations } from "../middlewares/validateApplication.js";
+import { selectApplicantValidations } from "../middlewares/validateSelectApplicant.js";
 import verifyToken from "../middlewares/verifyToken.js";
 
 const router = Router();
@@ -21,5 +25,9 @@ router.post("/tasks/apply/:id", verifyToken, createApplicationValidations, error
 
 router.get("/my-tasks", verifyToken, getMyTasksController);                    
 router.get("/my-tasks/applications/:id", verifyToken, getTaskApplicationsController);
+
+router.put("/my-tasks/select/:id/", verifyToken, selectApplicantValidations, errorsIsEmpty, selectApplicantController);
+router.put("/my-tasks/deselect/:id/", verifyToken, deselectApplicantController);
+router.put("/my-tasks/start/:id/", verifyToken, startTaskController);
 
 export default router;
