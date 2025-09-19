@@ -1,7 +1,8 @@
 import pool from "../config/db_config.js";
 import { ResultSetHeader, RowDataPacket } from "mysql2/promise";
 import { CreateTaskRequest, GetTasksFilters } from "../interfaces/task.interface.js";
-import { CreateTaskResult, GetTaskByIdResult, GetTasksResult } from "../interfaces/database.interface.js";
+import { TaskWithApplications } from "../interfaces/application.interface.js";
+import { CreateTaskResult, GetTaskByIdResult, GetTasksResult, GetUserTasksResult, GetTaskWithApplicationsResult } from "../interfaces/database.interface.js";
 
 const createTask = async (creator_id: number, taskData: CreateTaskRequest): Promise<CreateTaskResult> => {
     try {
@@ -87,16 +88,11 @@ const getTaskById = async (taskId: number): Promise<GetTaskByIdResult> => {
                 t.*, 
                 u.first_name as creator_first_name,
                 u.last_name as creator_last_name,
-                up.photo_url as creator_photo_url,
-                su.first_name as selected_user_first_name,
-                su.last_name as selected_user_last_name,
-                sup.photo_url as selected_user_photo_url
+                up.photo_url as creator_photo_url
             FROM tasks t
             LEFT JOIN users u ON t.creator_id = u.id
             LEFT JOIN profiles up ON u.id = up.user_id
-            LEFT JOIN users su ON t.selected_user_id = su.id
-            LEFT JOIN profiles sup ON su.id = sup.user_id
-            WHERE t.id = ? AND t.deleted_at IS NULL`,
+            WHERE t.id = ? AND t.deleted_at IS NULL AND t.status = 'available'`,
             [taskId]
         );
 
@@ -116,7 +112,6 @@ const getTaskById = async (taskId: number): Promise<GetTaskByIdResult> => {
             task: {
                 id: task.id,
                 creator_id: task.creator_id,
-                selected_user_id: task.selected_user_id,
                 title: task.title,
                 description: task.description,
                 city: task.city,
@@ -133,12 +128,6 @@ const getTaskById = async (taskId: number): Promise<GetTaskByIdResult> => {
                     last_name: task.creator_last_name,
                     photo_url: task.creator_photo_url
                 },
-                selected_user: task.selected_user_id ? {
-                    id: task.selected_user_id,
-                    first_name: task.selected_user_first_name,
-                    last_name: task.selected_user_last_name,
-                    photo_url: task.selected_user_photo_url
-                } : null
             }
         };
 
@@ -156,20 +145,15 @@ const getTasks = async (filters: GetTasksFilters): Promise<GetTasksResult> => {
     try {
         let query = `
             SELECT 
-                t.id, t.creator_id, t.selected_user_id, t.title, t.description, 
+                t.id, t.creator_id, t.title, t.description, 
                 t.city, t.neighborhood, t.duration_days, t.salary, t.status, 
                 t.created_at, t.updated_at,
                 u.first_name as creator_first_name,
                 u.last_name as creator_last_name,
-                up.photo_url as creator_photo_url,
-                su.first_name as selected_user_first_name,
-                su.last_name as selected_user_last_name,
-                sup.photo_url as selected_user_photo_url
+                up.photo_url as creator_photo_url
             FROM tasks t
             LEFT JOIN users u ON t.creator_id = u.id
             LEFT JOIN profiles up ON u.id = up.user_id
-            LEFT JOIN users su ON t.selected_user_id = su.id
-            LEFT JOIN profiles sup ON su.id = sup.user_id
             WHERE t.deleted_at IS NULL AND t.status = 'available'
         `;
         
@@ -220,7 +204,6 @@ const getTasks = async (filters: GetTasksFilters): Promise<GetTasksResult> => {
         const tasks = taskRows.map(row => ({
             id: row.id,
             creator_id: row.creator_id,
-            selected_user_id: row.selected_user_id,
             title: row.title,
             description: row.description,
             city: row.city,
@@ -236,12 +219,6 @@ const getTasks = async (filters: GetTasksFilters): Promise<GetTasksResult> => {
                 last_name: row.creator_last_name,
                 photo_url: row.creator_photo_url
             },
-            selected_user: row.selected_user_id ? {
-                id: row.selected_user_id,
-                first_name: row.selected_user_first_name,
-                last_name: row.selected_user_last_name,
-                photo_url: row.selected_user_photo_url
-            } : null
         }));
         
         return {
@@ -263,4 +240,145 @@ const getTasks = async (filters: GetTasksFilters): Promise<GetTasksResult> => {
     }
 };
 
-export { createTask, getTaskById, getTasks };
+const getUserTasks = async (creator_id: number): Promise<GetUserTasksResult> => {
+    try {
+        const [taskRows] = await pool.query<RowDataPacket[]>(
+            `SELECT 
+                t.id,
+                t.creator_id,
+                t.selected_user_id,
+                t.title,
+                t.description,
+                t.city,
+                t.neighborhood,
+                t.duration_days,
+                t.salary,
+                t.status,
+                t.created_at,
+                t.updated_at,
+                COUNT(a.id) as applications_count
+            FROM tasks t
+            LEFT JOIN applications a ON t.id = a.task_id
+            WHERE t.creator_id = ? AND t.deleted_at IS NULL
+            GROUP BY t.id
+            ORDER BY t.created_at DESC`,
+            [creator_id]
+        );
+
+        const tasks = taskRows.map(row => ({
+            id: row.id,
+            creator_id: row.creator_id,
+            selected_user_id: row.selected_user_id,
+            title: row.title,
+            description: row.description,
+            city: row.city,
+            neighborhood: row.neighborhood,
+            duration_days: row.duration_days,
+            salary: row.salary,
+            status: row.status,
+            created_at: row.created_at,
+            updated_at: row.updated_at,
+            applications_count: row.applications_count
+        }));
+
+        return {
+            success: true,
+            message: 'User tasks retrieved successfully',
+            data: tasks
+        };
+
+    } catch (error: any) {
+        console.error('Error getting user tasks:', error);
+        return {
+            success: false,
+            error: 'server',
+            message: 'Internal server error while retrieving user tasks'
+        };
+    }
+};
+
+const getTaskWithApplications = async (task_id: number, creator_id: number): Promise<GetTaskWithApplicationsResult> => {
+    try {
+        const [taskRows] = await pool.query<RowDataPacket[]>(
+            `SELECT 
+                id, creator_id, selected_user_id, title, description, 
+                city, neighborhood, duration_days, salary, status, 
+                created_at, updated_at
+            FROM tasks 
+            WHERE id = ? AND creator_id = ? AND deleted_at IS NULL`,
+            [task_id, creator_id]
+        );
+
+        if (taskRows.length === 0) {
+            return {
+                success: false,
+                error: 'task_not_found',
+                message: 'Task not found or you are not authorized to view it'
+            };
+        }
+
+        const task = taskRows[0];
+
+        const [applicationRows] = await pool.query<RowDataPacket[]>(
+            `SELECT 
+                a.id,
+                a.task_id,
+                a.applicant_id,
+                a.applied_at,
+                a.status,
+                a.status_changed_at,
+                u.first_name,
+                u.last_name,
+                u.avatar_url
+            FROM applications a
+            INNER JOIN users u ON a.applicant_id = u.id
+            WHERE a.task_id = ?
+            ORDER BY a.applied_at DESC`,
+            [task_id]
+        );
+
+        const applications = applicationRows.map(row => ({
+            id: row.id,
+            task_id: row.task_id,
+            applicant_id: row.applicant_id,
+            applied_at: row.applied_at,
+            status: row.status,
+            status_changed_at: row.status_changed_at,
+            first_name: row.first_name,
+            last_name: row.last_name,
+            avatar_url: row.avatar_url
+        }));
+
+        const taskWithApplications: TaskWithApplications = {
+            id: task.id,
+            creator_id: task.creator_id,
+            selected_user_id: task.selected_user_id,
+            title: task.title,
+            description: task.description,
+            city: task.city,
+            neighborhood: task.neighborhood,
+            duration_days: task.duration_days,
+            salary: task.salary,
+            status: task.status,
+            created_at: task.created_at,
+            updated_at: task.updated_at,
+            applications: applications
+        };
+
+        return {
+            success: true,
+            message: 'Task with applications retrieved successfully',
+            data: taskWithApplications
+        };
+
+    } catch (error: any) {
+        console.error('Error getting task with applications:', error);
+        return {
+            success: false,
+            error: 'server',
+            message: 'Internal server error while retrieving task with applications'
+        };
+    }
+};
+
+export { createTask, getTaskById, getTasks, getUserTasks, getTaskWithApplications };

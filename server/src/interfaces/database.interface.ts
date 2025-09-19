@@ -1,4 +1,5 @@
 import { User } from "./user.interface.js";
+import { Application, ApplicationWithApplicantInfo, TaskWithApplications } from "./application.interface.js";
 
 export interface DatabaseError extends Error {
     code?: string;
@@ -143,4 +144,46 @@ export interface GetTasksResult {
         }[];
         total: number;
     };
+}
+
+export interface CreateApplicationResult {
+    success: boolean;
+    error?: 'task_not_found' | 'task_not_available' | 'own_task' | 'already_applied' | 'server';
+    message?: string;
+    data?: Application;
+}
+
+export interface GetApplicationsByTaskResult {
+    success: boolean;
+    error?: 'task_not_found' | 'unauthorized' | 'server';
+    message?: string;
+    data?: ApplicationWithApplicantInfo[];
+}
+
+export interface GetUserTasksResult {
+    success: boolean;
+    error?: 'server';
+    message?: string;
+    data?: {
+        id: number;
+        creator_id: number;
+        selected_user_id?: number | null;
+        title: string;
+        description: string;
+        city: string;
+        neighborhood?: string | null;
+        duration_days: number;
+        salary: number;
+        status: 'available' | 'in_progress' | 'completed' | 'cancelled';
+        created_at: Date;
+        updated_at: Date;
+        applications_count: number;
+    }[];
+}
+
+export interface GetTaskWithApplicationsResult {
+    success: boolean;
+    error?: 'task_not_found' | 'unauthorized' | 'server';
+    message?: string;
+    data?: TaskWithApplications;
 }

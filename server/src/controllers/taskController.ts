@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import errorHandler from "../utils/errorHandler.js";
-import { createTask, getTaskById, getTasks } from "../models/taskModel.js";
+import { createTask, getTaskById, getTasks, getUserTasks, getTaskWithApplications } from "../models/taskModel.js";
+import { createApplication } from "../models/applicationModel.js";
 import { CreateTaskRequest, GetTasksFilters } from "../interfaces/task.interface.js";
 
 const createTaskController = async (req: Request, res: Response) => {
@@ -92,4 +93,126 @@ const getTasksController = async (req: Request, res: Response) => {
   }
 };
 
-export { createTaskController, getTaskByIdController, getTasksController };
+const getMyTasksController = async (req: Request, res: Response) => {
+  try {
+    const creator_id = req.user?.sub;
+    
+    if (!creator_id) {
+      return errorHandler.handleAuthError(res, "User not authenticated");
+    }
+
+    const creatorIdNumber = parseInt(creator_id, 10);
+    
+    if (isNaN(creatorIdNumber)) {
+      return errorHandler.handleValidationError(res, "Invalid user ID");
+    }
+
+    const response = await getUserTasks(creatorIdNumber);
+
+    if (response.success && response.data) {
+      return res.status(200).json(response);
+    } else {
+      return errorHandler.handleServerError(res, response.message);
+    }
+
+  } catch (error) {
+    console.error('Error in getUserTasksController:', error);
+    return errorHandler.handleServerError(res, "Internal server error while retrieving user tasks");
+  }
+};
+
+const getTaskApplicationsController = async (req: Request, res: Response) => {
+  try {
+    const creator_id = req.user?.sub;
+    
+    if (!creator_id) {
+      return errorHandler.handleAuthError(res, "User not authenticated");
+    }
+
+    const creatorIdNumber = parseInt(creator_id, 10);
+    
+    if (isNaN(creatorIdNumber)) {
+      return errorHandler.handleValidationError(res, "Invalid user ID");
+    }
+
+    const taskId = req.params.id;
+    const taskIdNumber = parseInt(taskId, 10);
+
+    if (isNaN(taskIdNumber)) {
+      return errorHandler.handleValidationError(res, "Invalid task ID");
+    }
+
+    const response = await getTaskWithApplications(taskIdNumber, creatorIdNumber);
+
+    if (response.success && response.data) {
+      return res.status(200).json({
+        success: true,
+        message: response.message,
+        data: response.data
+      });
+    } else if (response.error === 'task_not_found') {
+      return errorHandler.handleNotFoundError(res, response.message);
+    } else if (response.error === 'unauthorized') {
+      return errorHandler.handleAuthError(res, response.message);
+    } else {
+      return errorHandler.handleServerError(res, response.message);
+    }
+
+  } catch (error) {
+    console.error('Error in getTaskWithApplicationsController:', error);
+    return errorHandler.handleServerError(res, "Internal server error while retrieving task with applications");
+  }
+};
+
+const applyToTaskController = async (req: Request, res: Response) => {
+  try {
+    const applicant_id = req.user?.sub;
+    
+    if (!applicant_id) {
+      return errorHandler.handleAuthError(res, "User not authenticated");
+    }
+
+    const applicantIdNumber = parseInt(applicant_id, 10);
+    
+    if (isNaN(applicantIdNumber)) {
+      return errorHandler.handleValidationError(res, "Invalid user ID");
+    }
+
+    const taskId = req.params.id;
+    const taskIdNumber = parseInt(taskId, 10);
+
+    if (isNaN(taskIdNumber)) {
+      return errorHandler.handleValidationError(res, "Invalid task ID");
+    }
+
+    const applicationData = { task_id: taskIdNumber };
+    const response = await createApplication(applicantIdNumber, applicationData);
+
+    if (response.success) {
+      return res.status(201).json(response);
+    } else if (response.error === 'task_not_found') {
+      return errorHandler.handleNotFoundError(res, response.message);
+    } else if (response.error === 'task_not_available') {
+      return errorHandler.handleValidationError(res, response.message);
+    } else if (response.error === 'own_task') {
+      return errorHandler.handleValidationError(res, response.message);
+    } else if (response.error === 'already_applied') {
+      return errorHandler.handleValidationError(res, response.message);
+    } else {
+      return errorHandler.handleServerError(res, response.message);
+    }
+
+  } catch (error) {
+    console.error('Error in applyToTaskController:', error);
+    return errorHandler.handleServerError(res, "Internal server error during application creation");
+  }
+};
+
+export { 
+  createTaskController, 
+  getTaskByIdController, 
+  getTasksController, 
+  getMyTasksController, 
+  getTaskApplicationsController,
+  applyToTaskController 
+};
