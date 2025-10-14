@@ -75,8 +75,31 @@
       <h2 class="text-center font-semibold mb-6 text-2xl">Tareas destacadas</h2>
 
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mx-auto mb-8">
-        @for (card of [1, 2, 3, 4]; track $index) {
-        <app-task-card />
+        @if (isFeaturedLoading()) {
+          @for (placeholder of [1, 2, 3, 4]; track $index) {
+            <div class="bg-gray-100 animate-pulse rounded-2xl border border-gray-200 p-6 h-48">
+              <div class="flex items-center space-x-4">
+                <div class="rounded-full bg-gray-300 h-12 w-12"></div>
+                <div class="flex-1 space-y-2">
+                  <div class="h-4 bg-gray-300 rounded w-3/4"></div>
+                  <div class="h-3 bg-gray-300 rounded w-1/2"></div>
+                </div>
+              </div>
+              <div class="mt-4 space-y-2">
+                <div class="h-3 bg-gray-300 rounded"></div>
+                <div class="h-3 bg-gray-300 rounded w-5/6"></div>
+              </div>
+              <div class="mt-4 h-8 bg-gray-300 rounded"></div>
+            </div>
+          }
+        } @else if (featuredTasks().length > 0) {
+          @for (task of featuredTasks(); track task.id) {
+            <app-task-card [task]="task" [from]="'dashboard'" />
+          }
+        } @else {
+          <div class="col-span-full text-center py-8">
+            <p class="text-gray-500">No hay tareas destacadas disponibles</p>
+          </div>
         }
       </div>
 

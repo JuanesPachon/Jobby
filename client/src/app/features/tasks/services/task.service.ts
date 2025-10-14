@@ -68,4 +68,16 @@ export class TaskService {
     this.searchFilters.set({});
     this.isSearching.set(false);
   }
+
+  getTaskById(taskId: number): Observable<any> {
+    return this.http.get<any>(`${environment.apiUrl}/tasks/${taskId}`, {
+      withCredentials: true
+    });
+  }
+
+  getFeaturedTasks(limit: number = 4): Observable<any> {
+    return this.http.get<any>(`${environment.apiUrl}/tasks?limit=${limit}&page=1`, {
+      withCredentials: true
+    });
+  }
 }

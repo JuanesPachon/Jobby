@@ -1,15 +1,17 @@
 import { Component, Input } from '@angular/core';
 import { Task } from '../../interfaces/SearchTasks';
 import { environment } from '../../../../../environments/environment';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-task-card',
-  imports: [],
+  imports: [RouterLink],
   templateUrl: './task-card.html',
   styleUrl: './task-card.css'
 })
 export class TaskCard {
   @Input() task?: Task;
+  @Input() from: 'dashboard' | 'search' = 'dashboard';
 
   get displayTask() {
     if (this.task) {
@@ -76,5 +78,13 @@ export class TaskCard {
       return `${task.city}, ${task.neighborhood}`;
     }
     return task.city || 'Sin ubicación';
+  }
+
+  get taskDetailLink(): string {
+    return `/task/${this.displayTask.id}`;
+  }
+
+  get queryParams(): any {
+    return { from: this.from };
   }
 }

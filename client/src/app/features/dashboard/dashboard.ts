@@ -1,9 +1,10 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, OnInit } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { DashboardNavbar } from '../../shared/dashboard-navbar/dashboard-navbar';
 import { TaskCard } from '../tasks/components/task-card/task-card';
 import { TaskService } from '../tasks/services/task.service';
+import { Task } from '../tasks/interfaces/SearchTasks';
 
 @Component({
   selector: 'app-dashboard',
@@ -11,7 +12,7 @@ import { TaskService } from '../tasks/services/task.service';
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css'
 })
-export default class Dashboard {
+export default class Dashboard implements OnInit {
   private taskService = inject(TaskService);
   private router = inject(Router);
 
@@ -21,6 +22,12 @@ export default class Dashboard {
   });
 
   isLoading = signal<Boolean>(false);
+  featuredTasks = signal<Task[]>([]);
+  isFeaturedLoading = signal<Boolean>(true);
+
+  ngOnInit() {
+    this.loadFeaturedTasks();
+  }
 
   searchTasks(event: Event) {
     event.preventDefault();
@@ -36,5 +43,23 @@ export default class Dashboard {
     this.taskService.setSearchFilters(filters);
 
     this.router.navigate(['/task-result']);
+  }
+
+  private loadFeaturedTasks() {
+    this.isFeaturedLoading.set(true);
+    this.taskService.getFeaturedTasks(4).subscribe({
+      next: (response) => {
+        if (response.success && response.data && response.data.tasks) {
+          this.featuredTasks.set(response.data.tasks);
+        } else {
+          this.featuredTasks.set([]);
+        }
+        this.isFeaturedLoading.set(false);
+      },
+      error: (error) => {
+        this.featuredTasks.set([]);
+        this.isFeaturedLoading.set(false);
+      }
+    });
   }
 }
