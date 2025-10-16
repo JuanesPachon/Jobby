@@ -37,16 +37,34 @@ const createApplication = async (applicant_id: number, applicationData: CreateAp
         }
 
         const [existingRows] = await pool.query<RowDataPacket[]>(
-            'SELECT id FROM applications WHERE task_id = ? AND applicant_id = ?',
+            'SELECT id, status FROM applications WHERE task_id = ? AND applicant_id = ?',
             [applicationData.task_id, applicant_id]
         );
 
         if (existingRows.length > 0) {
-            return {
-                success: false,
-                error: 'already_applied',
-                message: 'You have already applied to this task'
-            };
+            const existingApplication = existingRows[0];
+            
+            if (existingApplication.status === 'applied' || 
+                existingApplication.status === 'selected' || 
+                existingApplication.status === 'completed') {
+                return {
+                    success: false,
+                    error: 'already_applied',
+                    message: 'You have already applied to this task'
+                };
+            }
+            
+            if (existingApplication.status === 'withdrawn') {
+                await pool.query(
+                    'UPDATE applications SET status = ?, applied_at = NOW(), status_changed_at = NOW() WHERE id = ?',
+                    ['applied', existingApplication.id]
+                );
+
+                return {
+                    success: true,
+                    message: 'Application submitted successfully'
+                };
+            }
         }
 
         const [result] = await pool.query<ResultSetHeader>(

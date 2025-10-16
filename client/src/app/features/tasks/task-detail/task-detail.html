@@ -127,7 +127,9 @@
             <button 
               [class]="applyButtonClass"
               (click)="applyToTask()"
-              [disabled]="!canApply"
+              (mouseenter)="onMouseEnter()"
+              (mouseleave)="onMouseLeave()"
+              [disabled]="!canApply && !canWithdraw"
             >
               {{ applyButtonText }}
             </button>

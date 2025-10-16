@@ -44,7 +44,9 @@
             [class]="mobileApplyButtonClass"
             type="button"
             (click)="applyToTask()"
-            [disabled]="!canApply"
+            (mouseenter)="onMouseEnter()"
+            (mouseleave)="onMouseLeave()"
+            [disabled]="!canApply && !canWithdraw"
             class="flex-1"
           >
             {{ applyButtonText }}
@@ -96,7 +98,9 @@
           [class]="applyButtonClass"
           type="button"
           (click)="applyToTask()"
-          [disabled]="!canApply"
+          (mouseenter)="onMouseEnter()"
+          (mouseleave)="onMouseLeave()"
+          [disabled]="!canApply && !canWithdraw"
         >
           {{ applyButtonText }}
         </button>

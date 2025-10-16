@@ -97,6 +97,12 @@ export class TaskService {
     });
   }
 
+  withdrawApplication(taskId: number): Observable<any> {
+    return this.http.delete<any>(`${environment.apiUrl}/tasks/withdraw/${taskId}`, {
+      withCredentials: true
+    });
+  }
+
   getCurrentUser(): Observable<any> {
     return this.http.get<any>(`${environment.apiUrl}/profile`, {
       withCredentials: true
@@ -146,6 +152,15 @@ export class TaskService {
     this.appliedTasksCache.set(newCache);
     
     this.saveToLocalStorage(taskId, true);
+  }
+
+  markAsWithdrawn(taskId: number): void {
+    const currentCache = this.appliedTasksCache();
+    const newCache = new Map(currentCache);
+    newCache.set(taskId, false);
+    this.appliedTasksCache.set(newCache);
+    
+    this.saveToLocalStorage(taskId, false);
   }
 
   private saveToLocalStorage(taskId: number, hasApplied: boolean): void {

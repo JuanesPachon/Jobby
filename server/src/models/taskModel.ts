@@ -644,14 +644,13 @@ const deselectApplicant = async (task_id: number, creator_id: number): Promise<D
 
 const checkUserApplication = async (task_id: number, applicant_id: number): Promise<{ hasApplied: boolean }> => {
     try {
-        
         const [rows] = await pool.query<RowDataPacket[]>(
-            'SELECT id FROM applications WHERE task_id = ? AND applicant_id = ?',
-            [task_id, applicant_id]
+            'SELECT id, status FROM applications WHERE task_id = ? AND applicant_id = ? AND status != ?',
+            [task_id, applicant_id, 'withdrawn']
         );
 
         const hasApplied = rows.length > 0;
-        console.log('Found', rows.length, 'applications, hasApplied:', hasApplied);
+        console.log('Found', rows.length, 'active applications, hasApplied:', hasApplied);
 
         return {
             hasApplied
@@ -745,4 +744,63 @@ const startTask = async (task_id: number, creator_id: number): Promise<StartTask
     }
 };
 
-export { createTask, getTaskById, getTasks, getUserTasks, getTaskWithApplications, selectApplicant, deselectApplicant, startTask, checkUserApplication };
+const withdrawApplication = async (task_id: number, applicant_id: number): Promise<{ success: boolean; message: string; error?: string }> => {
+    const connection = await pool.getConnection();
+    
+    try {
+        await connection.beginTransaction();
+
+        const [applicationRows] = await connection.query<RowDataPacket[]>(
+            `SELECT id, status FROM applications 
+             WHERE task_id = ? AND applicant_id = ? AND status != 'withdrawn'`,
+            [task_id, applicant_id]
+        );
+
+        if (applicationRows.length === 0) {
+            await connection.rollback();
+            return {
+                success: false,
+                error: 'application_not_found',
+                message: 'Application not found or already withdrawn'
+            };
+        }
+
+        const application = applicationRows[0];
+
+        if (application.status !== 'applied') {
+            await connection.rollback();
+            return {
+                success: false,
+                error: 'cannot_withdraw',
+                message: 'Cannot withdraw application. Application status is not "applied"'
+            };
+        }
+
+        await connection.query(
+            `UPDATE applications 
+             SET status = 'withdrawn', status_changed_at = NOW() 
+             WHERE id = ?`,
+            [application.id]
+        );
+
+        await connection.commit();
+
+        return {
+            success: true,
+            message: 'Application withdrawn successfully'
+        };
+
+    } catch (error: any) {
+        await connection.rollback();
+        console.error('Error withdrawing application:', error);
+        return {
+            success: false,
+            error: 'server',
+            message: 'Internal server error while withdrawing application'
+        };
+    } finally {
+        connection.release();
+    }
+};
+
+export { createTask, getTaskById, getTasks, getUserTasks, getTaskWithApplications, selectApplicant, deselectApplicant, startTask, checkUserApplication, withdrawApplication };

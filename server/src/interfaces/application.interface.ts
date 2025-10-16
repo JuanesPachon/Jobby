@@ -46,3 +46,9 @@ export interface TaskWithApplications {
   applications: ApplicationWithApplicantInfo[];
   selected_user?: SelectedUserInfo | null;
 }
+
+export interface WithdrawApplicationResult {
+  success: boolean;
+  message: string;
+  error?: 'application_not_found' | 'cannot_withdraw' | 'unauthorized' | 'server';
+}

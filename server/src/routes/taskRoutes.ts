@@ -9,7 +9,8 @@ import {
   selectApplicantController,
   deselectApplicantController,
   startTaskController,
-  checkApplicationController
+  checkApplicationController,
+  withdrawApplicationController
 } from "../controllers/taskController.js";
 import errorsIsEmpty from "../middlewares/errorIsEmpty.js";
 import { createTaskValidations } from "../middlewares/validateTask.js";
@@ -24,6 +25,7 @@ router.get("/tasks/:id", verifyToken, getTaskByIdController);
 router.get("/tasks/:id/check-application", verifyToken, checkApplicationController);
 router.post("/tasks", verifyToken, createTaskValidations, errorsIsEmpty, createTaskController);
 router.post("/tasks/apply/:id", verifyToken, createApplicationValidations, errorsIsEmpty, applyToTaskController); 
+router.delete("/tasks/withdraw/:id", verifyToken, withdrawApplicationController); 
 
 router.get("/my-tasks", verifyToken, getMyTasksController);                    
 router.get("/my-tasks/applications/:id", verifyToken, getTaskApplicationsController);

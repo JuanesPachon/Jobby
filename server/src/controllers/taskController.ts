@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import errorHandler from "../utils/errorHandler.js";
-import { createTask, getTaskById, getTasks, getUserTasks, getTaskWithApplications, selectApplicant, deselectApplicant, startTask, checkUserApplication } from '../models/taskModel.js';
+import { createTask, getTaskById, getTasks, getUserTasks, getTaskWithApplications, selectApplicant, deselectApplicant, startTask, checkUserApplication, withdrawApplication } from '../models/taskModel.js';
 import { createApplication } from "../models/applicationModel.js";
 import { CreateTaskRequest, GetTasksFilters, SelectApplicantRequest } from "../interfaces/task.interface.js";
 
@@ -395,6 +395,48 @@ const startTaskController = async (req: Request, res: Response) => {
   }
 };
 
+const withdrawApplicationController = async (req: Request, res: Response) => {
+  try {
+    const applicant_id = req.user?.sub;
+    
+    if (!applicant_id) {
+      return errorHandler.handleAuthError(res, "User not authenticated");
+    }
+
+    const applicantIdNumber = parseInt(applicant_id, 10);
+    
+    if (isNaN(applicantIdNumber)) {
+      return errorHandler.handleValidationError(res, "Invalid user ID");
+    }
+
+    const taskId = req.params.id;
+    const taskIdNumber = parseInt(taskId, 10);
+
+    if (isNaN(taskIdNumber)) {
+      return errorHandler.handleValidationError(res, "Invalid task ID");
+    }
+
+    const response = await withdrawApplication(taskIdNumber, applicantIdNumber);
+
+    if (response.success) {
+      return res.status(200).json({
+        success: true,
+        message: response.message
+      });
+    } else if (response.error === 'application_not_found') {
+      return errorHandler.handleNotFoundError(res, response.message);
+    } else if (response.error === 'cannot_withdraw') {
+      return errorHandler.handleValidationError(res, response.message);
+    } else {
+      return errorHandler.handleServerError(res, "Internal server error during application withdrawal");
+    }
+
+  } catch (error) {
+    console.error('Error in withdrawApplicationController:', error);
+    return errorHandler.handleServerError(res, "Internal server error during application withdrawal");
+  }
+};
+
 export { 
   createTaskController, 
   getTaskByIdController, 
@@ -405,5 +447,6 @@ export {
   selectApplicantController,
   deselectApplicantController,
   startTaskController,
-  checkApplicationController
+  checkApplicationController,
+  withdrawApplicationController
 };

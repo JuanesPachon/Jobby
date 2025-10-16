@@ -20,6 +20,8 @@ export class TaskCard implements OnInit {
   currentUserId = signal<number | null>(null);
   isApplying = signal<boolean>(false);
   hasApplied = signal<boolean>(false);
+  isHovering = signal<boolean>(false);
+  isWithdrawing = signal<boolean>(false);
 
   ngOnInit() {
     this.loadCurrentUser();
@@ -121,11 +123,17 @@ export class TaskCard implements OnInit {
   }
 
   get canApply(): boolean {
-    return !this.isOwner && !this.hasApplied() && !this.isApplying();
+    return !this.isOwner && !this.hasApplied() && !this.isApplying() && !this.isWithdrawing();
+  }
+
+  get canWithdraw(): boolean {
+    return !this.isOwner && this.hasApplied() && !this.isApplying() && !this.isWithdrawing();
   }
 
   get applyButtonText(): string {
     if (this.isOwner) return 'Tu tarea';
+    if (this.isWithdrawing()) return 'Despostulando...';
+    if (this.hasApplied() && this.isHovering()) return 'Despostularse';
     if (this.hasApplied()) return 'Postulado';
     if (this.isApplying()) return 'Postulando...';
     return 'Postularme';
@@ -137,8 +145,14 @@ export class TaskCard implements OnInit {
     if (this.isOwner) {
       return baseClass + " bg-gray-300 text-gray-600 cursor-not-allowed";
     }
+    if (this.isWithdrawing()) {
+      return baseClass + " bg-gray-400 text-white cursor-not-allowed";
+    }
+    if (this.hasApplied() && this.isHovering()) {
+      return baseClass + " bg-main-blue text-white hover:bg-blue-600";
+    }
     if (this.hasApplied()) {
-      return baseClass + " bg-yellow-400 text-black hover:bg-yellow-500";
+      return baseClass + " bg-yellow-400 text-black hover:bg-main-blue hover:text-white";
     }
     if (this.isApplying()) {
       return baseClass + " bg-gray-400 text-white cursor-not-allowed";
@@ -152,8 +166,14 @@ export class TaskCard implements OnInit {
     if (this.isOwner) {
       return baseClass + " bg-gray-300 text-gray-600 cursor-not-allowed";
     }
+    if (this.isWithdrawing()) {
+      return baseClass + " bg-gray-400 text-white cursor-not-allowed";
+    }
+    if (this.hasApplied() && this.isHovering()) {
+      return baseClass + " bg-main-blue text-white hover:bg-blue-600 cursor-pointer";
+    }
     if (this.hasApplied()) {
-      return baseClass + " bg-yellow-400 text-black hover:bg-yellow-500 cursor-pointer";
+      return baseClass + " bg-yellow-400 text-black hover:bg-main-blue hover:text-white cursor-pointer";
     }
     if (this.isApplying()) {
       return baseClass + " bg-gray-400 text-white cursor-not-allowed";
@@ -162,33 +182,67 @@ export class TaskCard implements OnInit {
   }
 
   applyToTask() {
-    if (!this.canApply) return;
+    if (!this.canApply && !this.canWithdraw) return;
 
-    this.isApplying.set(true);
     const taskId = this.displayTask.id;
 
-    this.taskService.applyToTask(taskId).subscribe({
-      next: (response) => {
-        console.log('TaskCard: Apply response:', response);
-        if (response.success) {
-          this.hasApplied.set(true);
-          this.taskService.markAsApplied(taskId);
-          this.taskService.taskNotification.set(true);
-          this.taskService.taskNotificationMessage.set('Te postulaste correctamente');
-          
-          
-          setTimeout(() => {
-            this.taskService.taskNotification.set(false);
-          }, 5000);
-        } else {
-          console.error('Error applying to task:', response.message);
+    // Si ya se postuló, entonces retirar la postulación
+    if (this.hasApplied()) {
+      this.isWithdrawing.set(true);
+      this.taskService.withdrawApplication(taskId).subscribe({
+        next: (response) => {
+          if (response.success) {
+            this.hasApplied.set(false);
+            this.taskService.markAsWithdrawn(taskId);
+            this.taskService.taskNotification.set(true);
+            this.taskService.taskNotificationMessage.set('Te despostulaste correctamente');
+            
+            setTimeout(() => {
+              this.taskService.taskNotification.set(false);
+            }, 5000);
+          } else {
+            console.error('Error withdrawing application:', response.message);
+          }
+          this.isWithdrawing.set(false);
+        },
+        error: (error) => {
+          console.error('Error withdrawing application:', error);
+          this.isWithdrawing.set(false);
         }
-        this.isApplying.set(false);
-      },
-      error: (error) => {
-        console.error('Error applying to task:', error);
-        this.isApplying.set(false);
-      }
-    });
+      });
+    } else {
+      // Postularse normalmente
+      this.isApplying.set(true);
+      this.taskService.applyToTask(taskId).subscribe({
+        next: (response) => {
+          console.log('TaskCard: Apply response:', response);
+          if (response.success) {
+            this.hasApplied.set(true);
+            this.taskService.markAsApplied(taskId);
+            this.taskService.taskNotification.set(true);
+            this.taskService.taskNotificationMessage.set('Te postulaste correctamente');
+            
+            setTimeout(() => {
+              this.taskService.taskNotification.set(false);
+            }, 5000);
+          } else {
+            console.error('Error applying to task:', response.message);
+          }
+          this.isApplying.set(false);
+        },
+        error: (error) => {
+          console.error('Error applying to task:', error);
+          this.isApplying.set(false);
+        }
+      });
+    }
+  }
+
+  onMouseEnter() {
+    this.isHovering.set(true);
+  }
+
+  onMouseLeave() {
+    this.isHovering.set(false);
   }
 }
