@@ -3,6 +3,7 @@ export interface SearchFilters {
   city?: string;
   limit?: number;
   page?: number;
+  excludeOwnTasks?: boolean;
 }
 
 export interface Task {

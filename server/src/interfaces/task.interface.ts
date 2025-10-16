@@ -28,6 +28,8 @@ export interface GetTasksFilters {
   city?: string; 
   limit?: number; 
   page?: number;
+  excludeOwnTasks?: boolean;
+  currentUserId?: number;
 }
 
 export interface SelectApplicantRequest {

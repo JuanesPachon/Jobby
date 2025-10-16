@@ -24,6 +24,9 @@ export default class Dashboard implements OnInit {
   isLoading = signal<Boolean>(false);
   featuredTasks = signal<Task[]>([]);
   isFeaturedLoading = signal<Boolean>(true);
+  
+  taskNotification = this.taskService.taskNotification;
+  taskNotificationMessage = this.taskService.taskNotificationMessage;
 
   ngOnInit() {
     this.loadFeaturedTasks();
@@ -37,7 +40,8 @@ export default class Dashboard implements OnInit {
       position: formData.position || undefined,
       city: formData.city || undefined,
       limit: 10,
-      page: 1
+      page: 1,
+      excludeOwnTasks: true
     };
 
     this.taskService.setSearchFilters(filters);

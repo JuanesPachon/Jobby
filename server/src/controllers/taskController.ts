@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import errorHandler from "../utils/errorHandler.js";
-import { createTask, getTaskById, getTasks, getUserTasks, getTaskWithApplications, selectApplicant, deselectApplicant, startTask } from "../models/taskModel.js";
+import { createTask, getTaskById, getTasks, getUserTasks, getTaskWithApplications, selectApplicant, deselectApplicant, startTask, checkUserApplication } from '../models/taskModel.js';
 import { createApplication } from "../models/applicationModel.js";
 import { CreateTaskRequest, GetTasksFilters, SelectApplicantRequest } from "../interfaces/task.interface.js";
 
@@ -68,7 +68,9 @@ const getTasksController = async (req: Request, res: Response) => {
       position: req.query.position as string,
       city: req.query.city as string,
       limit: req.query.limit ? parseInt(req.query.limit as string, 10) : undefined,
-      page: req.query.page ? parseInt(req.query.page as string, 10) : undefined
+      page: req.query.page ? parseInt(req.query.page as string, 10) : undefined,
+      excludeOwnTasks: req.query.excludeOwnTasks === 'true',
+      currentUserId: req.user?.sub ? parseInt(req.user.sub, 10) : undefined
     };
 
     if (filters.limit !== undefined && (isNaN(filters.limit) || filters.limit < 1)) {
@@ -305,6 +307,51 @@ const deselectApplicantController = async (req: Request, res: Response) => {
   }
 };
 
+const checkApplicationController = async (req: Request, res: Response) => {
+  try {
+    const applicant_id = req.user?.sub;
+    
+    if (!applicant_id) {
+      return res.status(401).json({
+        success: false,
+        message: 'Usuario no autenticado'
+      });
+    }
+
+    const applicantIdNumber = parseInt(applicant_id, 10);
+    
+    if (isNaN(applicantIdNumber)) {
+      return res.status(400).json({
+        success: false,
+        message: 'ID de usuario no válido'
+      });
+    }
+
+    const taskId = req.params.id;
+    const taskIdNumber = parseInt(taskId, 10);
+
+    if (isNaN(taskIdNumber)) {
+      return res.status(400).json({
+        success: false,
+        message: 'ID de tarea no válido'
+      });
+    }
+    
+    const result = await checkUserApplication(taskIdNumber, applicantIdNumber);
+
+    return res.status(200).json({
+      success: true,
+      data: {
+        hasApplied: result.hasApplied
+      }
+    });
+
+  } catch (error) {
+    console.error('Error in checkApplicationController:', error);
+    return errorHandler.handleServerError(res, "Internal server error while checking application");
+  }
+};
+
 const startTaskController = async (req: Request, res: Response) => {
   try {
     const creator_id = req.user?.sub;
@@ -357,5 +404,6 @@ export {
   applyToTaskController,
   selectApplicantController,
   deselectApplicantController,
-  startTaskController
+  startTaskController,
+  checkApplicationController
 };

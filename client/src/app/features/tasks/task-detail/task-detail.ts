@@ -20,6 +20,13 @@ export default class TaskDetail implements OnInit {
   error = signal<boolean>(false);
   errorMessage = signal<string>('');
   returnRoute = signal<string>('/dashboard');
+  
+  currentUserId = signal<number | null>(null);
+  isApplying = signal<boolean>(false);
+  hasApplied = signal<boolean>(false);
+  
+  taskNotification = this.taskService.taskNotification;
+  taskNotificationMessage = this.taskService.taskNotificationMessage;
 
   ngOnInit() {
     const taskId = this.route.snapshot.paramMap.get('id');
@@ -40,11 +47,42 @@ export default class TaskDetail implements OnInit {
     
     if (taskId) {
       this.loadTask(parseInt(taskId, 10));
+      this.loadCurrentUser();
+      this.checkApplicationStatus();
     } else {
       this.error.set(true);
       this.errorMessage.set('ID de tarea no válido');
       this.isLoading.set(false);
     }
+  }
+
+  private loadCurrentUser() {
+    this.taskService.getCurrentUser().subscribe({
+      next: (response) => {
+        if (response.success && response.data) {
+          this.currentUserId.set(response.data.id);
+        }
+      },
+      error: (error) => {
+        console.error('Error loading current user:', error);
+      }
+    });
+  }
+
+  private checkApplicationStatus() {
+    const taskId = parseInt(this.route.snapshot.paramMap.get('id') || '0', 10);
+    if (!taskId) return;
+
+    this.taskService.checkApplicationStatus(taskId).subscribe({
+      next: (response) => {
+        if (response.success && response.data) {
+          this.hasApplied.set(response.data.hasApplied);
+        }
+      },
+      error: (error) => {
+        this.hasApplied.set(false);
+      }
+    });
   }
 
   private loadTask(taskId: number) {
@@ -144,5 +182,65 @@ export default class TaskDetail implements OnInit {
     return this.returnRoute() === '/dashboard' 
       ? 'Volver al dashboard' 
       : 'Volver a las tareas';
+  }
+
+  get isOwner(): boolean {
+    const userId = this.currentUserId();
+    const task = this.task();
+    return userId !== null && task !== null && userId === task.creator_id;
+  }
+
+  get canApply(): boolean {
+    return !this.isOwner && !this.hasApplied() && !this.isApplying();
+  }
+
+  get applyButtonText(): string {
+    if (this.isOwner) return 'Tu tarea';
+    if (this.hasApplied()) return 'Postulado';
+    if (this.isApplying()) return 'Postulando...';
+    return 'Postularme';
+  }
+
+  get applyButtonClass(): string {
+    const baseClass = "postular w-full md:w-auto px-4 md:px-20 lg:px-24 py-2 lg:py-2.5 rounded-xl font-semibold shadow-sm border border-black text-center text-sm lg:text-base flex items-center justify-center gap-2 transition-colors";
+    
+    if (this.isOwner) {
+      return baseClass + " bg-gray-300 text-gray-600 cursor-not-allowed";
+    }
+    if (this.hasApplied()) {
+      return baseClass + " bg-yellow-400 text-black hover:bg-yellow-500 cursor-pointer";
+    }
+    if (this.isApplying()) {
+      return baseClass + " bg-gray-400 text-white cursor-not-allowed";
+    }
+    return baseClass + " bg-gradient-to-b bg-main-blue text-white hover:bg-blue-600 cursor-pointer";
+  }
+
+  applyToTask() {
+    if (!this.canApply) return;
+
+    const task = this.task();
+    if (!task) return;
+
+    this.isApplying.set(true);
+
+    this.taskService.applyToTask(task.id).subscribe({
+      next: (response) => {
+        if (response.success) {
+          this.hasApplied.set(true);
+          this.taskService.markAsApplied(task.id);
+          this.taskService.taskNotification.set(true);
+          this.taskService.taskNotificationMessage.set('Te postulaste correctamente');
+          
+          setTimeout(() => {
+            this.taskService.taskNotification.set(false);
+          }, 5000);
+        }
+        this.isApplying.set(false);
+      },
+      error: (error) => {
+        this.isApplying.set(false);
+      }
+    });
   }
 }

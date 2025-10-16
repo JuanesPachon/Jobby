@@ -168,6 +168,11 @@ const getTasks = async (filters: GetTasksFilters): Promise<GetTasksResult> => {
             query += ' AND city = ?';
             queryParams.push(filters.city.trim());
         }
+
+        if (filters.excludeOwnTasks && filters.currentUserId) {
+            query += ' AND t.creator_id != ?';
+            queryParams.push(filters.currentUserId);
+        }
         
         query += ' ORDER BY created_at DESC';
         
@@ -637,6 +642,28 @@ const deselectApplicant = async (task_id: number, creator_id: number): Promise<D
     }
 };
 
+const checkUserApplication = async (task_id: number, applicant_id: number): Promise<{ hasApplied: boolean }> => {
+    try {
+        
+        const [rows] = await pool.query<RowDataPacket[]>(
+            'SELECT id FROM applications WHERE task_id = ? AND applicant_id = ?',
+            [task_id, applicant_id]
+        );
+
+        const hasApplied = rows.length > 0;
+        console.log('Found', rows.length, 'applications, hasApplied:', hasApplied);
+
+        return {
+            hasApplied
+        };
+    } catch (error: any) {
+        console.error('Error checking user application:', error);
+        return {
+            hasApplied: false
+        };
+    }
+};
+
 const startTask = async (task_id: number, creator_id: number): Promise<StartTaskResult> => {
     const connection = await pool.getConnection();
     
@@ -718,4 +745,4 @@ const startTask = async (task_id: number, creator_id: number): Promise<StartTask
     }
 };
 
-export { createTask, getTaskById, getTasks, getUserTasks, getTaskWithApplications, selectApplicant, deselectApplicant, startTask };
+export { createTask, getTaskById, getTasks, getUserTasks, getTaskWithApplications, selectApplicant, deselectApplicant, startTask, checkUserApplication };

@@ -24,9 +24,11 @@ export default class TasksResult implements OnInit {
   currentPage = signal<number>(1);
   itemsPerPage = 10;
   totalPages = computed(() => Math.ceil(this.totalTasks() / this.itemsPerPage));
+  
+  taskNotification = this.taskService.taskNotification;
+  taskNotificationMessage = this.taskService.taskNotificationMessage;
 
   ngOnInit() {
-    // Inicializar la página desde los filtros si existe
     const filters = this.searchFilters();
     if (filters.page) {
       this.currentPage.set(filters.page);
@@ -106,7 +108,8 @@ export default class TasksResult implements OnInit {
     const searchParams = {
       ...filters,
       page,
-      limit: this.itemsPerPage
+      limit: this.itemsPerPage,
+      excludeOwnTasks: true
     };
 
     this.taskService.setSearchFilters(searchParams);
