@@ -4,10 +4,11 @@ import { TaskService } from '../services/task.service';
 import { Task } from '../interfaces/SearchTasks';
 import { DashboardNavbar } from '../../../shared/dashboard-navbar/dashboard-navbar';
 import { environment } from '../../../../environments/environment';
+import { CurrencyColombianPipe, SpanishDatePipe } from '../../../shared/pipes';
 
 @Component({
   selector: 'app-task-detail',
-  imports: [DashboardNavbar, RouterLink],
+  imports: [DashboardNavbar, RouterLink, CurrencyColombianPipe, SpanishDatePipe],
   templateUrl: './task-detail.html',
   styleUrl: './task-detail.css'
 })
@@ -106,28 +107,7 @@ export default class TaskDetail implements OnInit {
     });
   }
 
-  get formattedSalary(): string {
-    const taskData = this.task();
-    if (!taskData) return '$0';
-    
-    return new Intl.NumberFormat('es-CO', {
-      style: 'currency',
-      currency: 'COP',
-      minimumFractionDigits: 0
-    }).format(taskData.salary);
-  }
 
-  get formattedDate(): string {
-    const taskData = this.task();
-    if (!taskData) return '';
-    
-    const date = new Date(taskData.created_at);
-    return date.toLocaleDateString('es-ES', { 
-      day: '2-digit', 
-      month: 'long',
-      year: 'numeric'
-    });
-  }
 
   get durationText(): string {
     const taskData = this.task();

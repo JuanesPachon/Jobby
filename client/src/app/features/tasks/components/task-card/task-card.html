@@ -19,12 +19,12 @@
       <div class="flex-1 min-w-0">
         <div class="flex justify-between items-start mb-3">
           <h3 class="text-lg sm:text-xl md:text-lg font-semibold text-black truncate pr-2 flex-1 min-w-0">{{displayTask.title}}</h3>
-          <span class="text-xs sm:text-sm text-gray-500 flex-shrink-0 ml-2">{{formattedDate}}</span>
+          <span class="text-xs sm:text-sm text-gray-500 flex-shrink-0 ml-2">{{displayTask.created_at | spanishDate:'short'}}</span>
         </div>
         <div class="flex items-center gap-4 sm:gap-6 mb-4">
           <div class="flex items-center gap-1">
             <img src="/icons/coins_icon.svg" alt="money" class="w-4 h-4 sm:w-5 sm:h-5" />
-            <span class="text-sm sm:text-base md:text-sm font-medium text-black">{{formattedSalary}}</span>
+            <span class="text-sm sm:text-base md:text-sm font-medium text-black">{{displayTask.salary | currencyColombianPipe}}</span>
           </div>
           <div class="flex items-center gap-1">
             <img src="/icons/Clock_icon.svg" alt="time" class="w-4 h-4 sm:w-5 sm:h-5" />
@@ -71,12 +71,12 @@
     <div class="flex-1 min-w-0">
       <div class="flex justify-between items-start mb-3 xl:mb-4">
         <h3 class="text-lg xl:text-xl font-semibold text-black truncate pr-2 flex-1 min-w-0">{{displayTask.title}}</h3>
-        <span class="text-sm xl:text-base text-gray-500 flex-shrink-0 ml-2">{{formattedDate}}</span>
+        <span class="text-sm text-gray-500 flex-shrink-0 ml-2">{{displayTask.created_at | spanishDate:'medium'}}</span>
       </div>
       <div class="flex items-center gap-6 xl:gap-8 mb-4 xl:mb-5">
         <div class="flex items-center gap-2">
           <img src="/icons/coins_icon.svg" alt="money" class="w-4 h-4 xl:w-5 xl:h-5" />
-          <span class="text-base xl:text-lg font-medium text-black">{{formattedSalary}}</span>
+          <span class="text-base xl:text-lg font-medium text-black">{{displayTask.salary | currencyColombianPipe}}</span>
         </div>
         <div class="flex items-center gap-2">
           <img src="/icons/Clock_icon.svg" alt="time" class="w-4 h-4 xl:w-5 xl:h-5" />

@@ -3,10 +3,11 @@ import { Task } from '../../interfaces/SearchTasks';
 import { environment } from '../../../../../environments/environment';
 import { RouterLink } from '@angular/router';
 import { TaskService } from '../../services/task.service';
+import { CurrencyColombianPipe, SpanishDatePipe } from '../../../../shared/pipes';
 
 @Component({
   selector: 'app-task-card',
-  imports: [RouterLink],
+  imports: [RouterLink, CurrencyColombianPipe, SpanishDatePipe],
   templateUrl: './task-card.html',
   styleUrl: './task-card.css'
 })
@@ -90,23 +91,7 @@ export class TaskCard implements OnInit {
     return environment.supabaseStorageUrl + task.creator.photo_url || '/images/WebP/avatar.png';
   }
 
-  get formattedDate(): string {
-    const task = this.displayTask;
-    const date = new Date(task.created_at);
-    return date.toLocaleDateString('es-ES', { 
-      day: '2-digit', 
-      month: 'long'
-    });
-  }
 
-  get formattedSalary(): string {
-    const task = this.displayTask;
-    return new Intl.NumberFormat('es-CO', {
-      style: 'currency',
-      currency: 'COP',
-      minimumFractionDigits: 0
-    }).format(task.salary);
-  }
 
   get durationText(): string {
     const task = this.displayTask;
