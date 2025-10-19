@@ -32,6 +32,11 @@ export interface GetTasksFilters {
   currentUserId?: number;
 }
 
+export interface GetUserTasksFilters {
+  limit?: number; 
+  page?: number;
+}
+
 export interface SelectApplicantRequest {
   applicant_id: number;
 }

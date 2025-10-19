@@ -60,7 +60,10 @@ export interface PublishedTasksResponse {
   success: boolean;
   message?: string;
   error?: string;
-  data?: PublishedTask[];
+  data?: {
+    tasks: PublishedTask[];
+    total: number;
+  };
 }
 
 export interface TaskWithApplicationsResponse {

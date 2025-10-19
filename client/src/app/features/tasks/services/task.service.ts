@@ -192,8 +192,22 @@ export class TaskService {
     this.appliedTasksCache.set(new Map());
   }
 
-  getMyPublishedTasks(): Observable<PublishedTasksResponse> {
-    return this.http.get<PublishedTasksResponse>(`${environment.apiUrl}/my-tasks`, {
+
+  getMyPublishedTasks(filters?: { limit?: number; page?: number }): Observable<PublishedTasksResponse> {
+    let params = new URLSearchParams();
+    
+    if (filters?.limit) {
+      params.append('limit', filters.limit.toString());
+    }
+    
+    if (filters?.page) {
+      params.append('page', filters.page.toString());
+    }
+
+    const queryString = params.toString();
+    const url = queryString ? `${environment.apiUrl}/my-tasks?${queryString}` : `${environment.apiUrl}/my-tasks`;
+
+    return this.http.get<PublishedTasksResponse>(url, {
       withCredentials: true
     });
   }
