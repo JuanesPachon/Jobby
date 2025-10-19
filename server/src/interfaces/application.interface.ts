@@ -20,14 +20,14 @@ export interface ApplicationWithApplicantInfo {
   status_changed_at: Date;
   first_name: string;
   last_name: string;
-  avatar_url?: string;
+  photo_url?: string;
 }
 
 export interface SelectedUserInfo {
   id: number;
   first_name: string;
   last_name: string;
-  avatar_url?: string;
+  photo_url?: string;
 }
 
 export interface TaskWithApplications {

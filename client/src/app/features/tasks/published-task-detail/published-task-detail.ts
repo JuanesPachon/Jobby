@@ -19,6 +19,8 @@ export default class PublishedTaskDetail implements OnInit {
   applicants = signal<Applicant[]>([]);
   isLoading = signal<boolean>(false);
   error = signal<string | null>(null);
+  isSelectingApplicant = signal<number | null>(null);
+  hoveredApplicant = signal<number | null>(null);
 
   ngOnInit() {
     const taskId = this.route.snapshot.paramMap.get('id');
@@ -52,7 +54,18 @@ export default class PublishedTaskDetail implements OnInit {
           };
           
           this.taskDetail.set(taskDetail);
-          this.applicants.set(response.data.applications || []);
+          const activeApplications = (response.data.applications || [])
+            .filter((app: any) => app.status !== 'withdrawn')
+            .map((app: any) => ({
+              id: app.applicant_id,        
+              application_id: app.id,     
+              first_name: app.first_name,
+              last_name: app.last_name,               
+              photo_url: app.photo_url || '/images/WebP/profile_mock.png',
+              applied_at: app.applied_at,
+              status: app.status
+            }));
+          this.applicants.set(activeApplications);
         } else {
           this.error.set('Error al cargar los detalles de la tarea');
         }
@@ -64,6 +77,13 @@ export default class PublishedTaskDetail implements OnInit {
         this.isLoading.set(false);
       }
     });
+  }
+
+  refreshApplications(): void {
+    const taskDetail = this.taskDetail();
+    if (taskDetail) {
+      this.loadTaskWithApplications(taskDetail.id);
+    }
   }
 
 
@@ -94,7 +114,98 @@ export default class PublishedTaskDetail implements OnInit {
     return days === 1 ? '1 día' : `${days} días`;
   }
 
-  onSelectApplicant(): void {
+  onSelectApplicant(applicant: Applicant): void {
+    const taskDetail = this.taskDetail();
+    if (!taskDetail) return;
+
+    this.isSelectingApplicant.set(applicant.application_id);
+
+    if (applicant.status === 'selected') {
+      this.taskService.deselectApplicant(taskDetail.id).subscribe({
+        next: (response) => {
+          if (response.success) {
+            const currentApplicants = this.applicants();
+            const updatedApplicants = currentApplicants.map(app => 
+              app.application_id === applicant.application_id 
+                ? { ...app, status: 'applied' as const }
+                : app
+            );
+            this.applicants.set(updatedApplicants);
+
+            const updatedTask = { ...taskDetail, selected_user_id: null };
+            this.taskDetail.set(updatedTask);
+          }
+          this.isSelectingApplicant.set(null);
+        },
+        error: (error) => {
+          console.error('Error deselecting applicant:', error);
+          this.isSelectingApplicant.set(null);
+        }
+      });
+    } else {
+      this.taskService.selectApplicant(taskDetail.id, applicant.id).subscribe({
+        next: (response) => {
+          if (response.success) {
+            const currentApplicants = this.applicants();
+            const updatedApplicants = currentApplicants.map(app => 
+              app.application_id === applicant.application_id 
+                ? { ...app, status: 'selected' as const }
+                : { ...app, status: 'applied' as const }
+            );
+            this.applicants.set(updatedApplicants);
+
+            const updatedTask = { ...taskDetail, selected_user_id: applicant.id };
+            this.taskDetail.set(updatedTask);
+          }
+          this.isSelectingApplicant.set(null);
+        },
+        error: (error) => {
+          console.error('Error selecting applicant:', error);
+          this.isSelectingApplicant.set(null);
+        }
+      });
+    }
+  }
+
+  onMouseEnterApplicant(applicantId: number): void {
+    this.hoveredApplicant.set(applicantId);
+  }
+
+  onMouseLeaveApplicant(): void {
+    this.hoveredApplicant.set(null);
+  }
+
+  getButtonText(applicant: Applicant): string {
+    const isLoading = this.isSelectingApplicant() === applicant.application_id;
+    const isHovered = this.hoveredApplicant() === applicant.application_id;
+    
+    if (isLoading) {
+      return 'Cargando...';
+    }
+    
+    if (applicant.status === 'selected') {
+      return isHovered ? 'Deseleccionar' : 'Seleccionado';
+    }
+    
+    return 'Seleccionar';
+  }
+
+  getButtonClass(applicant: Applicant): string {
+    const isLoading = this.isSelectingApplicant() === applicant.application_id;
+    const isHovered = this.hoveredApplicant() === applicant.application_id;
+    
+    if (isLoading) {
+      return 'px-4 py-2 sm:px-6 sm:py-2 rounded-full bg-gray-400 text-white text-xs sm:text-sm font-medium border border-black cursor-not-allowed';
+    }
+    
+    if (applicant.status === 'selected') {
+      if (isHovered) {
+        return 'px-4 py-2 sm:px-6 sm:py-2 rounded-full bg-red-500 hover:bg-red-600 text-white text-xs sm:text-sm font-medium border border-black transition-colors cursor-pointer';
+      }
+      return 'px-4 py-2 sm:px-6 sm:py-2 rounded-full bg-main-yelllow hover:bg-yellow-500 text-black text-xs sm:text-sm font-medium border border-black transition-colors cursor-pointer';
+    }
+    
+    return 'px-4 py-2 sm:px-6 sm:py-2 rounded-full bg-main-blue hover:bg-blue-600 text-white text-xs sm:text-sm font-medium border border-black transition-colors cursor-pointer';
   }
 
   onImageError(event: Event): void {

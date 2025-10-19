@@ -89,11 +89,14 @@
                 </div>
 
                 <button
-                  class="px-4 py-2 sm:px-6 sm:py-2 rounded-full bg-main-blue hover:bg-blue-600 text-white text-xs sm:text-sm font-medium border border-black transition-colors cursor-pointer"
+                  [class]="getButtonClass(applicant)"
                   type="button"
-                  (click)="onSelectApplicant()"
+                  (click)="onSelectApplicant(applicant)"
+                  (mouseenter)="onMouseEnterApplicant(applicant.application_id)"
+                  (mouseleave)="onMouseLeaveApplicant()"
+                  [disabled]="isSelectingApplicant() === applicant.application_id"
                 >
-                  Seleccionar
+                  {{ getButtonText(applicant) }}
                 </button>
               </div>
             }

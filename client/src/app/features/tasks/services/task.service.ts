@@ -225,4 +225,10 @@ export class TaskService {
       withCredentials: true
     });
   }
+
+  deselectApplicant(taskId: number): Observable<any> {
+    return this.http.put<any>(`${environment.apiUrl}/my-tasks/deselect/${taskId}`, {}, {
+      withCredentials: true
+    });
+  }
 }

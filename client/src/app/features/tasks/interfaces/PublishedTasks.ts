@@ -32,11 +32,9 @@ export interface Applicant {
   application_id: number;
   first_name: string;
   last_name: string;
-  email: string;
-  phone?: string | null;
   photo_url: string;
   applied_at: string;
-  status: 'applied' | 'selected' | 'rejected';
+  status: 'applied' | 'selected' | 'rejected' | 'withdrawn';
 }
 
 export interface TaskWithApplications {
@@ -48,7 +46,7 @@ export interface TaskWithApplications {
   city: string;
   neighborhood?: string | null;
   duration_days: number;
-  salary: string; // El backend devuelve como string
+  salary: string;
   status: 'available' | 'in_progress' | 'completed' | 'cancelled';
   created_at: string;
   updated_at: string;

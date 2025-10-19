@@ -347,12 +347,13 @@ const getTaskWithApplications = async (task_id: number, creator_id: number): Pro
         if (task.selected_user_id) {
             const [selectedUserRows] = await pool.query<RowDataPacket[]>(
                 `SELECT 
-                    id,
-                    first_name,
-                    last_name,
-                    avatar_url
-                FROM users 
-                WHERE id = ?`,
+                    u.id,
+                    u.first_name,
+                    u.last_name,
+                    up.photo_url
+                FROM users u
+                LEFT JOIN profiles up ON u.id = up.user_id
+                WHERE u.id = ?`,
                 [task.selected_user_id]
             );
 
@@ -362,7 +363,7 @@ const getTaskWithApplications = async (task_id: number, creator_id: number): Pro
                     id: userRow.id,
                     first_name: userRow.first_name,
                     last_name: userRow.last_name,
-                    avatar_url: userRow.avatar_url
+                    photo_url: userRow.photo_url
                 };
             }
         }
@@ -377,10 +378,11 @@ const getTaskWithApplications = async (task_id: number, creator_id: number): Pro
                 a.status_changed_at,
                 u.first_name,
                 u.last_name,
-                u.avatar_url
+                up.photo_url
             FROM applications a
             INNER JOIN users u ON a.applicant_id = u.id
-            WHERE a.task_id = ?
+            LEFT JOIN profiles up ON u.id = up.user_id
+            WHERE a.task_id = ? AND a.status != 'withdrawn'
             ORDER BY a.applied_at DESC`,
             [task_id]
         );
@@ -394,7 +396,7 @@ const getTaskWithApplications = async (task_id: number, creator_id: number): Pro
             status_changed_at: row.status_changed_at,
             first_name: row.first_name,
             last_name: row.last_name,
-            avatar_url: row.avatar_url
+            photo_url: row.photo_url
         }));
 
         const taskWithApplications: TaskWithApplications = {
