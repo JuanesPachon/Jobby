@@ -4,10 +4,11 @@ import { DashboardNavbar } from '../../../shared/dashboard-navbar/dashboard-navb
 import { CurrencyColombianPipe, SpanishDatePipe } from '../../../shared/pipes';
 import { TaskService } from '../services/task.service';
 import { TaskDetail, Applicant } from '../interfaces';
+import { NgClass } from '@angular/common';
 
 @Component({
   selector: 'app-published-task-detail',
-  imports: [DashboardNavbar, RouterLink, CurrencyColombianPipe, SpanishDatePipe],
+  imports: [DashboardNavbar, RouterLink, CurrencyColombianPipe, SpanishDatePipe, NgClass],
   templateUrl: './published-task-detail.html',
   styleUrl: './published-task-detail.css'
 })
@@ -21,6 +22,9 @@ export default class PublishedTaskDetail implements OnInit {
   error = signal<string | null>(null);
   isSelectingApplicant = signal<number | null>(null);
   hoveredApplicant = signal<number | null>(null);
+  isStartingTask = signal<boolean>(false);
+  taskNotification = signal<boolean>(false);
+  taskNotificationMessage = signal<string>('');
 
   ngOnInit() {
     const taskId = this.route.snapshot.paramMap.get('id');
@@ -206,6 +210,60 @@ export default class PublishedTaskDetail implements OnInit {
     }
     
     return 'px-4 py-2 sm:px-6 sm:py-2 rounded-full bg-main-blue hover:bg-blue-600 text-white text-xs sm:text-sm font-medium border border-black transition-colors cursor-pointer';
+  }
+
+  onStartTask(): void {
+    const taskDetail = this.taskDetail();
+    if (!taskDetail) return;
+
+    this.isStartingTask.set(true);
+
+    this.taskService.startTask(taskDetail.id).subscribe({
+      next: (response) => {
+        if (response.success) {
+          const updatedTask = { ...taskDetail, status: 'in_progress' as const };
+          this.taskDetail.set(updatedTask);
+
+          this.taskNotificationMessage.set('Ha empezado la tarea exitosamente');
+          this.taskNotification.set(true);
+          
+          setTimeout(() => {
+            this.taskNotification.set(false);
+          }, 3000);
+        }
+        this.isStartingTask.set(false);
+      },
+      error: (error) => {
+        this.isStartingTask.set(false);
+      }
+    });
+  }
+
+  canStartTask(): boolean {
+    const taskDetail = this.taskDetail();
+    if (!taskDetail) return false;
+    
+    return taskDetail.status === 'available' && taskDetail.selected_user_id !== null;
+  }
+
+  getStartTaskButtonClass(): string {
+    const canStart = this.canStartTask();
+    const isLoading = this.isStartingTask();
+    
+    if (isLoading) {
+      return 'px-6 py-2 rounded-full bg-gray-400 text-white text-sm font-medium border border-black cursor-not-allowed';
+    }
+    
+    if (!canStart) {
+      return 'px-6 py-2 rounded-full bg-gray-300 text-gray-500 text-sm font-medium border border-black cursor-not-allowed';
+    }
+    
+    return 'px-6 py-2 rounded-full bg-main-blue hover:bg-blue-600 text-white text-sm font-medium border border-black transition-colors cursor-pointer';
+  }
+
+  getStartTaskButtonText(): string {
+    const isLoading = this.isStartingTask();
+    return isLoading ? 'Iniciando...' : this.taskDetail()?.status === 'in_progress'? 'Tarea iniciada' : 'Empezar tarea'; 
   }
 
   onImageError(event: Event): void {

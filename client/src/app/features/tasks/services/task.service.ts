@@ -231,4 +231,10 @@ export class TaskService {
       withCredentials: true
     });
   }
+
+  startTask(taskId: number): Observable<any> {
+    return this.http.put<any>(`${environment.apiUrl}/my-tasks/start/${taskId}`, {}, {
+      withCredentials: true
+    });
+  }
 }
