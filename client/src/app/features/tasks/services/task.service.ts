@@ -3,7 +3,7 @@ import { inject, Injectable, signal } from '@angular/core';
 import { Observable, tap } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 import { CreateTaskRequest } from '../post-task/interfaces/CreateTaskRequest';
-import { SearchFilters } from '../interfaces/SearchTasks';
+import { SearchFilters, PublishedTasksResponse, TaskWithApplicationsResponse } from '../interfaces';
 
 @Injectable({
   providedIn: 'root'
@@ -190,5 +190,25 @@ export class TaskService {
 
   clearAppliedTasks(): void {
     this.appliedTasksCache.set(new Map());
+  }
+
+  getMyPublishedTasks(): Observable<PublishedTasksResponse> {
+    return this.http.get<PublishedTasksResponse>(`${environment.apiUrl}/my-tasks`, {
+      withCredentials: true
+    });
+  }
+
+  getPublishedTaskWithApplications(taskId: number): Observable<TaskWithApplicationsResponse> {
+    return this.http.get<TaskWithApplicationsResponse>(`${environment.apiUrl}/my-tasks/applications/${taskId}`, {
+      withCredentials: true
+    });
+  }
+
+  selectApplicant(taskId: number, applicantId: number): Observable<any> {
+    return this.http.put<any>(`${environment.apiUrl}/my-tasks/select/${taskId}`, {
+      applicant_id: applicantId
+    }, {
+      withCredentials: true
+    });
   }
 }

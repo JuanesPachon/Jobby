@@ -1,11 +1,65 @@
-import { Component } from '@angular/core';
+import { Component, Input, inject } from '@angular/core';
+import { Router } from '@angular/router';
+import { CurrencyColombianPipe, SpanishDatePipe } from '../../../../shared/pipes';
+import { PublishedTask } from '../../interfaces';
 
 @Component({
   selector: 'app-published-task-card',
-  imports: [],
+  imports: [CurrencyColombianPipe, SpanishDatePipe],
   templateUrl: './published-task-card.html',
   styleUrl: './published-task-card.css'
 })
 export class PublishedTaskCard {
+  @Input() task?: PublishedTask;
+  
+  private router = inject(Router);
 
+  get displayTask(): PublishedTask {
+    if (this.task) {
+      return this.task;
+    }
+    
+    return {
+      id: 1,
+      creator_id: 1,
+      title: 'Enchapador de baño completo',
+      description: 'Se requiere enchapador con experiencia para trabajo completo de baño',
+      city: 'Bogotá',
+      neighborhood: 'Chapinero',
+      salary: 350000,
+      duration_days: 3,
+      applications_count: 7,
+      created_at: '2024-12-15',
+      status: 'available'
+    };
+  }
+
+  get durationText(): string {
+    const days = this.displayTask.duration_days;
+    return days === 1 ? '1 día' : `${days} días`;
+  }
+
+  get applicationsText(): string {
+    const count = this.displayTask.applications_count;
+    return count === 1 ? '1 postulado' : `${count} postulados`;
+  }
+
+  get statusText(): string {
+    switch (this.displayTask.status) {
+      case 'available':
+        return 'Disponible';
+      case 'in_progress':
+        return 'En progreso';
+      case 'completed':
+        return 'Completada';
+      case 'cancelled':
+        return 'Cancelada';
+      default:
+        return 'Sin estado';
+    }
+  }
+
+  onViewApplicants(): void {
+    this.router.navigate(['/published-task', this.displayTask.id]);
+  }
 }
