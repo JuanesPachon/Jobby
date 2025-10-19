@@ -96,4 +96,11 @@ export default class PublishedTaskDetail implements OnInit {
 
   onSelectApplicant(): void {
   }
+
+  onImageError(event: Event): void {
+    const img = event.target as HTMLImageElement;
+    if (img && img.src !== '/images/WebP/profile_mock.png') {
+      img.src = '/images/WebP/profile_mock.png';
+    }
+  }
 }

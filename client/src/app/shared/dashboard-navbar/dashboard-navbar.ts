@@ -68,6 +68,13 @@ export class DashboardNavbar implements OnInit, OnDestroy {
     return `${this.userData.first_name || ''} ${this.userData.last_name || ''}`.trim() || 'Usuario';
   }
 
+  onImageError(event: Event): void {
+    const img = event.target as HTMLImageElement;
+    if (img && img.src !== '/images/WebP/profile_mock.png') {
+      img.src = '/images/WebP/profile_mock.png';
+    }
+  }
+
   attemptSignOut(): void {
     this.authService.attemptSignOut().subscribe({
       next: () => {

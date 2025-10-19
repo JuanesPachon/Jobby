@@ -78,9 +78,10 @@
               <div class="flex items-center justify-between px-4 py-3 border-b border-x border-black last:rounded-b-lg">
                 <div class="flex items-center gap-3">
                   <img 
-                    [src]="applicant.photo_url" 
+                    [src]="applicant.photo_url || '/images/WebP/profile_mock.png'" 
                     [alt]="applicant.first_name + ' ' + applicant.last_name"
                     class="w-10 h-10 sm:w-12 sm:h-12 rounded-full object-cover border border-gray-300"
+                    (error)="onImageError($event)"
                   />
                   <span class="text-sm sm:text-base font-medium text-black">
                     {{ applicant.first_name }} {{ applicant.last_name }}

@@ -137,9 +137,18 @@ export default class TaskDetail implements OnInit {
 
   get creatorAvatar(): string {
     const taskData = this.task();
-    if (!taskData) return '/images/WebP/avatar.png';
+    if (!taskData || !taskData.creator.photo_url) {
+      return '/images/WebP/profile_mock.png';
+    }
     
-    return environment.supabaseStorageUrl + taskData.creator.photo_url || '/images/WebP/avatar.png';
+    return `${environment.supabaseStorageUrl}/${taskData.creator.photo_url}`;
+  }
+
+  onImageError(event: Event): void {
+    const img = event.target as HTMLImageElement;
+    if (img && img.src !== '/images/WebP/profile_mock.png') {
+      img.src = '/images/WebP/profile_mock.png';
+    }
   }
 
   get statusText(): string {
