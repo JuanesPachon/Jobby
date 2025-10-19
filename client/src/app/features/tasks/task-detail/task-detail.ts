@@ -244,7 +244,23 @@ export default class TaskDetail implements OnInit {
           this.isWithdrawing.set(false);
         },
         error: (error) => {
-          console.error('Error withdrawing application:', error);
+          
+          if (error.status === 400 && error.error?.message?.includes('Application status is not "applied"')) {
+            this.taskService.taskNotification.set(true);
+            this.taskService.taskNotificationMessage.set('No puedes despostularte, el creador de la tarea ya te ha seleccionado');
+            
+            setTimeout(() => {
+              this.taskService.taskNotification.set(false);
+            }, 5000);
+          } else {
+            this.taskService.taskNotification.set(true);
+            this.taskService.taskNotificationMessage.set('Error al despostularse. Intenta nuevamente');
+            
+            setTimeout(() => {
+              this.taskService.taskNotification.set(false);
+            }, 5000);
+          }
+          
           this.isWithdrawing.set(false);
         }
       });
