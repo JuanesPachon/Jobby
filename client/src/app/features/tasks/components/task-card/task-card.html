@@ -8,6 +8,7 @@
           [src]="creatorAvatar"
           alt="Avatar"
           class="w-12 h-12 sm:w-16 sm:h-16 md:w-14 md:h-14 rounded-full border object-cover mb-2"
+          (error)="onImageError($event)"
         />
         <p class="text-xs sm:text-sm md:text-xs font-medium text-black text-center mb-1">{{creatorName}}</p>
         <div class="flex items-center gap-1">
@@ -62,6 +63,7 @@
         [src]="creatorAvatar"
         alt="Avatar"
         class="w-16 h-16 xl:w-18 xl:h-18 rounded-full border object-cover mb-2"
+        (error)="onImageError($event)"
       />
       <p class="text-sm xl:text-base font-medium text-black text-center mb-1">{{creatorName}}</p>
       <div class="flex items-center gap-1">

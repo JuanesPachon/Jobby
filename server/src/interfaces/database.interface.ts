@@ -165,20 +165,23 @@ export interface GetUserTasksResult {
     error?: 'server';
     message?: string;
     data?: {
-        id: number;
-        creator_id: number;
-        selected_user_id?: number | null;
-        title: string;
-        description: string;
-        city: string;
-        neighborhood?: string | null;
-        duration_days: number;
-        salary: number;
-        status: 'available' | 'in_progress' | 'completed' | 'cancelled';
-        created_at: Date;
-        updated_at: Date;
-        applications_count: number;
-    }[];
+        tasks: {
+            id: number;
+            creator_id: number;
+            selected_user_id?: number | null;
+            title: string;
+            description: string;
+            city: string;
+            neighborhood?: string | null;
+            duration_days: number;
+            salary: number;
+            status: 'available' | 'in_progress' | 'completed' | 'cancelled';
+            created_at: Date;
+            updated_at: Date;
+            applications_count: number;
+        }[];
+        total: number;
+    };
 }
 
 export interface GetTaskWithApplicationsResult {

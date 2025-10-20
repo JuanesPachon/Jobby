@@ -1,1 +1,36 @@
-<p>published-task-card works!</p>
+<div class="bg-white border border-black rounded-2xl shadow-md p-4 sm:p-4 lg:p-5">
+
+    <div class="flex items-center justify-between gap-4 mb-3">
+        <h3 class="text-sm sm:text-base lg:text-lg font-semibold text-black mb-3">{{ displayTask.title }}</h3>
+        <div class="text-xs sm:text-sm text-gray-500 mb-3">{{ displayTask.created_at | spanishDate:'short' }}</div>
+    </div>
+    
+    <div class="flex items-center gap-10 mb-3">
+        <div class="flex items-center gap-2">
+            <img src="/icons/coins_icon.svg" alt="Salario" class="w-5 h-5" />
+            <span class="text-xs sm:text-sm lg:text-base font-medium text-black">{{ displayTask.salary | currencyColombianPipe }}</span>
+        </div>
+        
+        <div class="flex items-center gap-2">
+            <img src="/icons/Clock_icon.svg" alt="Duración" class="w-5 h-5" />
+            <span class="text-xs sm:text-sm lg:text-base font-medium text-black">{{ durationText }}</span>
+        </div>
+    </div>
+    
+    <div class="flex items-center justify-between">
+        <div class="flex items-center gap-1">
+            <svg class="w-5 h-5 text-black" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3z"></path>
+            </svg>
+            <span class="text-xs sm:text-sm lg:text-base font-medium text-black">Postulados: {{ displayTask.applications_count }}</span>
+        </div>
+        
+        <button
+            class="px-3 py-1.5 sm:px-4 sm:py-2 lg:px-6 lg:py-2 rounded-full bg-main-blue hover:bg-blue-600 text-white text-xs sm:text-sm font-medium border border-black transition-colors cursor-pointer"
+            type="button"
+            (click)="onViewApplicants()"
+            >
+            Ver postulados
+        </button>
+    </div>
+</div>

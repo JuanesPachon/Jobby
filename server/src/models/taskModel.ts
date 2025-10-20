@@ -1,6 +1,6 @@
 import pool from "../config/db_config.js";
 import { ResultSetHeader, RowDataPacket } from "mysql2/promise";
-import { CreateTaskRequest, GetTasksFilters } from "../interfaces/task.interface.js";
+import { CreateTaskRequest, GetTasksFilters, GetUserTasksFilters } from "../interfaces/task.interface.js";
 import { TaskWithApplications } from "../interfaces/application.interface.js";
 import { CreateTaskResult, GetTaskByIdResult, GetTasksResult, GetUserTasksResult, GetTaskWithApplicationsResult, SelectApplicantResult, DeselectApplicantResult, StartTaskResult } from "../interfaces/database.interface.js";
 
@@ -245,10 +245,10 @@ const getTasks = async (filters: GetTasksFilters): Promise<GetTasksResult> => {
     }
 };
 
-const getUserTasks = async (creator_id: number): Promise<GetUserTasksResult> => {
+const getUserTasks = async (creator_id: number, filters?: GetUserTasksFilters): Promise<GetUserTasksResult> => {
     try {
-        const [taskRows] = await pool.query<RowDataPacket[]>(
-            `SELECT 
+        let query = `
+            SELECT 
                 t.id,
                 t.creator_id,
                 t.selected_user_id,
@@ -266,9 +266,25 @@ const getUserTasks = async (creator_id: number): Promise<GetUserTasksResult> => 
             LEFT JOIN applications a ON t.id = a.task_id
             WHERE t.creator_id = ? AND t.deleted_at IS NULL
             GROUP BY t.id
-            ORDER BY t.created_at DESC`,
+            ORDER BY t.created_at DESC
+        `;
+
+        const limit = filters?.limit || 20;
+        const page = filters?.page || 1;
+        const offset = (page - 1) * limit;
+        
+        query += ' LIMIT ? OFFSET ?';
+        
+        const [taskRows] = await pool.query<RowDataPacket[]>(query, [creator_id, limit, offset]);
+
+        const [countRows] = await pool.query<RowDataPacket[]>(
+            `SELECT COUNT(DISTINCT t.id) as total
+            FROM tasks t
+            WHERE t.creator_id = ? AND t.deleted_at IS NULL`,
             [creator_id]
         );
+        
+        const total = countRows[0].total;
 
         const tasks = taskRows.map(row => ({
             id: row.id,
@@ -289,7 +305,10 @@ const getUserTasks = async (creator_id: number): Promise<GetUserTasksResult> => 
         return {
             success: true,
             message: 'User tasks retrieved successfully',
-            data: tasks
+            data: {
+                tasks,
+                total
+            }
         };
 
     } catch (error: any) {
@@ -328,12 +347,13 @@ const getTaskWithApplications = async (task_id: number, creator_id: number): Pro
         if (task.selected_user_id) {
             const [selectedUserRows] = await pool.query<RowDataPacket[]>(
                 `SELECT 
-                    id,
-                    first_name,
-                    last_name,
-                    avatar_url
-                FROM users 
-                WHERE id = ?`,
+                    u.id,
+                    u.first_name,
+                    u.last_name,
+                    up.photo_url
+                FROM users u
+                LEFT JOIN profiles up ON u.id = up.user_id
+                WHERE u.id = ?`,
                 [task.selected_user_id]
             );
 
@@ -343,7 +363,7 @@ const getTaskWithApplications = async (task_id: number, creator_id: number): Pro
                     id: userRow.id,
                     first_name: userRow.first_name,
                     last_name: userRow.last_name,
-                    avatar_url: userRow.avatar_url
+                    photo_url: userRow.photo_url
                 };
             }
         }
@@ -358,10 +378,11 @@ const getTaskWithApplications = async (task_id: number, creator_id: number): Pro
                 a.status_changed_at,
                 u.first_name,
                 u.last_name,
-                u.avatar_url
+                up.photo_url
             FROM applications a
             INNER JOIN users u ON a.applicant_id = u.id
-            WHERE a.task_id = ?
+            LEFT JOIN profiles up ON u.id = up.user_id
+            WHERE a.task_id = ? AND a.status != 'withdrawn'
             ORDER BY a.applied_at DESC`,
             [task_id]
         );
@@ -375,7 +396,7 @@ const getTaskWithApplications = async (task_id: number, creator_id: number): Pro
             status_changed_at: row.status_changed_at,
             first_name: row.first_name,
             last_name: row.last_name,
-            avatar_url: row.avatar_url
+            photo_url: row.photo_url
         }));
 
         const taskWithApplications: TaskWithApplications = {

@@ -3,7 +3,7 @@ import { inject, Injectable, signal } from '@angular/core';
 import { Observable, tap } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 import { CreateTaskRequest } from '../post-task/interfaces/CreateTaskRequest';
-import { SearchFilters } from '../interfaces/SearchTasks';
+import { SearchFilters, PublishedTasksResponse, TaskWithApplicationsResponse } from '../interfaces';
 
 @Injectable({
   providedIn: 'root'
@@ -190,5 +190,51 @@ export class TaskService {
 
   clearAppliedTasks(): void {
     this.appliedTasksCache.set(new Map());
+  }
+
+
+  getMyPublishedTasks(filters?: { limit?: number; page?: number }): Observable<PublishedTasksResponse> {
+    let params = new URLSearchParams();
+    
+    if (filters?.limit) {
+      params.append('limit', filters.limit.toString());
+    }
+    
+    if (filters?.page) {
+      params.append('page', filters.page.toString());
+    }
+
+    const queryString = params.toString();
+    const url = queryString ? `${environment.apiUrl}/my-tasks?${queryString}` : `${environment.apiUrl}/my-tasks`;
+
+    return this.http.get<PublishedTasksResponse>(url, {
+      withCredentials: true
+    });
+  }
+
+  getPublishedTaskWithApplications(taskId: number): Observable<TaskWithApplicationsResponse> {
+    return this.http.get<TaskWithApplicationsResponse>(`${environment.apiUrl}/my-tasks/applications/${taskId}`, {
+      withCredentials: true
+    });
+  }
+
+  selectApplicant(taskId: number, applicantId: number): Observable<any> {
+    return this.http.put<any>(`${environment.apiUrl}/my-tasks/select/${taskId}`, {
+      applicant_id: applicantId
+    }, {
+      withCredentials: true
+    });
+  }
+
+  deselectApplicant(taskId: number): Observable<any> {
+    return this.http.put<any>(`${environment.apiUrl}/my-tasks/deselect/${taskId}`, {}, {
+      withCredentials: true
+    });
+  }
+
+  startTask(taskId: number): Observable<any> {
+    return this.http.put<any>(`${environment.apiUrl}/my-tasks/start/${taskId}`, {}, {
+      withCredentials: true
+    });
   }
 }

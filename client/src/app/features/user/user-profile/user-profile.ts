@@ -96,6 +96,13 @@ export default class UserProfile implements OnInit, OnDestroy {
   getPhotoUrl(photoPath: string | null | undefined): string {
     return this.userService.getPhotoUrl(photoPath);
   }
+
+  onImageError(event: Event): void {
+    const img = event.target as HTMLImageElement;
+    if (img && img.src !== '/images/WebP/profile_mock.png') {
+      img.src = '/images/WebP/profile_mock.png';
+    }
+  }
   
   //Description
 

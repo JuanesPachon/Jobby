@@ -90,7 +90,17 @@ export class TaskCard implements OnInit {
 
   get creatorAvatar(): string {
     const task = this.displayTask;
-    return environment.supabaseStorageUrl + task.creator.photo_url || '/images/WebP/avatar.png';
+    if (!task.creator.photo_url) {
+      return '/images/WebP/profile_mock.png';
+    }
+    return `${environment.supabaseStorageUrl}/${task.creator.photo_url}`;
+  }
+
+  onImageError(event: Event): void {
+    const img = event.target as HTMLImageElement;
+    if (img && img.src !== '/images/WebP/profile_mock.png') {
+      img.src = '/images/WebP/profile_mock.png';
+    }
   }
 
 
@@ -186,7 +196,6 @@ export class TaskCard implements OnInit {
 
     const taskId = this.displayTask.id;
 
-    // Si ya se postuló, entonces retirar la postulación
     if (this.hasApplied()) {
       this.isWithdrawing.set(true);
       this.taskService.withdrawApplication(taskId).subscribe({
@@ -207,11 +216,27 @@ export class TaskCard implements OnInit {
         },
         error: (error) => {
           console.error('Error withdrawing application:', error);
+          
+          if (error.status === 400 && error.error?.message?.includes('Application status is not "applied"')) {
+            this.taskService.taskNotification.set(true);
+            this.taskService.taskNotificationMessage.set('No puedes despostularte, el creador de la tarea ya te ha seleccionado');
+            
+            setTimeout(() => {
+              this.taskService.taskNotification.set(false);
+            }, 5000);
+          } else {
+            this.taskService.taskNotification.set(true);
+            this.taskService.taskNotificationMessage.set('Error al despostularse. Intenta nuevamente');
+            
+            setTimeout(() => {
+              this.taskService.taskNotification.set(false);
+            }, 5000);
+          }
+          
           this.isWithdrawing.set(false);
         }
       });
     } else {
-      // Postularse normalmente
       this.isApplying.set(true);
       this.taskService.applyToTask(taskId).subscribe({
         next: (response) => {

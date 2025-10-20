@@ -109,7 +109,20 @@ const getMyTasksController = async (req: Request, res: Response) => {
       return errorHandler.handleValidationError(res, "Invalid user ID");
     }
 
-    const response = await getUserTasks(creatorIdNumber);
+    const filters = {
+      limit: req.query.limit ? parseInt(req.query.limit as string, 10) : undefined,
+      page: req.query.page ? parseInt(req.query.page as string, 10) : undefined
+    };
+
+    if (filters.limit !== undefined && (isNaN(filters.limit) || filters.limit < 1)) {
+      return errorHandler.handleValidationError(res, "Invalid limit parameter");
+    }
+
+    if (filters.page !== undefined && (isNaN(filters.page) || filters.page < 1)) {
+      return errorHandler.handleValidationError(res, "Invalid page parameter");
+    }
+
+    const response = await getUserTasks(creatorIdNumber, filters);
 
     if (response.success && response.data) {
       return res.status(200).json(response);
