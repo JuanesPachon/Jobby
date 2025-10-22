@@ -118,20 +118,40 @@
           @if (taskDetail()?.status === 'available' && taskDetail()?.selected_user_id === null && !isStartingTask()) {
             <p class="text-[12px]">Selecciona a un postulante para empezar la tarea*</p>
           }
-          <button
-            [ngClass]="getStartTaskButtonClass()"
-            class="w-full sm:w-auto"
-            type="button"
-            (click)="onStartTask()"
-            [disabled]="!canStartTask() || isStartingTask()"
-          >
-            {{ getStartTaskButtonText() }}
-          </button>
+          
+          <div class="flex flex-col sm:flex-row gap-2 sm:gap-4">
+            @if (canCancelTask() && taskDetail()?.status !== 'cancelled') {
+              <button
+                class="w-full sm:w-auto px-6 py-2 rounded-full bg-white hover:bg-gray-300 text-sm font-medium border border-black transition-colors cursor-pointer"
+                type="button"
+                (click)="onCancelTask()"
+              >
+                Cancelar tarea
+              </button>
+            }
+            
+            <button
+              [ngClass]="getStartTaskButtonClass()"
+              class="w-full sm:w-auto"
+              type="button"
+              (click)="onStartTask()"
+              [disabled]="!canStartTask() || isStartingTask()"
+            >
+              {{ getStartTaskButtonText() }}
+            </button>
+          </div>
         </div>
 
       </main>
     }
   </div>
+
+  <app-cancel-task-modal
+    [isOpen]="isCancelModalOpen"
+    [isLoading]="isCancellingTask"
+    (onConfirm)="onConfirmCancel()"
+    (onCancel)="onCancelModal()"
+  />
 
   <button
     class="fixed bottom-15 right-8 w-14 h-14 lg:w-[4rem] lg:h-[4rem] flex items-center justify-center lg:right-[calc((100vw-1024px)/2+1rem)] xl:right-[calc((100vw-1280px)/2+1rem)] 2xl:right-[calc((100vw-1536px)/2+1rem)] z-3 bg-[#EBC636] p-2 rounded-full border-[1px] border-black hover:bg-yellow-500 transition-colors duration-200">

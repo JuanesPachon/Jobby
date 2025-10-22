@@ -5,10 +5,11 @@ import { CurrencyColombianPipe, SpanishDatePipe } from '../../../shared/pipes';
 import { TaskService } from '../services/task.service';
 import { TaskDetail, Applicant } from '../interfaces';
 import { NgClass } from '@angular/common';
+import { CancelTaskModal } from '../components/cancel-task-modal/cancel-task-modal';
 
 @Component({
   selector: 'app-published-task-detail',
-  imports: [DashboardNavbar, RouterLink, CurrencyColombianPipe, SpanishDatePipe, NgClass],
+  imports: [DashboardNavbar, RouterLink, CurrencyColombianPipe, SpanishDatePipe, NgClass, CancelTaskModal],
   templateUrl: './published-task-detail.html',
   styleUrl: './published-task-detail.css'
 })
@@ -25,6 +26,8 @@ export default class PublishedTaskDetail implements OnInit {
   isStartingTask = signal<boolean>(false);
   taskNotification = signal<boolean>(false);
   taskNotificationMessage = signal<string>('');
+  isCancelModalOpen = signal<boolean>(false);
+  isCancellingTask = signal<boolean>(false);
 
   ngOnInit() {
     const taskId = this.route.snapshot.paramMap.get('id');
@@ -271,5 +274,61 @@ export default class PublishedTaskDetail implements OnInit {
     if (img && img.src !== '/images/WebP/profile_mock.png') {
       img.src = '/images/WebP/profile_mock.png';
     }
+  }
+
+  onCancelTask(): void {
+    this.isCancelModalOpen.set(true);
+  }
+
+  onConfirmCancel(): void {
+    const taskDetail = this.taskDetail();
+    if (!taskDetail) return;
+
+    this.isCancellingTask.set(true);
+
+    this.taskService.cancelTask(taskDetail.id).subscribe({
+      next: (response) => {
+        if (response.success) {
+          const updatedTask = { ...taskDetail, status: 'cancelled' as const };
+          this.taskDetail.set(updatedTask);
+
+          this.taskNotificationMessage.set('Tarea cancelada exitosamente');
+          this.taskNotification.set(true);
+          
+          setTimeout(() => {
+            this.taskNotification.set(false);
+          }, 3000);
+        }
+        this.isCancellingTask.set(false);
+        this.isCancelModalOpen.set(false);
+      },
+      error: (error) => {
+        console.error('Error cancelling task:', error);
+        this.isCancellingTask.set(false);
+        this.isCancelModalOpen.set(false);
+        
+        // Mostrar mensaje de error
+        this.taskNotificationMessage.set('Error al cancelar la tarea');
+        this.taskNotification.set(true);
+        
+        setTimeout(() => {
+          this.taskNotification.set(false);
+        }, 3000);
+      }
+    });
+  }
+
+  onCancelModal(): void {
+    this.isCancelModalOpen.set(false);
+  }
+
+  canCancelTask(): boolean {
+    const taskDetail = this.taskDetail();
+    if (!taskDetail) return false;
+    
+    // Solo se puede cancelar si está disponible sin postulante seleccionado, 
+    // o si está en progreso
+    return (taskDetail.status === 'available' && taskDetail.selected_user_id === null) ||
+           taskDetail.status === 'in_progress';
   }
 }
