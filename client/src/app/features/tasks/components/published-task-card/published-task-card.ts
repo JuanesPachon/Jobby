@@ -59,6 +59,36 @@ export class PublishedTaskCard {
     }
   }
 
+  getStatusIndicatorClass(): string {
+    switch (this.displayTask.status) {
+      case 'available':
+        return 'w-2 h-2 rounded-full bg-green-400';
+      case 'in_progress':
+        return 'w-2 h-2 rounded-full bg-blue-400';
+      case 'completed':
+        return 'w-2 h-2 rounded-full bg-gray-400';
+      case 'cancelled':
+        return 'w-2 h-2 rounded-full bg-red-400';
+      default:
+        return 'w-2 h-2 rounded-full bg-gray-300';
+    }
+  }
+
+  getStatusTextClass(): string {
+    switch (this.displayTask.status) {
+      case 'available':
+        return 'text-green-600';
+      case 'in_progress':
+        return 'text-blue-600';
+      case 'completed':
+        return 'text-gray-600';
+      case 'cancelled':
+        return 'text-red-600';
+      default:
+        return 'text-gray-500';
+    }
+  }
+
   onViewApplicants(): void {
     this.router.navigate(['/published-task', this.displayTask.id]);
   }

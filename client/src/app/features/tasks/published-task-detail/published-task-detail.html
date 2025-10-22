@@ -40,8 +40,9 @@
         </a>
 
         <div class="flex justify-between items-start mb-6 pt-8">
-          <div>
-            <span class="text-gray-600">{{ statusText }}</span>
+          <div class="flex items-center gap-3">
+            <div [class]="getStatusIndicatorClass()"></div>
+            <span [class]="getStatusTextClass()" class="font-medium">{{ statusText }}</span>
           </div>
           <div class="text-gray-500">
             {{ taskDetail()!.created_at | spanishDate:'full' }}

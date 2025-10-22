@@ -113,6 +113,42 @@ export default class PublishedTaskDetail implements OnInit {
     }
   }
 
+  getStatusIndicatorClass(): string {
+    const task = this.taskDetail();
+    if (!task) return 'w-3 h-3 rounded-full bg-gray-300';
+    
+    switch (task.status) {
+      case 'available':
+        return 'w-3 h-3 rounded-full bg-green-400 shadow-sm';
+      case 'in_progress':
+        return 'w-3 h-3 rounded-full bg-blue-400 shadow-sm animate-pulse';
+      case 'completed':
+        return 'w-3 h-3 rounded-full bg-gray-400 shadow-sm';
+      case 'cancelled':
+        return 'w-3 h-3 rounded-full bg-red-400 shadow-sm';
+      default:
+        return 'w-3 h-3 rounded-full bg-gray-300';
+    }
+  }
+
+  getStatusTextClass(): string {
+    const task = this.taskDetail();
+    if (!task) return 'text-gray-500';
+    
+    switch (task.status) {
+      case 'available':
+        return 'text-green-700 bg-green-500/30 px-3 py-1 rounded-full text-sm border border-green-700';
+      case 'in_progress':
+        return 'text-blue-700 bg-blue-500/30 px-3 py-1 rounded-full text-sm border border-blue-700';
+      case 'completed':
+        return 'text-gray-700 bg-gray-500/30 px-3 py-1 rounded-full text-sm border border-gray-700';
+      case 'cancelled':
+        return 'text-red-700 bg-red-500/30 px-3 py-1 rounded-full text-sm border border-red-700';
+      default:
+        return 'text-gray-500';
+    }
+  }
+
   get durationText(): string {
     const task = this.taskDetail();
     if (!task) return '';
@@ -312,7 +348,6 @@ export default class PublishedTaskDetail implements OnInit {
         this.isCancellingTask.set(false);
         this.isCancelModalOpen.set(false);
         
-        // Mostrar mensaje de error
         this.taskNotificationMessage.set('Error al cancelar la tarea');
         this.taskNotification.set(true);
         
