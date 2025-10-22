@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import errorHandler from "../utils/errorHandler.js";
-import { createTask, getTaskById, getTasks, getUserTasks, getTaskWithApplications, selectApplicant, deselectApplicant, startTask, checkUserApplication, withdrawApplication } from '../models/taskModel.js';
+import { createTask, getTaskById, getTasks, getUserTasks, getTaskWithApplications, selectApplicant, deselectApplicant, startTask, checkUserApplication, withdrawApplication, cancelTask } from '../models/taskModel.js';
 import { createApplication } from "../models/applicationModel.js";
 import { CreateTaskRequest, GetTasksFilters, SelectApplicantRequest } from "../interfaces/task.interface.js";
 
@@ -450,6 +450,49 @@ const withdrawApplicationController = async (req: Request, res: Response) => {
   }
 };
 
+const cancelTaskController = async (req: Request, res: Response) => {
+  try {
+    const creator_id = req.user?.sub;
+    
+    if (!creator_id) {
+      return errorHandler.handleAuthError(res, "User not authenticated");
+    }
+
+    const creatorIdNumber = parseInt(creator_id, 10);
+    
+    if (isNaN(creatorIdNumber)) {
+      return errorHandler.handleValidationError(res, "Invalid user ID");
+    }
+
+    const taskId = req.params.id;
+    const taskIdNumber = parseInt(taskId, 10);
+
+    if (isNaN(taskIdNumber)) {
+      return errorHandler.handleValidationError(res, "Invalid task ID");
+    }
+
+    const response = await cancelTask(taskIdNumber, creatorIdNumber);
+
+    if (response.success) {
+      return res.status(200).json(response);
+    } else if (response.error === 'task_not_found') {
+      return errorHandler.handleNotFoundError(res, response.message);
+    } else if (response.error === 'unauthorized') {
+      return errorHandler.handleAuthError(res, response.message);
+    } else if (response.error === 'task_not_cancellable') {
+      return errorHandler.handleValidationError(res, response.message);
+    } else if (response.error === 'has_selected_applicant') {
+      return errorHandler.handleValidationError(res, response.message);
+    } else {
+      return errorHandler.handleServerError(res, response.message);
+    }
+
+  } catch (error) {
+    console.error('Error in cancelTaskController:', error);
+    return errorHandler.handleServerError(res, "Internal server error during task cancellation");
+  }
+};
+
 export { 
   createTaskController, 
   getTaskByIdController, 
@@ -461,5 +504,6 @@ export {
   deselectApplicantController,
   startTaskController,
   checkApplicationController,
-  withdrawApplicationController
+  withdrawApplicationController,
+  cancelTaskController
 };
