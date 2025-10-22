@@ -122,9 +122,10 @@
           <div class="flex flex-col sm:flex-row gap-2 sm:gap-4">
             @if (canCancelTask() && taskDetail()?.status !== 'cancelled') {
               <button
-                class="w-full sm:w-auto px-6 py-2 rounded-full bg-white hover:bg-gray-300 text-sm font-medium border border-black transition-colors cursor-pointer"
+                [class]="getCancelTaskButtonClass()"
                 type="button"
                 (click)="onCancelTask()"
+                [disabled]="!isCancelTaskEnabled()"
               >
                 Cancelar tarea
               </button>

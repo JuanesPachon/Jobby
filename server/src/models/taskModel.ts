@@ -261,7 +261,7 @@ const getUserTasks = async (creator_id: number, filters?: GetUserTasksFilters): 
                 t.status,
                 t.created_at,
                 t.updated_at,
-                COUNT(a.id) as applications_count
+                COUNT(CASE WHEN a.status != 'withdrawn' THEN a.id END) as applications_count
             FROM tasks t
             LEFT JOIN applications a ON t.id = a.task_id
             WHERE t.creator_id = ? AND t.deleted_at IS NULL

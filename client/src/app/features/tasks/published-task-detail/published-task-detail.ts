@@ -277,6 +277,11 @@ export default class PublishedTaskDetail implements OnInit {
   }
 
   onCancelTask(): void {
+    // No abrir modal si el botón está deshabilitado
+    if (!this.isCancelTaskEnabled()) {
+      return;
+    }
+    
     this.isCancelModalOpen.set(true);
   }
 
@@ -326,9 +331,24 @@ export default class PublishedTaskDetail implements OnInit {
     const taskDetail = this.taskDetail();
     if (!taskDetail) return false;
     
-    // Solo se puede cancelar si está disponible sin postulante seleccionado, 
-    // o si está en progreso
+    return taskDetail.status === 'available' || taskDetail.status === 'in_progress';
+  }
+
+  isCancelTaskEnabled(): boolean {
+    const taskDetail = this.taskDetail();
+    if (!taskDetail) return false;
+    
     return (taskDetail.status === 'available' && taskDetail.selected_user_id === null) ||
            taskDetail.status === 'in_progress';
+  }
+
+  getCancelTaskButtonClass(): string {
+    const isEnabled = this.isCancelTaskEnabled();
+    
+    if (!isEnabled) {
+      return 'w-full sm:w-auto px-6 py-2 rounded-full bg-gray-300 text-gray-500 text-sm font-medium border border-black cursor-not-allowed';
+    }
+    
+    return 'w-full sm:w-auto px-6 py-2 rounded-full bg-white hover:bg-gray-300 text-sm font-medium border border-black transition-colors cursor-pointer';
   }
 }
