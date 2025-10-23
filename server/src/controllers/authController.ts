@@ -52,8 +52,9 @@ const loginController = async (req: Request, res: Response) => {
       return res.cookie('access_token', token, {
         httpOnly: true,
         secure: process.env.SERVER_PROD === 'true',
-        sameSite: 'lax', 
-        maxAge: 14 * 24 * 60 * 60 * 1000
+        sameSite: process.env.SERVER_PROD === 'true' ? 'none' : 'lax',
+        maxAge: 14 * 24 * 60 * 60 * 1000,
+        domain: process.env.SERVER_PROD === 'true' ? undefined : undefined
       }).status(200).json({
         success: true,
         message: "Login successful",
@@ -91,7 +92,7 @@ const logoutController = async (_req: Request, res: Response) => {
     return res.clearCookie('access_token', {
       httpOnly: true,
       secure: process.env.SERVER_PROD === 'true',
-      sameSite: 'lax'
+      sameSite: process.env.SERVER_PROD === 'true' ? 'none' : 'lax'
     }).status(200).json({
       success: true,
       message: "Logout successful"
@@ -120,7 +121,7 @@ const verifyCodeController = async (req: Request, res: Response) => {
       return res.cookie('reset_token', resetToken, {
         httpOnly: true,
         secure: process.env.SERVER_PROD === 'true',
-        sameSite: 'lax',
+        sameSite: process.env.SERVER_PROD === 'true' ? 'none' : 'lax',
         maxAge: 15 * 60 * 1000
       }).status(200).json({
         success: true,
@@ -176,7 +177,7 @@ const resetPasswordController = async (req: Request, res: Response) => {
       return res.clearCookie('reset_token', {
         httpOnly: true,
         secure: process.env.SERVER_PROD === 'true',
-        sameSite: 'lax'
+        sameSite: process.env.SERVER_PROD === 'true' ? 'none' : 'lax'
       }).status(200).json({
         success: true,
         message: "Password updated successfully",

@@ -10,10 +10,21 @@ import cookieParser from "cookie-parser";
 const PORT = process.env.PORT ?? 3002;
 const app = express();
 
+const getAllowedOrigins = (): string[] => {
+  const corsOrigins = process.env.CORS_ORIGINS;
+  if (corsOrigins) {
+    return corsOrigins.split(',').map(origin => origin.trim());
+  }
+  
+  return ['http://localhost:4200', 'http://127.0.0.1:4200'];
+};
+
 const corsOptions = {
-  origin: ['http://localhost:4200', 'http://127.0.0.1:4200'],
+  origin: getAllowedOrigins(),
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+  exposedHeaders: ['Set-Cookie'],
 };
 
 app.use(cors(corsOptions));
