@@ -5,10 +5,11 @@ import { CurrencyColombianPipe, SpanishDatePipe } from '../../../shared/pipes';
 import { TaskService } from '../services/task.service';
 import { TaskDetail, Applicant } from '../interfaces';
 import { NgClass } from '@angular/common';
+import { CancelTaskModal } from '../components/cancel-task-modal/cancel-task-modal';
 
 @Component({
   selector: 'app-published-task-detail',
-  imports: [DashboardNavbar, RouterLink, CurrencyColombianPipe, SpanishDatePipe, NgClass],
+  imports: [DashboardNavbar, RouterLink, CurrencyColombianPipe, SpanishDatePipe, NgClass, CancelTaskModal],
   templateUrl: './published-task-detail.html',
   styleUrl: './published-task-detail.css'
 })
@@ -25,6 +26,8 @@ export default class PublishedTaskDetail implements OnInit {
   isStartingTask = signal<boolean>(false);
   taskNotification = signal<boolean>(false);
   taskNotificationMessage = signal<string>('');
+  isCancelModalOpen = signal<boolean>(false);
+  isCancellingTask = signal<boolean>(false);
 
   ngOnInit() {
     const taskId = this.route.snapshot.paramMap.get('id');
@@ -107,6 +110,42 @@ export default class PublishedTaskDetail implements OnInit {
         return 'Cancelada';
       default:
         return 'Sin estado';
+    }
+  }
+
+  getStatusIndicatorClass(): string {
+    const task = this.taskDetail();
+    if (!task) return 'w-3 h-3 rounded-full bg-gray-300';
+    
+    switch (task.status) {
+      case 'available':
+        return 'w-3 h-3 rounded-full bg-green-400 shadow-sm';
+      case 'in_progress':
+        return 'w-3 h-3 rounded-full bg-blue-400 shadow-sm animate-pulse';
+      case 'completed':
+        return 'w-3 h-3 rounded-full bg-gray-400 shadow-sm';
+      case 'cancelled':
+        return 'w-3 h-3 rounded-full bg-red-400 shadow-sm';
+      default:
+        return 'w-3 h-3 rounded-full bg-gray-300';
+    }
+  }
+
+  getStatusTextClass(): string {
+    const task = this.taskDetail();
+    if (!task) return 'text-gray-500';
+    
+    switch (task.status) {
+      case 'available':
+        return 'text-green-700 bg-green-500/30 px-3 py-1 rounded-full text-sm border border-green-700';
+      case 'in_progress':
+        return 'text-blue-700 bg-blue-500/30 px-3 py-1 rounded-full text-sm border border-blue-700';
+      case 'completed':
+        return 'text-gray-700 bg-gray-500/30 px-3 py-1 rounded-full text-sm border border-gray-700';
+      case 'cancelled':
+        return 'text-red-700 bg-red-500/30 px-3 py-1 rounded-full text-sm border border-red-700';
+      default:
+        return 'text-gray-500';
     }
   }
 
@@ -271,5 +310,80 @@ export default class PublishedTaskDetail implements OnInit {
     if (img && img.src !== '/images/WebP/profile_mock.png') {
       img.src = '/images/WebP/profile_mock.png';
     }
+  }
+
+  onCancelTask(): void {
+    // No abrir modal si el botón está deshabilitado
+    if (!this.isCancelTaskEnabled()) {
+      return;
+    }
+    
+    this.isCancelModalOpen.set(true);
+  }
+
+  onConfirmCancel(): void {
+    const taskDetail = this.taskDetail();
+    if (!taskDetail) return;
+
+    this.isCancellingTask.set(true);
+
+    this.taskService.cancelTask(taskDetail.id).subscribe({
+      next: (response) => {
+        if (response.success) {
+          const updatedTask = { ...taskDetail, status: 'cancelled' as const };
+          this.taskDetail.set(updatedTask);
+
+          this.taskNotificationMessage.set('Tarea cancelada exitosamente');
+          this.taskNotification.set(true);
+          
+          setTimeout(() => {
+            this.taskNotification.set(false);
+          }, 3000);
+        }
+        this.isCancellingTask.set(false);
+        this.isCancelModalOpen.set(false);
+      },
+      error: (error) => {
+        console.error('Error cancelling task:', error);
+        this.isCancellingTask.set(false);
+        this.isCancelModalOpen.set(false);
+        
+        this.taskNotificationMessage.set('Error al cancelar la tarea');
+        this.taskNotification.set(true);
+        
+        setTimeout(() => {
+          this.taskNotification.set(false);
+        }, 3000);
+      }
+    });
+  }
+
+  onCancelModal(): void {
+    this.isCancelModalOpen.set(false);
+  }
+
+  canCancelTask(): boolean {
+    const taskDetail = this.taskDetail();
+    if (!taskDetail) return false;
+    
+    return taskDetail.status === 'available' || taskDetail.status === 'in_progress';
+  }
+
+  isCancelTaskEnabled(): boolean {
+    const taskDetail = this.taskDetail();
+    if (!taskDetail) return false;
+    
+    return (taskDetail.status === 'available' && taskDetail.selected_user_id === null) ||
+           taskDetail.status === 'in_progress';
+  }
+
+  getCancelTaskButtonClass(): string {
+    const isEnabled = this.isCancelTaskEnabled();
+    
+    if (!isEnabled) {
+      return 'w-full sm:w-auto px-6 py-2 rounded-full bg-gray-300 text-gray-500 text-sm font-medium border border-black cursor-not-allowed';
+    }
+    
+    return 'w-full sm:w-auto px-6 py-2 rounded-full bg-white hover:bg-gray-300 text-sm font-medium border border-black transition-colors cursor-pointer';
   }
 }

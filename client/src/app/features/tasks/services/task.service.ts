@@ -237,4 +237,10 @@ export class TaskService {
       withCredentials: true
     });
   }
+
+  cancelTask(taskId: number): Observable<any> {
+    return this.http.delete<any>(`${environment.apiUrl}/my-tasks/cancel/${taskId}`, {
+      withCredentials: true
+    });
+  }
 }

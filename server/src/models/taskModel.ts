@@ -2,7 +2,7 @@ import pool from "../config/db_config.js";
 import { ResultSetHeader, RowDataPacket } from "mysql2/promise";
 import { CreateTaskRequest, GetTasksFilters, GetUserTasksFilters } from "../interfaces/task.interface.js";
 import { TaskWithApplications } from "../interfaces/application.interface.js";
-import { CreateTaskResult, GetTaskByIdResult, GetTasksResult, GetUserTasksResult, GetTaskWithApplicationsResult, SelectApplicantResult, DeselectApplicantResult, StartTaskResult } from "../interfaces/database.interface.js";
+import { CreateTaskResult, GetTaskByIdResult, GetTasksResult, GetUserTasksResult, GetTaskWithApplicationsResult, SelectApplicantResult, DeselectApplicantResult, StartTaskResult, CancelTaskResult } from "../interfaces/database.interface.js";
 
 const createTask = async (creator_id: number, taskData: CreateTaskRequest): Promise<CreateTaskResult> => {
     try {
@@ -261,7 +261,7 @@ const getUserTasks = async (creator_id: number, filters?: GetUserTasksFilters): 
                 t.status,
                 t.created_at,
                 t.updated_at,
-                COUNT(a.id) as applications_count
+                COUNT(CASE WHEN a.status != 'withdrawn' THEN a.id END) as applications_count
             FROM tasks t
             LEFT JOIN applications a ON t.id = a.task_id
             WHERE t.creator_id = ? AND t.deleted_at IS NULL
@@ -824,4 +824,91 @@ const withdrawApplication = async (task_id: number, applicant_id: number): Promi
     }
 };
 
-export { createTask, getTaskById, getTasks, getUserTasks, getTaskWithApplications, selectApplicant, deselectApplicant, startTask, checkUserApplication, withdrawApplication };
+const cancelTask = async (task_id: number, creator_id: number): Promise<CancelTaskResult> => {
+    const connection = await pool.getConnection();
+    
+    try {
+        await connection.beginTransaction();
+
+        const [taskRows] = await connection.query<RowDataPacket[]>(
+            'SELECT id, creator_id, status, selected_user_id FROM tasks WHERE id = ? AND creator_id = ? AND deleted_at IS NULL',
+            [task_id, creator_id]
+        );
+
+        if (taskRows.length === 0) {
+            await connection.rollback();
+            return {
+                success: false,
+                error: 'task_not_found',
+                message: 'Task not found or you are not authorized to cancel this task'
+            };
+        }
+
+        const task = taskRows[0];
+
+        if (task.status === 'cancelled' || task.status === 'completed') {
+            await connection.rollback();
+            return {
+                success: false,
+                error: 'task_not_cancellable',
+                message: 'Cannot cancel a task that is already cancelled or completed'
+            };
+        }
+
+        if (task.status === 'available' && task.selected_user_id !== null) {
+            await connection.rollback();
+            return {
+                success: false,
+                error: 'has_selected_applicant',
+                message: 'Cannot cancel a task that has a selected applicant. Please deselect the applicant first'
+            };
+        }
+
+        const [taskUpdateResult] = await connection.query<ResultSetHeader>(
+            'UPDATE tasks SET status = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?',
+            ['cancelled', task_id]
+        );
+
+        if (taskUpdateResult.affectedRows === 0) {
+            await connection.rollback();
+            return {
+                success: false,
+                error: 'server',
+                message: 'Failed to cancel task'
+            };
+        }
+
+        if (task.status === 'in_progress' && task.selected_user_id) {
+            await connection.query<ResultSetHeader>(
+                'UPDATE applications SET status = ?, status_changed_at = CURRENT_TIMESTAMP WHERE task_id = ? AND applicant_id = ? AND status = ?',
+                ['applied', task_id, task.selected_user_id, 'selected']
+            );
+        }
+
+        await connection.commit();
+
+        const currentDate = new Date();
+        return {
+            success: true,
+            message: 'Task cancelled successfully',
+            data: {
+                task_id: task_id,
+                task_status: 'cancelled',
+                updated_at: currentDate
+            }
+        };
+
+    } catch (error: any) {
+        await connection.rollback();
+        console.error('Error in cancelTask:', error);
+        return {
+            success: false,
+            error: 'server',
+            message: 'Internal server error while cancelling task'
+        };
+    } finally {
+        connection.release();
+    }
+};
+
+export { createTask, getTaskById, getTasks, getUserTasks, getTaskWithApplications, selectApplicant, deselectApplicant, startTask, checkUserApplication, withdrawApplication, cancelTask };

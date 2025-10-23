@@ -226,3 +226,14 @@ export interface StartTaskResult {
         updated_at: Date;
     };
 }
+
+export interface CancelTaskResult {
+    success: boolean;
+    error?: 'task_not_found' | 'unauthorized' | 'task_not_cancellable' | 'has_selected_applicant' | 'server';
+    message?: string;
+    data?: {
+        task_id: number;
+        task_status: 'cancelled';
+        updated_at: Date;
+    };
+}
