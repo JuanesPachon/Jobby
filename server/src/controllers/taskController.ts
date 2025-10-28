@@ -115,7 +115,6 @@ const getMyTasksController = async (req: Request, res: Response) => {
       status: req.query.status as 'available' | 'in_progress' | 'completed' | 'cancelled' | undefined
     };
 
-    console.log('Filtros recibidos en backend:', filters); // Debug log
 
     if (filters.limit !== undefined && (isNaN(filters.limit) || filters.limit < 1)) {
       return errorHandler.handleValidationError(res, "Invalid limit parameter");

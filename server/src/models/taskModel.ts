@@ -690,7 +690,6 @@ const checkUserApplication = async (task_id: number, applicant_id: number): Prom
         );
 
         const hasApplied = rows.length > 0;
-        console.log('Found', rows.length, 'active applications, hasApplied:', hasApplied);
 
         return {
             hasApplied
