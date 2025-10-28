@@ -265,6 +265,16 @@ const getUserTasks = async (creator_id: number, filters?: GetUserTasksFilters): 
             FROM tasks t
             LEFT JOIN applications a ON t.id = a.task_id
             WHERE t.creator_id = ? AND t.deleted_at IS NULL
+        `;
+        
+        const queryParams: any[] = [creator_id];
+        
+        if (filters?.status) {
+            query += ' AND t.status = ?';
+            queryParams.push(filters.status);
+        }
+        
+        query += `
             GROUP BY t.id
             ORDER BY t.created_at DESC
         `;
@@ -274,15 +284,24 @@ const getUserTasks = async (creator_id: number, filters?: GetUserTasksFilters): 
         const offset = (page - 1) * limit;
         
         query += ' LIMIT ? OFFSET ?';
+        queryParams.push(limit, offset);
         
-        const [taskRows] = await pool.query<RowDataPacket[]>(query, [creator_id, limit, offset]);
+        const [taskRows] = await pool.query<RowDataPacket[]>(query, queryParams);
 
-        const [countRows] = await pool.query<RowDataPacket[]>(
-            `SELECT COUNT(DISTINCT t.id) as total
+        let countQuery = `
+            SELECT COUNT(DISTINCT t.id) as total
             FROM tasks t
-            WHERE t.creator_id = ? AND t.deleted_at IS NULL`,
-            [creator_id]
-        );
+            WHERE t.creator_id = ? AND t.deleted_at IS NULL
+        `;
+        
+        const countParams: any[] = [creator_id];
+        
+        if (filters?.status) {
+            countQuery += ' AND t.status = ?';
+            countParams.push(filters.status);
+        }
+
+        const [countRows] = await pool.query<RowDataPacket[]>(countQuery, countParams);
         
         const total = countRows[0].total;
 

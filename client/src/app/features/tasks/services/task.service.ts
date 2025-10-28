@@ -193,7 +193,7 @@ export class TaskService {
   }
 
 
-  getMyPublishedTasks(filters?: { limit?: number; page?: number }): Observable<PublishedTasksResponse> {
+  getMyPublishedTasks(filters?: { limit?: number; page?: number; status?: string }): Observable<PublishedTasksResponse> {
     let params = new URLSearchParams();
     
     if (filters?.limit) {
@@ -204,8 +204,14 @@ export class TaskService {
       params.append('page', filters.page.toString());
     }
 
+    if (filters?.status) {
+      params.append('status', filters.status);
+    }
+
     const queryString = params.toString();
     const url = queryString ? `${environment.apiUrl}/my-tasks?${queryString}` : `${environment.apiUrl}/my-tasks`;
+
+    console.log('URL construida:', url); // Debug log
 
     return this.http.get<PublishedTasksResponse>(url, {
       withCredentials: true

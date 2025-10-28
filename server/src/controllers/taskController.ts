@@ -111,8 +111,11 @@ const getMyTasksController = async (req: Request, res: Response) => {
 
     const filters = {
       limit: req.query.limit ? parseInt(req.query.limit as string, 10) : undefined,
-      page: req.query.page ? parseInt(req.query.page as string, 10) : undefined
+      page: req.query.page ? parseInt(req.query.page as string, 10) : undefined,
+      status: req.query.status as 'available' | 'in_progress' | 'completed' | 'cancelled' | undefined
     };
+
+    console.log('Filtros recibidos en backend:', filters); // Debug log
 
     if (filters.limit !== undefined && (isNaN(filters.limit) || filters.limit < 1)) {
       return errorHandler.handleValidationError(res, "Invalid limit parameter");
@@ -120,6 +123,10 @@ const getMyTasksController = async (req: Request, res: Response) => {
 
     if (filters.page !== undefined && (isNaN(filters.page) || filters.page < 1)) {
       return errorHandler.handleValidationError(res, "Invalid page parameter");
+    }
+
+    if (filters.status && !['available', 'in_progress', 'completed', 'cancelled'].includes(filters.status)) {
+      return errorHandler.handleValidationError(res, "Invalid status parameter");
     }
 
     const response = await getUserTasks(creatorIdNumber, filters);

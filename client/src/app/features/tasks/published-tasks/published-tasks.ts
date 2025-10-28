@@ -27,6 +27,15 @@ export default class PublishedTasks implements OnInit, OnDestroy {
   itemsPerPage = 10;
   totalPages = computed(() => Math.ceil(this.totalTasks() / this.itemsPerPage));
 
+  selectedStatus = signal<string>('all');
+  statusOptions = [
+    { value: 'all', label: 'Todas las tareas', color: 'bg-gray-100 text-gray-800' },
+    { value: 'available', label: 'Disponibles', color: 'bg-green-100 text-blue-800' },
+    { value: 'in_progress', label: 'En progreso', color: 'bg-blue-100 text-yellow-800' },
+    { value: 'completed', label: 'Completadas', color: 'bg-green-100 text-green-800' },
+    { value: 'cancelled', label: 'Canceladas', color: 'bg-red-100 text-red-800' }
+  ];
+
   ngOnInit() {
     if (this.taskNotification()) {
       this.timeoutId = window.setTimeout(() => {
@@ -47,8 +56,11 @@ export default class PublishedTasks implements OnInit, OnDestroy {
 
     const filters = {
       page,
-      limit: this.itemsPerPage
+      limit: this.itemsPerPage,
+      status: this.selectedStatus() === 'all' ? undefined : this.selectedStatus()
     };
+
+    console.log('Filtros enviados:', filters); // Debug log
 
     this.taskService.getMyPublishedTasks(filters).subscribe({
       next: (response) => {
@@ -130,6 +142,13 @@ export default class PublishedTasks implements OnInit, OnDestroy {
     }
 
     return pages;
+  }
+
+  onStatusFilterChange(status: string): void {
+    console.log('Cambiando filtro a:', status); // Debug log
+    this.selectedStatus.set(status);
+    this.currentPage.set(1); // Reset to first page
+    this.loadTasksWithPage(1);
   }
 
   ngOnDestroy() {
