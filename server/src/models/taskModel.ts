@@ -1,8 +1,8 @@
 import pool from "../config/db_config.js";
 import { ResultSetHeader, RowDataPacket } from "mysql2/promise";
-import { CreateTaskRequest, GetTasksFilters, GetUserTasksFilters } from "../interfaces/task.interface.js";
+import { CreateTaskRequest, GetTasksFilters, GetUserTasksFilters, GetUserApplicationsFilters } from "../interfaces/task.interface.js";
 import { TaskWithApplications } from "../interfaces/application.interface.js";
-import { CreateTaskResult, GetTaskByIdResult, GetTasksResult, GetUserTasksResult, GetTaskWithApplicationsResult, SelectApplicantResult, DeselectApplicantResult, StartTaskResult, CancelTaskResult } from "../interfaces/database.interface.js";
+import { CreateTaskResult, GetTaskByIdResult, GetTasksResult, GetUserTasksResult, GetTaskWithApplicationsResult, SelectApplicantResult, DeselectApplicantResult, StartTaskResult, CancelTaskResult, GetUserApplicationsResult } from "../interfaces/database.interface.js";
 
 const createTask = async (creator_id: number, taskData: CreateTaskRequest): Promise<CreateTaskResult> => {
     try {
@@ -929,4 +929,216 @@ const cancelTask = async (task_id: number, creator_id: number): Promise<CancelTa
     }
 };
 
-export { createTask, getTaskById, getTasks, getUserTasks, getTaskWithApplications, selectApplicant, deselectApplicant, startTask, checkUserApplication, withdrawApplication, cancelTask };
+const getUserApplications = async (userId: number, filters: GetUserApplicationsFilters): Promise<GetUserApplicationsResult> => {
+    try {
+        console.log('getUserApplications - userId:', userId, 'filters:', filters);
+
+        let whereConditions = ['a.applicant_id = ?'];
+        let queryParams: any[] = [userId];
+
+    
+        
+        if (filters.status) {
+            switch (filters.status) {
+                case 'applied':
+                    whereConditions.push('a.status = ?');
+                    queryParams.push('applied');
+                    break;
+                case 'selected':
+                    whereConditions.push('t.selected_user_id = ?');
+                    whereConditions.push('t.status = ?');
+                    queryParams.push(userId, 'available');
+                    break;
+                case 'in_progress':
+                    whereConditions.push('t.selected_user_id = ?');
+                    whereConditions.push('t.status = ?');
+                    queryParams.push(userId, 'in_progress');
+                    break;
+                case 'completed':
+                    whereConditions.push('t.selected_user_id = ?');
+                    whereConditions.push('t.status = ?');
+                    queryParams.push(userId, 'completed');
+                    break;
+                case 'cancelled':
+                    // Usuario fue seleccionado pero la tarea fue cancelada
+                    // Solo mostrar tareas canceladas en los últimos 7 días
+                    whereConditions.push('t.selected_user_id = ?');
+                    whereConditions.push('t.status = ?');
+                    whereConditions.push('DATEDIFF(NOW(), t.updated_at) <= 7');
+                    queryParams.push(userId, 'cancelled');
+                    break;
+            }
+        }
+
+        const whereClause = `WHERE ${whereConditions.join(' AND ')}`;
+
+        const countQuery = `
+            SELECT COUNT(*) as total
+            FROM applications a
+            INNER JOIN tasks t ON a.task_id = t.id
+            INNER JOIN users u ON t.creator_id = u.id
+            ${whereClause}
+        `;
+
+        console.log('Count Query:', countQuery);
+        console.log('Count Params:', queryParams);
+
+        const [countResult] = await pool.query<RowDataPacket[]>(countQuery, queryParams);
+        const totalTasks = countResult[0]?.total || 0;
+
+        console.log('Total tareas encontradas:', totalTasks);
+
+        if (totalTasks === 0) {
+            return {
+                success: true,
+                message: 'No applications found',
+                data: {
+                    tasks: [],
+                    total: 0,
+                    currentPage: filters.page || 1,
+                    totalPages: 0
+                }
+            };
+        }
+
+        const limit = filters.limit || 10;
+        const page = filters.page || 1;
+        const offset = (page - 1) * limit;
+
+        const tasksQuery = `
+            SELECT 
+                t.id,
+                t.creator_id,
+                t.selected_user_id,
+                t.title,
+                t.description,
+                t.city,
+                t.neighborhood,
+                t.duration_days,
+                t.salary,
+                t.status,
+                t.created_at,
+                t.updated_at,
+                u.first_name,
+                u.last_name,
+                up.photo_url,
+                a.status as application_status,
+                a.applied_at,
+                a.status_changed_at
+            FROM applications a
+            INNER JOIN tasks t ON a.task_id = t.id
+            INNER JOIN users u ON t.creator_id = u.id
+            LEFT JOIN profiles up ON u.id = up.user_id
+            ${whereClause}
+            ORDER BY a.applied_at DESC
+            LIMIT ? OFFSET ?
+        `;
+
+        queryParams.push(limit, offset);
+
+        console.log('Tasks Query:', tasksQuery);
+        console.log('Tasks Params:', queryParams);
+
+        const [tasksResult] = await pool.query<RowDataPacket[]>(tasksQuery, queryParams);
+
+        console.log('Tareas obtenidas:', tasksResult.length);
+
+        const tasks = tasksResult.map(row => {
+            let userRelationStatus: 'applied' | 'selected' | 'in_progress' | 'completed' | 'cancelled';
+            
+            if (row.selected_user_id === userId) {
+                switch (row.status) {
+                    case 'available':
+                        userRelationStatus = 'selected';
+                        break;
+                    case 'in_progress':
+                        userRelationStatus = 'in_progress';
+                        break;
+                    case 'completed':
+                        userRelationStatus = 'completed';
+                        break;
+                    case 'cancelled':
+                        userRelationStatus = 'cancelled';
+                        break;
+                    default:
+                        userRelationStatus = 'applied';
+                }
+            } else {
+                userRelationStatus = 'applied';
+            }
+
+            return {
+                id: row.id,
+                creator_id: row.creator_id,
+                selected_user_id: row.selected_user_id,
+                title: row.title,
+                description: row.description,
+                city: row.city,
+                neighborhood: row.neighborhood,
+                duration_days: row.duration_days,
+                salary: row.salary,
+                status: row.status,
+                created_at: row.created_at,
+                updated_at: row.updated_at,
+                creator: {
+                    id: row.creator_id,
+                    first_name: row.first_name,
+                    last_name: row.last_name,
+                    photo_url: row.photo_url
+                },
+                application_status: row.application_status,
+                applied_at: row.applied_at,
+                status_changed_at: row.status_changed_at,
+                user_relation_status: userRelationStatus
+            };
+        });
+
+        const totalPages = Math.ceil(totalTasks / limit);
+
+        return {
+            success: true,
+            message: `Found ${totalTasks} application(s)`,
+            data: {
+                tasks,
+                total: totalTasks,
+                currentPage: page,
+                totalPages
+            }
+        };
+
+    } catch (error: any) {
+        console.error('Error in getUserApplications:', error);
+        return {
+            success: false,
+            error: 'server',
+            message: 'Internal server error while fetching user applications'
+        };
+    }
+};
+
+const cleanupOldCancelledTasks = async (): Promise<{ success: boolean; message: string; deletedCount?: number }> => {
+    try {
+        // Eliminar tareas canceladas que tienen más de 7 días
+        const [result] = await pool.query<ResultSetHeader>(
+            `UPDATE tasks 
+             SET deleted_at = NOW() 
+             WHERE status = 'cancelled' 
+             AND DATEDIFF(NOW(), updated_at) > 7 
+             AND deleted_at IS NULL`
+        );
+
+        return {
+            success: true,
+            message: `Cleanup completed. ${result.affectedRows} cancelled tasks marked as deleted.`,
+            deletedCount: result.affectedRows
+        };
+    } catch (error: any) {
+        console.error('Error in cleanupOldCancelledTasks:', error);
+        return {
+            success: false,
+            message: 'Error during cleanup of old cancelled tasks'
+        };
+    }
+};
+
+export { createTask, getTaskById, getTasks, getUserTasks, getTaskWithApplications, selectApplicant, deselectApplicant, startTask, checkUserApplication, withdrawApplication, cancelTask, getUserApplications, cleanupOldCancelledTasks };

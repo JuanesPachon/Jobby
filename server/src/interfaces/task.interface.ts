@@ -38,6 +38,12 @@ export interface GetUserTasksFilters {
   status?: 'available' | 'in_progress' | 'completed' | 'cancelled';
 }
 
+export interface GetUserApplicationsFilters {
+  limit?: number; 
+  page?: number;
+  status?: 'applied' | 'selected' | 'in_progress' | 'completed' | 'cancelled';
+}
+
 export interface SelectApplicantRequest {
   applicant_id: number;
 }

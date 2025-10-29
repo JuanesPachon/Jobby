@@ -249,4 +249,28 @@ export class TaskService {
       withCredentials: true
     });
   }
+
+  getMyAppliedTasks(filters?: { page?: number; limit?: number; status?: string }): Observable<any> {
+    const params = new URLSearchParams();
+
+    if (filters?.page) {
+      params.append('page', filters.page.toString());
+    }
+    
+    if (filters?.limit) {
+      params.append('limit', filters.limit.toString());
+    }
+
+    if (filters?.status) {
+      params.append('status', filters.status);
+    }
+
+    const queryString = params.toString();
+    const url = queryString ? `${environment.apiUrl}/my-applications?${queryString}` : `${environment.apiUrl}/my-applications`;
+
+
+    return this.http.get<any>(url, {
+      withCredentials: true
+    });
+  }
 }

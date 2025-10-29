@@ -13,7 +13,7 @@ import { CurrencyColombianPipe, SpanishDatePipe } from '../../../../shared/pipes
 })
 export class TaskCard implements OnInit {
   @Input() task?: Task;
-  @Input() from: 'dashboard' | 'search' = 'dashboard';
+  @Input() from: 'dashboard' | 'search' | 'applied-tasks' = 'dashboard';
 
   private taskService = inject(TaskService);
   
