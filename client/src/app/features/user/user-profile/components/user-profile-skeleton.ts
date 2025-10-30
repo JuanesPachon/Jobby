@@ -6,7 +6,7 @@ import { DashboardNavbar } from '../../../../shared/dashboard-navbar/dashboard-n
   standalone: true,
   imports: [DashboardNavbar],
   template: `
-    <div class="min-h-screen bg-bg-white animate-pulse">
+    <div class="min-h-screen animate-pulse">
       <app-dashboard-navbar></app-dashboard-navbar>
 
       <main class="flex justify-center py-6">

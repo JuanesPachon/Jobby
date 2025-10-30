@@ -7,7 +7,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="icon" type="image/x-icon" href="favicon.ico" />
   </head>
-  <body class="bg-bg-white/93">
+  <body class="relative min-h-screen bg-bg-white/93">
+    <div class="absolute inset-0 bg-[url('/images/WebP/main_bg.png')] bg-fixed bg-no-repeat bg-center bg-cover opacity-80"></div>
+
+    <div class="relative z-10">
+      <app-root></app-root>
+    </div>
+  </body>
     <app-root></app-root>
   </body>
 </html>

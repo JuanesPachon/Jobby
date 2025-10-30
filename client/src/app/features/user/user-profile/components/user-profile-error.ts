@@ -7,7 +7,7 @@ import { RouterLink } from '@angular/router';
   standalone: true,
   imports: [DashboardNavbar, RouterLink],
   template: `
-    <div class="min-h-screen bg-bg-white flex flex-col">
+    <div class="min-h-screen flex flex-col">
       <app-dashboard-navbar></app-dashboard-navbar>
 
       <main class="flex-1 flex justify-center py-6">
