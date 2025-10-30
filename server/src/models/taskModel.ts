@@ -931,7 +931,6 @@ const cancelTask = async (task_id: number, creator_id: number): Promise<CancelTa
 
 const getUserApplications = async (userId: number, filters: GetUserApplicationsFilters): Promise<GetUserApplicationsResult> => {
     try {
-        console.log('getUserApplications - userId:', userId, 'filters:', filters);
 
         let whereConditions = ['a.applicant_id = ?'];
         let queryParams: any[] = [userId];
@@ -980,13 +979,9 @@ const getUserApplications = async (userId: number, filters: GetUserApplicationsF
             ${whereClause}
         `;
 
-        console.log('Count Query:', countQuery);
-        console.log('Count Params:', queryParams);
-
         const [countResult] = await pool.query<RowDataPacket[]>(countQuery, queryParams);
         const totalTasks = countResult[0]?.total || 0;
 
-        console.log('Total tareas encontradas:', totalTasks);
 
         if (totalTasks === 0) {
             return {
@@ -1036,12 +1031,8 @@ const getUserApplications = async (userId: number, filters: GetUserApplicationsF
 
         queryParams.push(limit, offset);
 
-        console.log('Tasks Query:', tasksQuery);
-        console.log('Tasks Params:', queryParams);
-
         const [tasksResult] = await pool.query<RowDataPacket[]>(tasksQuery, queryParams);
 
-        console.log('Tareas obtenidas:', tasksResult.length);
 
         const tasks = tasksResult.map(row => {
             let userRelationStatus: 'applied' | 'selected' | 'in_progress' | 'completed' | 'cancelled';

@@ -517,8 +517,6 @@ const getMyApplicationsController = async (req: Request, res: Response) => {
     const limit = parseInt(req.query.limit as string) || 10;
     const status = req.query.status as string;
 
-    console.log('Filtros recibidos en controlador (aplicaciones):', { page, limit, status });
-
     const filters: GetUserApplicationsFilters = {
       page,
       limit,

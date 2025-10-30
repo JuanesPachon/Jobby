@@ -2,12 +2,12 @@ import { Component, inject, OnInit, OnDestroy, computed, signal } from '@angular
 import { RouterLink } from '@angular/router';
 import { TaskService } from '../services/task.service';
 import { DashboardNavbar } from '../../../shared/dashboard-navbar/dashboard-navbar';
-import { TaskCard } from '../components/task-card/task-card';
-import { Task } from '../interfaces/SearchTasks';
+import { AppliedTaskCard } from '../components/applied-task-card/applied-task-card';
+import { AppliedTask } from '../interfaces';
 
 @Component({
   selector: 'app-applied-tasks',
-  imports: [DashboardNavbar, RouterLink, TaskCard],
+  imports: [DashboardNavbar, RouterLink, AppliedTaskCard],
   templateUrl: './applied-tasks.html',
   styleUrl: './applied-tasks.css'
 })
@@ -18,7 +18,7 @@ export default class AppliedTasks implements OnInit, OnDestroy {
   taskNotification = computed(() => this.taskService.taskNotification());
   taskNotificationMessage = computed(() => this.taskService.taskNotificationMessage());
   
-  appliedTasks = signal<Task[]>([]);
+  appliedTasks = signal<AppliedTask[]>([]);
   totalTasks = signal<number>(0);
   isLoading = signal<boolean>(false);
   error = signal<string | null>(null);
