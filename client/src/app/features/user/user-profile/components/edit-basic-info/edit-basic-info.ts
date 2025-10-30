@@ -31,19 +31,22 @@ export class EditBasicInfo implements OnInit {
     
     this.basicInfoForm = new FormGroup({
       mock_email: new FormControl(displayEmail, [
+        Validators.required,
         Validators.email,
         Validators.maxLength(100),
       ]),
       phone: new FormControl(this.userData()?.phone || '', [
+        Validators.required,
         Validators.minLength(10),
         Validators.maxLength(10),
       ]),
       occupation: new FormControl(this.userData()?.profile?.occupation || '', [
+        Validators.required,
         Validators.maxLength(100),
       ]),
       current_location: new FormControl(
         this.userData()?.profile?.current_location || '',
-        [Validators.maxLength(100)]
+        [Validators.required, Validators.maxLength(100)]
       ),
     });
   }

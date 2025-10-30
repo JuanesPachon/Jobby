@@ -23,8 +23,12 @@
                 [ngClass]="basicInfoForm.get('mock_email')?.invalid && basicInfoForm.get('mock_email')?.touched ? 'border-red-600 focus:ring-red-600' : 'border-gray-400 focus:ring-black'"
                 placeholder="ejemplo@correo.com"
               >
-              @if (basicInfoForm.get('mock_email')?.hasError('email') && basicInfoForm.get('mock_email')?.touched) {
-                <small class="text-red-600">Ingresa un correo electrónico válido</small>
+              @if (basicInfoForm.get('mock_email')?.hasError('required') && basicInfoForm.get('mock_email')?.touched) {
+                <small class="text-red-600 block mt-1">El correo electrónico es obligatorio</small>
+              } @else if (basicInfoForm.get('mock_email')?.hasError('email') && basicInfoForm.get('mock_email')?.touched) {
+                <small class="text-red-600 block mt-1">Ingresa un correo electrónico válido</small>
+              } @else if (basicInfoForm.get('mock_email')?.hasError('maxlength') && basicInfoForm.get('mock_email')?.touched) {
+                <small class="text-red-600 block mt-1">Máximo 100 caracteres</small>
               }
             </div>
             
@@ -40,8 +44,10 @@
                 inputmode="numeric"
                 pattern="[0-9]*"
               >
-              @if ((basicInfoForm.get('phone')?.hasError('minlength') || basicInfoForm.get('phone')?.hasError('maxlength')) && basicInfoForm.get('phone')?.touched) {
-                <small class="text-red-600">El teléfono debe tener exactamente 10 dígitos</small>
+              @if (basicInfoForm.get('phone')?.hasError('required') && basicInfoForm.get('phone')?.touched) {
+                <small class="text-red-600 block mt-1">El teléfono es obligatorio</small>
+              } @else if ((basicInfoForm.get('phone')?.hasError('minlength') || basicInfoForm.get('phone')?.hasError('maxlength')) && basicInfoForm.get('phone')?.touched) {
+                <small class="text-red-600 block mt-1">El teléfono debe tener exactamente 10 dígitos</small>
               }
             </div>
             
@@ -56,11 +62,13 @@
                 type="text" 
                 formControlName="occupation"
                 class="w-full placeholder:text-gray-500 px-3.5 md:px-3 py-2.5 md:py-2 text-sm md:text-sm border rounded-md focus:ring-2 focus:outline-none transition-all"
-                [ngClass]="basicInfoForm.get('education')?.invalid && basicInfoForm.get('education')?.touched ? 'border-red-600 focus:ring-red-600' : 'border-gray-400 focus:ring-black'"
+                [ngClass]="basicInfoForm.get('occupation')?.invalid && basicInfoForm.get('occupation')?.touched ? 'border-red-600 focus:ring-red-600' : 'border-gray-400 focus:ring-black'"
                 placeholder="Ej. Ingeniero de Software"
               >
-              @if (basicInfoForm.get('education')?.hasError('maxlength') && basicInfoForm.get('education')?.touched) {
-                <small class="text-red-600">Máximo 100 caracteres</small>
+              @if (basicInfoForm.get('occupation')?.hasError('required') && basicInfoForm.get('occupation')?.touched) {
+                <small class="text-red-600 block mt-1">La ocupación es obligatoria</small>
+              } @else if (basicInfoForm.get('occupation')?.hasError('maxlength') && basicInfoForm.get('occupation')?.touched) {
+                <small class="text-red-600 block mt-1">Máximo 100 caracteres</small>
               }
             </div>
             
@@ -74,8 +82,10 @@
                 [ngClass]="basicInfoForm.get('current_location')?.invalid && basicInfoForm.get('current_location')?.touched ? 'border-red-600 focus:ring-red-600' : 'border-gray-400 focus:ring-black'"
                 placeholder="Ej. Bogotá, Colombia"
               >
-              @if (basicInfoForm.get('current_location')?.hasError('maxlength') && basicInfoForm.get('current_location')?.touched) {
-                <small class="text-red-600">Máximo 100 caracteres</small>
+              @if (basicInfoForm.get('current_location')?.hasError('required') && basicInfoForm.get('current_location')?.touched) {
+                <small class="text-red-600 block mt-1">La ubicación es obligatoria</small>
+              } @else if (basicInfoForm.get('current_location')?.hasError('maxlength') && basicInfoForm.get('current_location')?.touched) {
+                <small class="text-red-600 block mt-1">Máximo 100 caracteres</small>
               }
             </div>
             
