@@ -941,7 +941,8 @@ const getUserApplications = async (userId: number, filters: GetUserApplicationsF
             switch (filters.status) {
                 case 'applied':
                     whereConditions.push('a.status = ?');
-                    queryParams.push('applied');
+                    whereConditions.push('t.status != ?'); // Excluir tareas canceladas
+                    queryParams.push('applied', 'cancelled');
                     break;
                 case 'selected':
                     whereConditions.push('t.selected_user_id = ?');
@@ -959,12 +960,11 @@ const getUserApplications = async (userId: number, filters: GetUserApplicationsF
                     queryParams.push(userId, 'completed');
                     break;
                 case 'cancelled':
-                    // Usuario fue seleccionado pero la tarea fue cancelada
-                    // Solo mostrar tareas canceladas en los últimos 7 días
-                    whereConditions.push('t.selected_user_id = ?');
+
                     whereConditions.push('t.status = ?');
                     whereConditions.push('DATEDIFF(NOW(), t.updated_at) <= 7');
-                    queryParams.push(userId, 'cancelled');
+                    whereConditions.push('(t.selected_user_id = ? OR a.status = ?)');
+                    queryParams.push('cancelled', userId, 'applied');
                     break;
             }
         }

@@ -37,10 +37,11 @@
           </span>
         </div>
         <button
-          class="w-full h-9 sm:h-10 md:h-9 rounded-lg bg-white hover:bg-gray-100 text-black text-xs sm:text-sm font-medium border border-black transition-colors cursor-pointer"
+          class="w-full h-9 sm:h-10 md:h-9 rounded-lg bg-white hover:bg-gray-100 text-black text-xs sm:text-sm font-medium border border-black transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white"
           type="button"
           [routerLink]="taskDetailLink"
           [queryParams]="queryParams"
+          [disabled]="isTaskCancelled"
         >
           Ver más
         </button>
@@ -85,10 +86,11 @@
       </div>
       <div class="flex justify-end items-center gap-3 xl:gap-4">
         <button
-          class="px-6 xl:px-8 h-[35px] xl:h-[40px] rounded-full border border-black text-sm bg-white hover:bg-gray-100 whitespace-nowrap font-medium cursor-pointer"
+          class="px-6 xl:px-8 h-[35px] xl:h-[40px] rounded-full border border-black text-sm bg-white hover:bg-gray-100 whitespace-nowrap font-medium cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white"
           type="button"
           [routerLink]="taskDetailLink"
           [queryParams]="queryParams"
+          [disabled]="isTaskCancelled"
         >
           Más información
         </button>

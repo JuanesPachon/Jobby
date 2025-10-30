@@ -115,10 +115,14 @@ export class AppliedTaskCard {
   }
 
   get taskDetailLink(): string {
-    return `/dashboard/task-detail/${this.displayTask.id}`;
+    return `/task/${this.displayTask.id}`;
   }
 
   get queryParams(): any {
     return { from: 'applied-tasks' };
+  }
+
+  get isTaskCancelled(): boolean {
+    return this.displayTask.user_relation_status === 'cancelled';
   }
 }
