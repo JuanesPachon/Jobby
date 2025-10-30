@@ -104,11 +104,18 @@ const uploadCombinedToSupabase = async (req: Request, res: Response, next: NextF
 
         if (photoFile) {
             const { originalname, buffer } = photoFile;
-            const filePath = `${Date.now()}-${originalname}`;
+            
+            const sanitizedName = originalname
+                .normalize('NFD')
+                .replace(/[\u0300-\u036f]/g, '') 
+                .replace(/\s+/g, '_') 
+                .replace(/[^a-zA-Z0-9._-]/g, '');
+            
+            const filePath = `${Date.now()}-${sanitizedName}`;
             const fileBase64 = decode(buffer.toString('base64'));
 
             const { error } = await supabaseClient.storage.from('Jobby_files').upload(filePath, fileBase64, {
-                contentType: 'image/' + path.extname(originalname).substring(1),
+                contentType: 'image/' + path.extname(sanitizedName).substring(1),
             });
 
             if (error) {
@@ -129,7 +136,14 @@ const uploadCombinedToSupabase = async (req: Request, res: Response, next: NextF
 
             for (const file of documentFiles) {
                 const { originalname, buffer } = file;
-                const filePath = `documents/${Date.now()}-${Math.random().toString(36).substring(2)}-${originalname}`;
+                
+                const sanitizedName = originalname
+                    .normalize('NFD')
+                    .replace(/[\u0300-\u036f]/g, '')
+                    .replace(/\s+/g, '_')
+                    .replace(/[^a-zA-Z0-9._-]/g, '');
+                
+                const filePath = `documents/${Date.now()}-${Math.random().toString(36).substring(2)}-${sanitizedName}`;
                 const fileBase64 = decode(buffer.toString('base64'));
 
                 const uploadPromise = supabaseClient.storage
@@ -139,8 +153,8 @@ const uploadCombinedToSupabase = async (req: Request, res: Response, next: NextF
                     })
                     .then(({ error }) => {
                         if (error) {
-                            console.error(`Error uploading ${originalname}:`, error);
-                            throw new Error(`Failed to upload ${originalname}`);
+                            console.error(`Error uploading ${sanitizedName}:`, error);
+                            throw new Error(`Failed to upload ${sanitizedName}`);
                         }
                         return filePath;
                     });
