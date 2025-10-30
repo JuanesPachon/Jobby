@@ -237,3 +237,38 @@ export interface CancelTaskResult {
         updated_at: Date;
     };
 }
+
+export interface GetUserApplicationsResult {
+    success: boolean;
+    error?: 'server';
+    message?: string;
+    data?: {
+        tasks: {
+            id: number;
+            creator_id: number;
+            selected_user_id?: number | null;
+            title: string;
+            description: string;
+            city: string;
+            neighborhood?: string | null;
+            duration_days: number;
+            salary: number;
+            status: 'available' | 'in_progress' | 'completed' | 'cancelled';
+            created_at: Date;
+            updated_at: Date;
+            creator: {
+                id: number;
+                first_name: string;
+                last_name: string;
+                photo_url?: string | null;
+            };
+            application_status: 'applied' | 'selected' | 'withdrawn';
+            user_relation_status: 'applied' | 'selected' | 'in_progress' | 'completed' | 'cancelled';
+            applied_at: Date;
+            status_changed_at?: Date | null;
+        }[];
+        total: number;
+        currentPage: number;
+        totalPages: number;
+    };
+}

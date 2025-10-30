@@ -2,23 +2,23 @@ import { Component, inject, OnInit, OnDestroy, computed, signal } from '@angular
 import { RouterLink } from '@angular/router';
 import { TaskService } from '../services/task.service';
 import { DashboardNavbar } from '../../../shared/dashboard-navbar/dashboard-navbar';
-import { PublishedTaskCard } from '../components/published-task-card/published-task-card';
-import { PublishedTask } from '../interfaces';
+import { AppliedTaskCard } from '../components/applied-task-card/applied-task-card';
+import { AppliedTask } from '../interfaces';
 
 @Component({
-  selector: 'app-published-tasks',
-  imports: [DashboardNavbar, RouterLink, PublishedTaskCard],
-  templateUrl: './published-tasks.html',
-  styleUrl: './published-tasks.css'
+  selector: 'app-applied-tasks',
+  imports: [DashboardNavbar, RouterLink, AppliedTaskCard],
+  templateUrl: './applied-tasks.html',
+  styleUrl: './applied-tasks.css'
 })
-export default class PublishedTasks implements OnInit, OnDestroy {
+export default class AppliedTasks implements OnInit, OnDestroy {
   private taskService = inject(TaskService);
   private timeoutId?: number;
 
   taskNotification = computed(() => this.taskService.taskNotification());
   taskNotificationMessage = computed(() => this.taskService.taskNotificationMessage());
   
-  publishedTasks = signal<PublishedTask[]>([]);
+  appliedTasks = signal<AppliedTask[]>([]);
   totalTasks = signal<number>(0);
   isLoading = signal<boolean>(false);
   error = signal<string | null>(null);
@@ -27,13 +27,13 @@ export default class PublishedTasks implements OnInit, OnDestroy {
   itemsPerPage = 10;
   totalPages = computed(() => Math.ceil(this.totalTasks() / this.itemsPerPage));
 
-  selectedStatus = signal<string>('all');
+  selectedStatus = signal<string>('applied');
   statusOptions = [
-    { value: 'all', label: 'Todas las tareas', color: 'bg-gray-100 text-gray-800' },
-    { value: 'available', label: 'Disponibles', color: 'bg-green-100 text-blue-800' },
-    { value: 'in_progress', label: 'En progreso', color: 'bg-blue-100 text-yellow-800' },
-    { value: 'completed', label: 'Completadas', color: 'bg-yellow-100 text-green-800' },
-    { value: 'cancelled', label: 'Canceladas', color: 'bg-red-100 text-red-800' }
+    { value: 'applied', label: 'Postulado', color: 'bg-blue-100 text-blue-800' },
+    { value: 'selected', label: 'Seleccionado', color: 'bg-yellow-100 text-yellow-800' },
+    { value: 'in_progress', label: 'En Progreso', color: 'bg-orange-100 text-orange-800' },
+    { value: 'completed', label: 'Completado', color: 'bg-green-100 text-green-800' },
+    { value: 'cancelled', label: 'Cancelada', color: 'bg-red-100 text-red-800' }
   ];
 
   ngOnInit() {
@@ -43,10 +43,10 @@ export default class PublishedTasks implements OnInit, OnDestroy {
       }, 5000);
     }
     
-    this.loadPublishedTasks();
+    this.loadAppliedTasks();
   }
 
-  loadPublishedTasks(): void {
+  loadAppliedTasks(): void {
     this.loadTasksWithPage(this.currentPage());
   }
 
@@ -60,20 +60,19 @@ export default class PublishedTasks implements OnInit, OnDestroy {
       status: this.selectedStatus() === 'all' ? undefined : this.selectedStatus()
     };
 
-    console.log('Filtros enviados:', filters); // Debug log
 
-    this.taskService.getMyPublishedTasks(filters).subscribe({
+    this.taskService.getMyAppliedTasks(filters).subscribe({
       next: (response) => {
         if (response.success && response.data) {
-          this.publishedTasks.set(response.data.tasks);
+          this.appliedTasks.set(response.data.tasks);
           this.totalTasks.set(response.data.total);
         } else {
-          this.error.set('Error al cargar las tareas publicadas');
+          this.error.set('Error al cargar las tareas aplicadas');
         }
         this.isLoading.set(false);
       },
       error: (error) => {
-        this.error.set('Error al cargar las tareas publicadas');
+        this.error.set('Error al cargar las tareas aplicadas');
         this.isLoading.set(false);
       }
     });
@@ -145,10 +144,47 @@ export default class PublishedTasks implements OnInit, OnDestroy {
   }
 
   onStatusFilterChange(status: string): void {
-    console.log('Cambiando filtro a:', status); // Debug log
+    console.log('Cambiando filtro a:', status);
     this.selectedStatus.set(status);
-    this.currentPage.set(1); // Reset to first page
+    this.currentPage.set(1);
     this.loadTasksWithPage(1);
+  }
+
+  getEmptyStateMessage(): { title: string; description: string } {
+    const status = this.selectedStatus();
+    
+    switch (status) {
+      case 'applied':
+        return {
+          title: 'No tienes aplicaciones pendientes',
+          description: 'Las tareas donde te postulaste pero aún no has sido seleccionado aparecerán aquí.'
+        };
+      case 'selected':
+        return {
+          title: 'No has sido seleccionado en ninguna tarea',
+          description: 'Las tareas donde fuiste elegido pero aún no han comenzado aparecerán aquí.'
+        };
+      case 'in_progress':
+        return {
+          title: 'No tienes tareas en progreso',
+          description: 'Las tareas donde fuiste seleccionado y ya están en ejecución aparecerán aquí.'
+        };
+      case 'completed':
+        return {
+          title: 'No has completado ninguna tarea',
+          description: 'Las tareas que hayas terminado exitosamente aparecerán aquí.'
+        };
+      case 'cancelled':
+        return {
+          title: 'No tienes tareas canceladas recientes',
+          description: 'Las tareas donde fuiste seleccionado pero fueron canceladas en los últimos 7 días aparecerán aquí.'
+        };
+      default:
+        return {
+          title: 'No te has postulado a ninguna tarea',
+          description: 'Explora oportunidades laborales y postúlate a las tareas que te interesen.'
+        };
+    }
   }
 
   ngOnDestroy() {

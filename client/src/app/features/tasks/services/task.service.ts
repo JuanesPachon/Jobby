@@ -193,7 +193,7 @@ export class TaskService {
   }
 
 
-  getMyPublishedTasks(filters?: { limit?: number; page?: number }): Observable<PublishedTasksResponse> {
+  getMyPublishedTasks(filters?: { limit?: number; page?: number; status?: string }): Observable<PublishedTasksResponse> {
     let params = new URLSearchParams();
     
     if (filters?.limit) {
@@ -204,8 +204,14 @@ export class TaskService {
       params.append('page', filters.page.toString());
     }
 
+    if (filters?.status) {
+      params.append('status', filters.status);
+    }
+
     const queryString = params.toString();
     const url = queryString ? `${environment.apiUrl}/my-tasks?${queryString}` : `${environment.apiUrl}/my-tasks`;
+
+    console.log('URL construida:', url); // Debug log
 
     return this.http.get<PublishedTasksResponse>(url, {
       withCredentials: true
@@ -240,6 +246,30 @@ export class TaskService {
 
   cancelTask(taskId: number): Observable<any> {
     return this.http.delete<any>(`${environment.apiUrl}/my-tasks/cancel/${taskId}`, {
+      withCredentials: true
+    });
+  }
+
+  getMyAppliedTasks(filters?: { page?: number; limit?: number; status?: string }): Observable<any> {
+    const params = new URLSearchParams();
+
+    if (filters?.page) {
+      params.append('page', filters.page.toString());
+    }
+    
+    if (filters?.limit) {
+      params.append('limit', filters.limit.toString());
+    }
+
+    if (filters?.status) {
+      params.append('status', filters.status);
+    }
+
+    const queryString = params.toString();
+    const url = queryString ? `${environment.apiUrl}/my-applications?${queryString}` : `${environment.apiUrl}/my-applications`;
+
+
+    return this.http.get<any>(url, {
       withCredentials: true
     });
   }

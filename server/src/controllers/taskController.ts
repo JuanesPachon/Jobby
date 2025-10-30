@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
 import errorHandler from "../utils/errorHandler.js";
-import { createTask, getTaskById, getTasks, getUserTasks, getTaskWithApplications, selectApplicant, deselectApplicant, startTask, checkUserApplication, withdrawApplication, cancelTask } from '../models/taskModel.js';
+import { createTask, getTaskById, getTasks, getUserTasks, getTaskWithApplications, selectApplicant, deselectApplicant, startTask, checkUserApplication, withdrawApplication, cancelTask, getUserApplications, cleanupOldCancelledTasks } from '../models/taskModel.js';
 import { createApplication } from "../models/applicationModel.js";
-import { CreateTaskRequest, GetTasksFilters, SelectApplicantRequest } from "../interfaces/task.interface.js";
+import { CreateTaskRequest, GetTasksFilters, SelectApplicantRequest, GetUserApplicationsFilters } from "../interfaces/task.interface.js";
 
 const createTaskController = async (req: Request, res: Response) => {
   try {
@@ -111,8 +111,10 @@ const getMyTasksController = async (req: Request, res: Response) => {
 
     const filters = {
       limit: req.query.limit ? parseInt(req.query.limit as string, 10) : undefined,
-      page: req.query.page ? parseInt(req.query.page as string, 10) : undefined
+      page: req.query.page ? parseInt(req.query.page as string, 10) : undefined,
+      status: req.query.status as 'available' | 'in_progress' | 'completed' | 'cancelled' | undefined
     };
+
 
     if (filters.limit !== undefined && (isNaN(filters.limit) || filters.limit < 1)) {
       return errorHandler.handleValidationError(res, "Invalid limit parameter");
@@ -120,6 +122,10 @@ const getMyTasksController = async (req: Request, res: Response) => {
 
     if (filters.page !== undefined && (isNaN(filters.page) || filters.page < 1)) {
       return errorHandler.handleValidationError(res, "Invalid page parameter");
+    }
+
+    if (filters.status && !['available', 'in_progress', 'completed', 'cancelled'].includes(filters.status)) {
+      return errorHandler.handleValidationError(res, "Invalid status parameter");
     }
 
     const response = await getUserTasks(creatorIdNumber, filters);
@@ -493,6 +499,60 @@ const cancelTaskController = async (req: Request, res: Response) => {
   }
 };
 
+const getMyApplicationsController = async (req: Request, res: Response) => {
+  try {
+    const userId = req.user?.sub;
+    
+    if (!userId) {
+      return errorHandler.handleAuthError(res, "User not authenticated");
+    }
+
+    const userIdNumber = parseInt(userId, 10);
+    
+    if (isNaN(userIdNumber)) {
+      return errorHandler.handleValidationError(res, "Invalid user ID");
+    }
+
+    const page = parseInt(req.query.page as string) || 1;
+    const limit = parseInt(req.query.limit as string) || 10;
+    const status = req.query.status as string;
+
+    const filters: GetUserApplicationsFilters = {
+      page,
+      limit,
+      status: status ? status as 'applied' | 'selected' | 'in_progress' | 'completed' | 'cancelled' : undefined
+    };
+
+    const response = await getUserApplications(userIdNumber, filters);
+
+    if (response.success) {
+      return res.status(200).json(response);
+    } else {
+      return errorHandler.handleServerError(res, response.message);
+    }
+
+  } catch (error) {
+    console.error('Error in getMyApplicationsController:', error);
+    return errorHandler.handleServerError(res, "Internal server error fetching user applications");
+  }
+};
+
+const cleanupOldCancelledTasksController = async (_req: Request, res: Response) => {
+  try {
+    const response = await cleanupOldCancelledTasks();
+
+    if (response.success) {
+      return res.status(200).json(response);
+    } else {
+      return errorHandler.handleServerError(res, response.message);
+    }
+
+  } catch (error) {
+    console.error('Error in cleanupOldCancelledTasksController:', error);
+    return errorHandler.handleServerError(res, "Internal server error during cleanup");
+  }
+};
+
 export { 
   createTaskController, 
   getTaskByIdController, 
@@ -505,5 +565,7 @@ export {
   startTaskController,
   checkApplicationController,
   withdrawApplicationController,
-  cancelTaskController
+  cancelTaskController,
+  getMyApplicationsController,
+  cleanupOldCancelledTasksController
 };
