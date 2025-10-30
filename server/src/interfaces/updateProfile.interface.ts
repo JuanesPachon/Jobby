@@ -6,6 +6,7 @@ export interface UpdateProfileRequest {
     occupation: string;
     current_location: string;
     description?: string;
+    mock_email?: string;
     experiences?: ExperienceOperation[];
     skills?: SkillOperation[];
     documents?: DocumentOperation[];

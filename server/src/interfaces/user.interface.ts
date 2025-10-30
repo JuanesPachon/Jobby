@@ -26,6 +26,7 @@ export interface UserProfile {
   description?: string;
   occupation?: string;
   current_location?: string;
+  mock_email?: string;
   created_at: Date;
   updated_at: Date;
 }

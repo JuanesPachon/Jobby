@@ -163,6 +163,7 @@ const getUserByIdFiltered = async (userId: number): Promise<getUserByIdResult> =
                 description,
                 occupation,
                 current_location,
+                mock_email,
                 created_at,
                 updated_at
             FROM profiles 
@@ -212,6 +213,7 @@ const getUserByIdFiltered = async (userId: number): Promise<getUserByIdResult> =
                 description: profileRows[0].description,
                 occupation: profileRows[0].occupation,
                 current_location: profileRows[0].current_location,
+                mock_email: profileRows[0].mock_email,
                 created_at: profileRows[0].created_at,
                 updated_at: profileRows[0].updated_at
             } as UserProfile;
@@ -266,6 +268,12 @@ const updateUserProfile = async (userId: number, updateData: UpdateProfileReques
         let skillsProcessed = 0;
         let documentsProcessed = 0;
 
+        const [userEmailRows] = await connection.query<RowDataPacket[]>(
+            'SELECT email FROM users WHERE id = ?',
+            [userId]
+        );
+        const userEmail = userEmailRows.length > 0 ? userEmailRows[0].email : null;
+
         const userFields: string[] = [];
         const userValues: any[] = [];
 
@@ -295,7 +303,7 @@ const updateUserProfile = async (userId: number, updateData: UpdateProfileReques
             updatedUser = true;
         }
 
-        if (updateData.description !== undefined || photoUrl || updateData.occupation !== undefined || updateData.current_location !== undefined) {
+        if (updateData.description !== undefined || photoUrl || updateData.occupation !== undefined || updateData.current_location !== undefined || updateData.mock_email !== undefined) {
             const [existingProfile] = await connection.query<RowDataPacket[]>(
                 'SELECT user_id FROM profiles WHERE user_id = ?',
                 [userId]
@@ -321,6 +329,10 @@ const updateUserProfile = async (userId: number, updateData: UpdateProfileReques
                     profileFields.push('current_location = ?');
                     profileValues.push(updateData.current_location);
                 }
+                if (updateData.mock_email !== undefined) {
+                    profileFields.push('mock_email = ?');
+                    profileValues.push(updateData.mock_email);
+                }
 
                 if (profileFields.length > 0) {
                     profileValues.push(userId);
@@ -332,8 +344,8 @@ const updateUserProfile = async (userId: number, updateData: UpdateProfileReques
                 }
             } else {
                 await connection.query(
-                    'INSERT INTO profiles (user_id, description, photo_url, occupation, current_location) VALUES (?, ?, ?, ?, ?)',
-                    [userId, updateData.description || null, photoUrl || null, updateData.occupation || null, updateData.current_location || null]
+                    'INSERT INTO profiles (user_id, description, photo_url, occupation, current_location, mock_email) VALUES (?, ?, ?, ?, ?, ?)',
+                    [userId, updateData.description || null, photoUrl || null, updateData.occupation || null, updateData.current_location || null, updateData.mock_email || userEmail]
                 );
                 updatedProfile = true;
             }

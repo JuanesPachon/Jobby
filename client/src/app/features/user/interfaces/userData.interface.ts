@@ -19,6 +19,7 @@ export interface Profile {
   updated_at: string
   occupation?: string
   current_location?: string
+  mock_email?: string
 }
 
 export interface Experience {

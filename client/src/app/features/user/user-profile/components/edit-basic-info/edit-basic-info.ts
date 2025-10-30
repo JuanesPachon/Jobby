@@ -27,8 +27,10 @@ export class EditBasicInfo implements OnInit {
   }
 
   private initializeForm(): void {
+    const displayEmail = this.userData()?.profile?.mock_email || this.userData()?.email || '';
+    
     this.basicInfoForm = new FormGroup({
-      email: new FormControl(this.userData()?.email || '', [
+      mock_email: new FormControl(displayEmail, [
         Validators.email,
         Validators.maxLength(100),
       ]),
@@ -56,7 +58,7 @@ export class EditBasicInfo implements OnInit {
 
       const formValue = this.basicInfoForm.value;
       const updateData = {
-        email: formValue.email || '',
+        mock_email: formValue.mock_email || '',
         phone: formValue.phone || '',
         occupation: formValue.occupation || '',
         current_location: formValue.current_location || ''
