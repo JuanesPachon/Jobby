@@ -9,6 +9,7 @@ export const routes: Routes = [
     {path: 'dashboard', canActivate: [authGuard], loadComponent: () => import('./features/dashboard/dashboard')},
     {path: 'recovery', canActivate: [nonAuthGuard],loadComponent: () => import('./features/auth/password-recovery/password-recovery')},
     {path: 'profile', canActivate: [authGuard],loadComponent: () => import('./features/user/user-profile/user-profile')},
+    {path: 'profile/:id', canActivate: [authGuard],loadComponent: () => import('./features/user/public-profile/public-profile')},
     {path: 'task', canActivate: [authGuard],loadComponent: () => import('./features/tasks/post-task/post-task')},
     {path: 'task/:id', canActivate: [authGuard],loadComponent: () => import('./features/tasks/task-detail/task-detail')},
     {path: 'task-result', canActivate: [authGuard],loadComponent: () => import('./features/tasks/tasks-result/tasks-result')},

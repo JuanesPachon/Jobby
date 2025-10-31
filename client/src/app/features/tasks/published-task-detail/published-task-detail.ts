@@ -6,6 +6,7 @@ import { TaskService } from '../services/task.service';
 import { TaskDetail, Applicant } from '../interfaces';
 import { NgClass } from '@angular/common';
 import { CancelTaskModal } from '../components/cancel-task-modal/cancel-task-modal';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-published-task-detail',
@@ -68,7 +69,7 @@ export default class PublishedTaskDetail implements OnInit {
               application_id: app.id,     
               first_name: app.first_name,
               last_name: app.last_name,               
-              photo_url: app.photo_url || '/images/WebP/profile_mock.png',
+              photo_url: app.photo_url,
               applied_at: app.applied_at,
               status: app.status
             }));
@@ -310,6 +311,13 @@ export default class PublishedTaskDetail implements OnInit {
     if (img && img.src !== '/images/WebP/profile_mock.png') {
       img.src = '/images/WebP/profile_mock.png';
     }
+  }
+
+  getPhotoUrl(photoPath: string | null | undefined): string {
+    if (!photoPath || photoPath === '/images/WebP/profile_mock.png') {
+      return '/images/WebP/profile_mock.png';
+    }
+    return `${environment.supabaseStorageUrl}${photoPath}`;
   }
 
   onCancelTask(): void {

@@ -40,6 +40,7 @@ const getUserById = async (userId: number): Promise<getUserByIdResult> => {
                 description,
                 occupation,
                 current_location,
+                mock_email,
                 created_at,
                 updated_at
             FROM profiles 
@@ -89,6 +90,7 @@ const getUserById = async (userId: number): Promise<getUserByIdResult> => {
                 description: profileRows[0].description,
                 occupation: profileRows[0].occupation,
                 current_location: profileRows[0].current_location,
+                mock_email: profileRows[0].mock_email,
                 created_at: profileRows[0].created_at,
                 updated_at: profileRows[0].updated_at
             } as UserProfile;

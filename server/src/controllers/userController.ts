@@ -41,6 +41,51 @@ const getUserDataController = async (req: Request, res: Response) => {
   }
 };
 
+const getPublicUserProfileController = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+
+    if (!id) {
+      return res.status(400).json({
+        success: false,
+        message: "User ID is required"
+      });
+    }
+
+    const numericUserId = parseInt(id, 10);
+
+    if (isNaN(numericUserId)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid user ID"
+      });
+    }
+
+    const response = await getUserById(numericUserId);
+
+    if (response.success && response.user) {
+      return res.status(200).json({
+        success: true,
+        message: response.message,
+        data: response.user
+      });
+    }
+
+    switch (response.error) {
+      case 'user_not_found':
+        return errorHandler.handleNotFoundError(res, response.message);
+      case 'server':
+        return errorHandler.handleServerError(res, response.message);
+      default:
+        return errorHandler.handleServerError(res, "Internal server error while retrieving user data");
+    }
+
+  } catch (error) {
+    console.error('Error in getPublicUserProfileController:', error);
+    return errorHandler.handleServerError(res, "Internal server error");
+  }
+};
+
 const updateUserProfileController = async (req: Request, res: Response) => {
   try {
     const userId = req.user?.sub;
@@ -95,4 +140,4 @@ const updateUserProfileController = async (req: Request, res: Response) => {
   }
 };
 
-export { getUserDataController, updateUserProfileController };
+export { getUserDataController, getPublicUserProfileController, updateUserProfileController };

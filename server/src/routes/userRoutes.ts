@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { getUserDataController, updateUserProfileController } from "../controllers/userController.js";
+import { getUserDataController, getPublicUserProfileController, updateUserProfileController } from "../controllers/userController.js";
 import { uploadCombined } from "../config/multer.config.js";
 import { deleteOldImage, handleCombinedMulterError, uploadCombinedToSupabase } from "../middlewares/validateMulter.js";
 import { updateProfileValidations } from "../middlewares/validateUpdateProfile.js";
@@ -9,6 +9,7 @@ import verifyToken from "../middlewares/verifyToken.js";
 const router = Router();
 
 router.get("/user/profile", verifyToken, getUserDataController);
+router.get("/user/profile/:id", verifyToken, getPublicUserProfileController);
 
 router.patch("/user/profile", 
   verifyToken, 
