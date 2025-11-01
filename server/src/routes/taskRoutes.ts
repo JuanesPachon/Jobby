@@ -12,6 +12,7 @@ import {
   checkApplicationController,
   withdrawApplicationController,
   cancelTaskController,
+  completeTaskController,
   getMyApplicationsController,
   cleanupOldCancelledTasksController
 } from "../controllers/taskController.js";
@@ -37,6 +38,7 @@ router.get("/my-applications", verifyToken, getMyApplicationsController);
 router.put("/my-tasks/select/:id/", verifyToken, selectApplicantValidations, errorsIsEmpty, selectApplicantController);
 router.put("/my-tasks/deselect/:id/", verifyToken, deselectApplicantController);
 router.put("/my-tasks/start/:id/", verifyToken, startTaskController);
+router.put("/my-tasks/complete/:id", verifyToken, completeTaskController);
 router.delete("/my-tasks/cancel/:id", verifyToken, cancelTaskController);
 
 router.post("/cleanup-cancelled-tasks", verifyToken, cleanupOldCancelledTasksController);

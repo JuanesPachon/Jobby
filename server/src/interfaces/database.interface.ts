@@ -238,6 +238,17 @@ export interface CancelTaskResult {
     };
 }
 
+export interface CompleteTaskResult {
+    success: boolean;
+    error?: 'task_not_found' | 'unauthorized' | 'task_not_in_progress' | 'no_selected_user' | 'server';
+    message?: string;
+    data?: {
+        task_id: number;
+        task_status: 'completed';
+        updated_at: Date;
+    };
+}
+
 export interface GetUserApplicationsResult {
     success: boolean;
     error?: 'server';

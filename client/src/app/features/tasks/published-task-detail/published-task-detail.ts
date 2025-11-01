@@ -29,6 +29,7 @@ export default class PublishedTaskDetail implements OnInit {
   taskNotificationMessage = signal<string>('');
   isCancelModalOpen = signal<boolean>(false);
   isCancellingTask = signal<boolean>(false);
+  isCompletingTask = signal<boolean>(false);
 
   ngOnInit() {
     const taskId = this.route.snapshot.paramMap.get('id');
@@ -393,5 +394,67 @@ export default class PublishedTaskDetail implements OnInit {
     }
     
     return 'w-full sm:w-auto px-6 py-2 rounded-full bg-white hover:bg-gray-300 text-sm font-medium border border-black transition-colors cursor-pointer';
+  }
+
+  onCompleteTask(): void {
+    const taskDetail = this.taskDetail();
+    if (!taskDetail) return;
+
+    this.isCompletingTask.set(true);
+
+    this.taskService.completeTask(taskDetail.id).subscribe({
+      next: (response) => {
+        if (response.success) {
+          const updatedTask = { ...taskDetail, status: 'completed' as const };
+          this.taskDetail.set(updatedTask);
+
+          this.taskNotificationMessage.set('Tarea completada exitosamente');
+          this.taskNotification.set(true);
+          
+          setTimeout(() => {
+            this.taskNotification.set(false);
+          }, 3000);
+        }
+        this.isCompletingTask.set(false);
+      },
+      error: (error) => {
+        console.error('Error completing task:', error);
+        this.isCompletingTask.set(false);
+        
+        this.taskNotificationMessage.set('Error al completar la tarea');
+        this.taskNotification.set(true);
+        
+        setTimeout(() => {
+          this.taskNotification.set(false);
+        }, 3000);
+      }
+    });
+  }
+
+  canCompleteTask(): boolean {
+    const taskDetail = this.taskDetail();
+    if (!taskDetail) return false;
+    
+    return taskDetail.status === 'in_progress';
+  }
+
+  getCompleteTaskButtonClass(): string {
+    const canComplete = this.canCompleteTask();
+    const isLoading = this.isCompletingTask();
+    
+    if (isLoading) {
+      return 'w-full sm:w-auto px-6 py-2 rounded-full bg-gray-400 text-white text-sm font-medium border border-black cursor-not-allowed';
+    }
+    
+    if (!canComplete) {
+      return 'hidden';
+    }
+    
+    return 'w-full sm:w-auto px-6 py-2 rounded-full bg-main-blue hover:bg-blue-600 text-white text-sm font-medium border border-black transition-colors cursor-pointer';
+  }
+
+  getCompleteTaskButtonText(): string {
+    const isLoading = this.isCompletingTask();
+    return isLoading ? 'Completando...' : 'Completar tarea';
   }
 }
