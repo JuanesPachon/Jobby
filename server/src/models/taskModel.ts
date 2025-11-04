@@ -2,7 +2,7 @@ import pool from "../config/db_config.js";
 import { ResultSetHeader, RowDataPacket } from "mysql2/promise";
 import { CreateTaskRequest, GetTasksFilters, GetUserTasksFilters, GetUserApplicationsFilters } from "../interfaces/task.interface.js";
 import { TaskWithApplications } from "../interfaces/application.interface.js";
-import { CreateTaskResult, GetTaskByIdResult, GetTasksResult, GetUserTasksResult, GetTaskWithApplicationsResult, SelectApplicantResult, DeselectApplicantResult, StartTaskResult, CancelTaskResult, GetUserApplicationsResult } from "../interfaces/database.interface.js";
+import { CreateTaskResult, GetTaskByIdResult, GetTasksResult, GetUserTasksResult, GetTaskWithApplicationsResult, SelectApplicantResult, DeselectApplicantResult, StartTaskResult, CancelTaskResult, CompleteTaskResult, GetUserApplicationsResult } from "../interfaces/database.interface.js";
 
 const createTask = async (creator_id: number, taskData: CreateTaskRequest): Promise<CreateTaskResult> => {
     try {
@@ -929,6 +929,86 @@ const cancelTask = async (task_id: number, creator_id: number): Promise<CancelTa
     }
 };
 
+const completeTask = async (task_id: number, creator_id: number): Promise<CompleteTaskResult> => {
+    const connection = await pool.getConnection();
+    
+    try {
+        await connection.beginTransaction();
+
+        const [taskRows] = await connection.query<RowDataPacket[]>(
+            'SELECT id, creator_id, status, selected_user_id FROM tasks WHERE id = ? AND creator_id = ? AND deleted_at IS NULL',
+            [task_id, creator_id]
+        );
+
+        if (taskRows.length === 0) {
+            await connection.rollback();
+            return {
+                success: false,
+                error: 'task_not_found',
+                message: 'Task not found or you are not authorized to complete this task'
+            };
+        }
+
+        const task = taskRows[0];
+
+        if (task.status !== 'in_progress') {
+            await connection.rollback();
+            return {
+                success: false,
+                error: 'task_not_in_progress',
+                message: 'Only tasks in progress can be completed'
+            };
+        }
+
+        if (!task.selected_user_id) {
+            await connection.rollback();
+            return {
+                success: false,
+                error: 'no_selected_user',
+                message: 'Cannot complete a task without a selected user'
+            };
+        }
+
+        const [taskUpdateResult] = await connection.query<ResultSetHeader>(
+            'UPDATE tasks SET status = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?',
+            ['completed', task_id]
+        );
+
+        if (taskUpdateResult.affectedRows === 0) {
+            await connection.rollback();
+            return {
+                success: false,
+                error: 'server',
+                message: 'Failed to complete task'
+            };
+        }
+
+        await connection.commit();
+
+        const currentDate = new Date();
+        return {
+            success: true,
+            message: 'Task completed successfully',
+            data: {
+                task_id: task_id,
+                task_status: 'completed',
+                updated_at: currentDate
+            }
+        };
+
+    } catch (error: any) {
+        await connection.rollback();
+        console.error('Error in completeTask:', error);
+        return {
+            success: false,
+            error: 'server',
+            message: 'Internal server error while completing task'
+        };
+    } finally {
+        connection.release();
+    }
+};
+
 const getUserApplications = async (userId: number, filters: GetUserApplicationsFilters): Promise<GetUserApplicationsResult> => {
     try {
 
@@ -1132,4 +1212,4 @@ const cleanupOldCancelledTasks = async (): Promise<{ success: boolean; message: 
     }
 };
 
-export { createTask, getTaskById, getTasks, getUserTasks, getTaskWithApplications, selectApplicant, deselectApplicant, startTask, checkUserApplication, withdrawApplication, cancelTask, getUserApplications, cleanupOldCancelledTasks };
+export { createTask, getTaskById, getTasks, getUserTasks, getTaskWithApplications, selectApplicant, deselectApplicant, startTask, checkUserApplication, withdrawApplication, cancelTask, completeTask, getUserApplications, cleanupOldCancelledTasks };

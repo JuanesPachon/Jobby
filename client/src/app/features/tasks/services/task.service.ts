@@ -250,6 +250,12 @@ export class TaskService {
     });
   }
 
+  completeTask(taskId: number): Observable<any> {
+    return this.http.put<any>(`${environment.apiUrl}/my-tasks/complete/${taskId}`, {}, {
+      withCredentials: true
+    });
+  }
+
   getMyAppliedTasks(filters?: { page?: number; limit?: number; status?: string }): Observable<any> {
     const params = new URLSearchParams();
 

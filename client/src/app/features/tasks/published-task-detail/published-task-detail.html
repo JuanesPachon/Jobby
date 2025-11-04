@@ -133,7 +133,8 @@
               </button>
             }
             
-            <button
+            @if (!canCompleteTask()) {
+              <button
               [ngClass]="getStartTaskButtonClass()"
               class="w-full sm:w-auto"
               type="button"
@@ -142,6 +143,18 @@
             >
               {{ getStartTaskButtonText() }}
             </button>
+            }
+            
+            @if (canCompleteTask()) {
+              <button
+                [class]="getCompleteTaskButtonClass()"
+                type="button"
+                (click)="onCompleteTask()"
+                [disabled]="isCompletingTask()"
+              >
+                {{ getCompleteTaskButtonText() }}
+              </button>
+            }
           </div>
         </div>
 
