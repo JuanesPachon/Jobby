@@ -10,6 +10,10 @@ export const serverRoutes: ServerRoute[] = [
     renderMode: RenderMode.Server
   },
   {
+    path: 'profile/:id',
+    renderMode: RenderMode.Server
+  },
+  {
     path: '',
     renderMode: RenderMode.Prerender
   },
@@ -39,6 +43,14 @@ export const serverRoutes: ServerRoute[] = [
   },
   {
     path: 'task-result',
+    renderMode: RenderMode.Prerender
+  },
+  {
+    path: 'my-tasks',
+    renderMode: RenderMode.Prerender
+  },
+  {
+    path: 'applied-tasks',
     renderMode: RenderMode.Prerender
   },
   {

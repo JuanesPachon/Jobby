@@ -13,6 +13,14 @@ export class AuthService {
   private cacheExpiry: number = 0;
   private readonly CACHE_DURATION = 5 * 60 * 1000;
 
+  authNotification = signal<Boolean>(false);
+  notificationMessage = signal<string>('');
+  isLoadingSplash = signal<boolean>(false);
+
+  setLoading(loading: boolean): void {
+    this.isLoadingSplash.set(loading);
+  }
+
   hasLocalToken(): boolean {
     if (typeof document !== 'undefined') {
       const cookies = document.cookie.split(';');
@@ -39,9 +47,6 @@ export class AuthService {
   attemptSignUp(formData: RegisterRequest): Observable<any> {
     return this.http.post<any>(`${environment.apiUrl}/auth/register`, formData)
   }
-
-  authNotification = signal<Boolean>(false);
-  notificationMessage = signal<string>('');
 
   attemptLogin(formData: LoginRequest): Observable<any> {
     return this.http.post<any>(`${environment.apiUrl}/auth/login`, formData, {
