@@ -49,13 +49,15 @@ const loginController = async (req: Request, res: Response) => {
         expiresIn: '14d'
       });
 
-      return res.cookie('access_token', token, {
+      const cookieOptions = {
         httpOnly: true,
         secure: process.env.SERVER_PROD === 'true',
-        sameSite: process.env.SERVER_PROD === 'true' ? 'none' : 'lax',
+        sameSite: process.env.SERVER_PROD === 'true' ? 'none' as const : 'lax' as const,
         maxAge: 14 * 24 * 60 * 60 * 1000,
-        domain: process.env.SERVER_PROD === 'true' ? undefined : undefined
-      }).status(200).json({
+        path: '/'
+      };
+
+      return res.cookie('access_token', token, cookieOptions).status(200).json({
         success: true,
         message: "Login successful",
       });
@@ -89,11 +91,14 @@ const validateTokenController = async (_req: Request, res: Response) => {
 
 const logoutController = async (_req: Request, res: Response) => {
   try {
-    return res.clearCookie('access_token', {
+    const cookieOptions = {
       httpOnly: true,
       secure: process.env.SERVER_PROD === 'true',
-      sameSite: process.env.SERVER_PROD === 'true' ? 'none' : 'lax'
-    }).status(200).json({
+      sameSite: process.env.SERVER_PROD === 'true' ? 'none' as const : 'lax' as const,
+      path: '/'
+    };
+
+    return res.clearCookie('access_token', cookieOptions).status(200).json({
       success: true,
       message: "Logout successful"
     });
@@ -118,12 +123,15 @@ const verifyCodeController = async (req: Request, res: Response) => {
         { expiresIn: '15m' }
       );
 
-      return res.cookie('reset_token', resetToken, {
+      const cookieOptions = {
         httpOnly: true,
         secure: process.env.SERVER_PROD === 'true',
-        sameSite: process.env.SERVER_PROD === 'true' ? 'none' : 'lax',
-        maxAge: 15 * 60 * 1000
-      }).status(200).json({
+        sameSite: process.env.SERVER_PROD === 'true' ? 'none' as const : 'lax' as const,
+        maxAge: 15 * 60 * 1000,
+        path: '/'
+      };
+
+      return res.cookie('reset_token', resetToken, cookieOptions).status(200).json({
         success: true,
         message: "Reset code verified successfully",
       });
@@ -174,11 +182,14 @@ const resetPasswordController = async (req: Request, res: Response) => {
     const response = await resetPassword(resetData, decoded.userId);
 
     if (response.success) {
-      return res.clearCookie('reset_token', {
+      const cookieOptions = {
         httpOnly: true,
         secure: process.env.SERVER_PROD === 'true',
-        sameSite: process.env.SERVER_PROD === 'true' ? 'none' : 'lax'
-      }).status(200).json({
+        sameSite: process.env.SERVER_PROD === 'true' ? 'none' as const : 'lax' as const,
+        path: '/'
+      };
+
+      return res.clearCookie('reset_token', cookieOptions).status(200).json({
         success: true,
         message: "Password updated successfully",
       });

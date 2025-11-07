@@ -6,6 +6,7 @@ import { UserService } from '../services/user.service';
 import { UserData } from '../interfaces/userData.interface';
 import { UserProfileSkeletonComponent } from '../user-profile/components/user-profile-skeleton';
 import { UserProfileErrorComponent } from '../user-profile/components/user-profile-error';
+import { HelpButtonComponent } from '../../../shared/help-button/help-button';
 
 @Component({
   selector: 'app-public-profile',
@@ -15,7 +16,8 @@ import { UserProfileErrorComponent } from '../user-profile/components/user-profi
     RouterLink,
     CommonModule,
     UserProfileSkeletonComponent,
-    UserProfileErrorComponent
+    UserProfileErrorComponent,
+    HelpButtonComponent
   ],
   templateUrl: './public-profile.html',
   styleUrl: './public-profile.css',

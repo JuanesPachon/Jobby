@@ -4,10 +4,11 @@ import { TaskService } from '../services/task.service';
 import { DashboardNavbar } from '../../../shared/dashboard-navbar/dashboard-navbar';
 import { PublishedTaskCard } from '../components/published-task-card/published-task-card';
 import { PublishedTask } from '../interfaces';
+import { HelpButtonComponent } from '../../../shared/help-button/help-button';
 
 @Component({
   selector: 'app-published-tasks',
-  imports: [DashboardNavbar, RouterLink, PublishedTaskCard],
+  imports: [DashboardNavbar, RouterLink, PublishedTaskCard, HelpButtonComponent],
   templateUrl: './published-tasks.html',
   styleUrl: './published-tasks.css'
 })

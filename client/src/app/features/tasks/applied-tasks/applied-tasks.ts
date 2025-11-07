@@ -4,10 +4,11 @@ import { TaskService } from '../services/task.service';
 import { DashboardNavbar } from '../../../shared/dashboard-navbar/dashboard-navbar';
 import { AppliedTaskCard } from '../components/applied-task-card/applied-task-card';
 import { AppliedTask } from '../interfaces';
+import { HelpButtonComponent } from '../../../shared/help-button/help-button';
 
 @Component({
   selector: 'app-applied-tasks',
-  imports: [DashboardNavbar, RouterLink, AppliedTaskCard],
+  imports: [DashboardNavbar, RouterLink, AppliedTaskCard, HelpButtonComponent],
   templateUrl: './applied-tasks.html',
   styleUrl: './applied-tasks.css'
 })

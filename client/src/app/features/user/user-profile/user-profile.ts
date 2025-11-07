@@ -14,6 +14,7 @@ import { EditPhoto } from "./components/edit-photo/edit-photo";
 import { EditBasicInfo } from './components/edit-basic-info/edit-basic-info';
 import { Subscription } from 'rxjs';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
+import { HelpButtonComponent } from '../../../shared/help-button/help-button';
 
 @Component({
   selector: 'app-user-profile',
@@ -30,7 +31,8 @@ import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
     DeleteConfirmationModal,
     EditPhoto,
     EditBasicInfo,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    HelpButtonComponent
 ],
   templateUrl: './user-profile.html',
   styleUrl: './user-profile.css',

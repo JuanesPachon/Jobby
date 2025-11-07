@@ -4,10 +4,11 @@ import { TaskCard } from '../components/task-card/task-card';
 import { RouterLink } from '@angular/router';
 import { TaskService } from '../services/task.service';
 import { Task } from '../interfaces/SearchTasks';
+import { HelpButtonComponent } from '../../../shared/help-button/help-button';
 
 @Component({
   selector: 'app-tasks-result',
-  imports: [DashboardNavbar, TaskCard, RouterLink],
+  imports: [DashboardNavbar, TaskCard, RouterLink, HelpButtonComponent],
   templateUrl: './tasks-result.html'
 })
 export default class TasksResult implements OnInit {

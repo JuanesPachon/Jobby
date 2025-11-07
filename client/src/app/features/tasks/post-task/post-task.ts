@@ -4,10 +4,11 @@ import { Router, RouterLink } from '@angular/router';
 import { DashboardNavbar } from '../../../shared/dashboard-navbar/dashboard-navbar';
 import { TaskService } from '../services/task.service';
 import { CreateTaskRequest } from './interfaces/CreateTaskRequest';
+import { HelpButtonComponent } from '../../../shared/help-button/help-button';
 
 @Component({
   selector: 'app-post-task',
-  imports: [DashboardNavbar, RouterLink, ReactiveFormsModule],
+  imports: [DashboardNavbar, RouterLink, ReactiveFormsModule, HelpButtonComponent],
   templateUrl: './post-task.html',
   styleUrl: './post-task.css'
 })

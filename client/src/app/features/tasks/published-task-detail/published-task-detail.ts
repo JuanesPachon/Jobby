@@ -7,10 +7,11 @@ import { TaskDetail, Applicant } from '../interfaces';
 import { NgClass } from '@angular/common';
 import { CancelTaskModal } from '../components/cancel-task-modal/cancel-task-modal';
 import { environment } from '../../../../environments/environment';
+import { HelpButtonComponent } from '../../../shared/help-button/help-button';
 
 @Component({
   selector: 'app-published-task-detail',
-  imports: [DashboardNavbar, RouterLink, CurrencyColombianPipe, SpanishDatePipe, NgClass, CancelTaskModal],
+  imports: [DashboardNavbar, RouterLink, CurrencyColombianPipe, SpanishDatePipe, NgClass, CancelTaskModal, HelpButtonComponent],
   templateUrl: './published-task-detail.html',
   styleUrl: './published-task-detail.css'
 })

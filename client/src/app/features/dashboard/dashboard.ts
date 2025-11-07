@@ -5,10 +5,11 @@ import { DashboardNavbar } from '../../shared/dashboard-navbar/dashboard-navbar'
 import { TaskCard } from '../tasks/components/task-card/task-card';
 import { TaskService } from '../tasks/services/task.service';
 import { Task } from '../tasks/interfaces/SearchTasks';
+import { HelpButtonComponent } from '../../shared/help-button/help-button';
 
 @Component({
   selector: 'app-dashboard',
-  imports: [DashboardNavbar, TaskCard, RouterLink, ReactiveFormsModule],
+  imports: [DashboardNavbar, TaskCard, RouterLink, ReactiveFormsModule, HelpButtonComponent],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css'
 })
