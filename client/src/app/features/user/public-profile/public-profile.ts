@@ -60,6 +60,11 @@ export default class PublicProfile implements OnInit {
     return this.userService.getPhotoUrl(photoPath);
   }
 
+  viewDocument(fileUrl: string): void {
+    const fullUrl = this.userService.getDocumentUrl(fileUrl);
+    window.open(fullUrl, '_blank');
+  }
+
   onImageError(event: Event): void {
     const img = event.target as HTMLImageElement;
     if (img && img.src !== '/images/WebP/profile_mock.png') {

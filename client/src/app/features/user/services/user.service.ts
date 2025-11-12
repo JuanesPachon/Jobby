@@ -53,6 +53,10 @@ export class UserService {
     return `${environment.supabaseStorageUrl}/${photoPath}`;
   }
 
+  getDocumentUrl(fileUrl: string): string {
+    return `${environment.supabaseStorageUrl}/${fileUrl}`;
+  }
+
   editUserProfile(updateData: any): Observable<any> {
     return this.http.patch<any>(`${this.apiUrl}/user/profile`, updateData, 
     { withCredentials: true }).pipe(
