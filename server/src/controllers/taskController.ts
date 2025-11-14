@@ -40,9 +40,10 @@ const createTaskController = async (req: Request, res: Response) => {
 const getTaskByIdController = async (req: Request, res: Response) => {
   try {
     const taskId = req.params.id;
+    const userId = (req as any).user?.sub;
 
     const taskIdNumber = parseInt(taskId, 10);
-    const response = await getTaskById(taskIdNumber);
+    const response = await getTaskById(taskIdNumber, userId);
 
     if (response.success && response.task) {
       return res.status(200).json({

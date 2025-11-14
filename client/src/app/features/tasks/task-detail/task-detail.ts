@@ -36,7 +36,9 @@ export default class TaskDetail implements OnInit {
     const taskId = this.route.snapshot.paramMap.get('id');
     const from = this.route.snapshot.queryParamMap.get('from');
     
-    if (from === 'search') {
+    if (from === 'applied-tasks') {
+      this.returnRoute.set('/applied-tasks');
+    } else if (from === 'search') {
       this.returnRoute.set('/task-result');
     } else if (from === 'dashboard') {
       this.returnRoute.set('/dashboard');

@@ -31,9 +31,19 @@ export default class PublishedTaskDetail implements OnInit {
   isCancelModalOpen = signal<boolean>(false);
   isCancellingTask = signal<boolean>(false);
   isCompletingTask = signal<boolean>(false);
+  returnRoute = signal<string>('/published-tasks');
 
   ngOnInit() {
     const taskId = this.route.snapshot.paramMap.get('id');
+    const from = this.route.snapshot.queryParamMap.get('from');
+    
+    if (from === 'profile') {
+      this.returnRoute.set('/profile');
+    } else if (from === 'my-tasks') {
+      this.returnRoute.set('/published-tasks');
+    } else {
+      this.returnRoute.set('/published-tasks');
+    }
     
     if (taskId) {
       this.loadTaskWithApplications(parseInt(taskId, 10));
@@ -236,12 +246,39 @@ export default class PublishedTaskDetail implements OnInit {
     return 'Seleccionar';
   }
 
+  isSelectButtonDisabled(): boolean {
+    const taskDetail = this.taskDetail();
+    if (!taskDetail) return true;
+    
+    return taskDetail.status === 'cancelled' || taskDetail.status === 'in_progress' || taskDetail.status === 'completed';
+  }
+
+  getSelectButtonTooltip(): string {
+    const taskDetail = this.taskDetail();
+    if (!taskDetail) return '';
+    
+    if (taskDetail.status === 'cancelled') {
+      return 'No se pueden seleccionar postulantes en tareas canceladas';
+    }
+    
+    if (taskDetail.status === 'in_progress') {
+      return 'No se pueden cambiar postulantes en tareas en progreso';
+    }
+    
+    if (taskDetail.status === 'completed') {
+      return 'No se pueden seleccionar postulantes en tareas completadas';
+    }
+    
+    return '';
+  }
+
   getButtonClass(applicant: Applicant): string {
     const isLoading = this.isSelectingApplicant() === applicant.application_id;
     const isHovered = this.hoveredApplicant() === applicant.application_id;
+    const isDisabled = this.isSelectButtonDisabled();
     
-    if (isLoading) {
-      return 'px-4 py-2 sm:px-6 sm:py-2 rounded-full bg-gray-400 text-white text-xs sm:text-sm font-medium border border-black cursor-not-allowed';
+    if (isLoading || isDisabled) {
+      return 'px-4 py-2 sm:px-6 sm:py-2 rounded-full bg-gray-400 text-white text-xs sm:text-sm font-medium border border-black cursor-not-allowed opacity-60';
     }
     
     if (applicant.status === 'selected') {

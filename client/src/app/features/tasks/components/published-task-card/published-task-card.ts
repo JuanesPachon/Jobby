@@ -11,6 +11,7 @@ import { PublishedTask } from '../../interfaces';
 })
 export class PublishedTaskCard {
   @Input() task?: PublishedTask;
+  @Input() from?: 'my-tasks' | 'profile' = 'my-tasks';
   
   private router = inject(Router);
 
@@ -90,6 +91,8 @@ export class PublishedTaskCard {
   }
 
   onViewApplicants(): void {
-    this.router.navigate(['/published-task', this.displayTask.id]);
+    this.router.navigate(['/published-task', this.displayTask.id], {
+      queryParams: { from: this.from }
+    });
   }
 }

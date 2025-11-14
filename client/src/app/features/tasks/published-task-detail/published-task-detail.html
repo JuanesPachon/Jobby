@@ -27,7 +27,7 @@
           </svg>
           <h3 class="text-lg font-medium text-gray-900 mb-2">Error</h3>
           <p class="text-gray-600 mb-4">{{ error() }}</p>
-          <a [routerLink]="'/published-tasks'" class="bg-main-blue text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors text-sm font-medium">
+          <a [routerLink]="returnRoute()" class="bg-main-blue text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors text-sm font-medium">
             Volver
           </a>
         </div>
@@ -35,7 +35,7 @@
     } @else if (taskDetail()) {
       <main class="relative max-w-lg sm:max-w-xl md:max-w-4xl lg:max-w-5xl xl:max-w-6xl 2xl:max-w-7xl w-full bg-white rounded-2xl p-6 sm:p-8 md:p-10 lg:p-12 shadow-sm border border-black">
         
-        <a [routerLink]="'/published-tasks'" class="absolute top-8 left-8">
+        <a [routerLink]="returnRoute()" class="absolute top-8 left-8">
           <img src="/icons/return-pg_icon.svg" alt="Atrás" class="w-6 h-6 sm:w-7 sm:h-7" />
         </a>
 
@@ -107,7 +107,8 @@
                   (click)="onSelectApplicant(applicant)"
                   (mouseenter)="onMouseEnterApplicant(applicant.application_id)"
                   (mouseleave)="onMouseLeaveApplicant()"
-                  [disabled]="isSelectingApplicant() === applicant.application_id"
+                  [disabled]="isSelectingApplicant() === applicant.application_id || isSelectButtonDisabled()"
+                  [title]="getSelectButtonTooltip()"
                 >
                   {{ getButtonText(applicant) }}
                 </button>

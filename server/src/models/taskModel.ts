@@ -81,10 +81,9 @@ const createTask = async (creator_id: number, taskData: CreateTaskRequest): Prom
     }
 };
 
-const getTaskById = async (taskId: number): Promise<GetTaskByIdResult> => {
+const getTaskById = async (taskId: number, userId?: number): Promise<GetTaskByIdResult> => {
     try {
-        const [taskRows] = await pool.query<RowDataPacket[]>(
-            `SELECT 
+        let query = `SELECT 
                 t.*, 
                 u.first_name as creator_first_name,
                 u.last_name as creator_last_name,
@@ -92,9 +91,20 @@ const getTaskById = async (taskId: number): Promise<GetTaskByIdResult> => {
             FROM tasks t
             LEFT JOIN users u ON t.creator_id = u.id
             LEFT JOIN profiles up ON u.id = up.user_id
-            WHERE t.id = ? AND t.deleted_at IS NULL AND t.status = 'available'`,
-            [taskId]
-        );
+            WHERE t.id = ? AND t.deleted_at IS NULL`;
+
+        const params: any[] = [taskId];
+        if (!userId) {
+            query += ` AND t.status = 'available'`;
+        } else {
+            query += ` AND (t.status = 'available' OR t.creator_id = ? OR EXISTS (
+                SELECT 1 FROM applications a 
+                WHERE a.task_id = t.id AND a.applicant_id = ?
+            ))`;
+            params.push(userId, userId);
+        }
+
+        const [taskRows] = await pool.query<RowDataPacket[]>(query, params);
 
         if (taskRows.length === 0) {
             return {
