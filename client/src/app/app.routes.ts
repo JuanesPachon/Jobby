@@ -17,5 +17,13 @@ export const routes: Routes = [
     {path: 'applied-tasks', canActivate: [authGuard],loadComponent: () => import('./features/tasks/applied-tasks/applied-tasks')},
     {path: 'published-tasks', canActivate: [authGuard],loadComponent: () => import('./features/tasks/published-tasks/published-tasks')},
     {path: 'published-task/:id', canActivate: [authGuard],loadComponent: () => import('./features/tasks/published-task-detail/published-task-detail')},
+    {
+        path: 'help', 
+        loadComponent: () => import('./features/help/help-view'),
+        children: [
+            {path: 'terms', loadComponent: () => import('./features/help/terms/terms')},
+            {path: 'faq', loadComponent: () => import('./features/help/faq/faq')}
+        ]
+    },
     {path: '**', redirectTo: 'dashboard'}
 ];

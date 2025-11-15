@@ -1,6 +1,6 @@
-<header class="container mx-auto p-3 font-poppins">
-  <nav class="flex items-center justify-between px-2">
-    <img src="/images/LOGO/png_sin_fondo/fondo_blanco.png" alt="Jobby Logo" class="h-10 object-contain">
+<header class="w-full bg-white border-b-2">
+  <nav class="container mx-auto p-3 font-poppins flex items-center justify-between px-2">
+    <a [routerLink]="''"><img src="/images/LOGO/png_sin_fondo/fondo_blanco.png" alt="Jobby Logo" class="h-10 object-contain"></a>
 
      <!-- Mobile Menu  -->
     <img [ngClass]="menuOpen() ? 'bg-gray-400/50 rounded-md p-0.5 shadow-inner' : ''" (click)="toggleMenu()" class="w-14 h-10 lg:hidden self-center" src="/icons/menu_bar_piso.svg" alt="Menu">

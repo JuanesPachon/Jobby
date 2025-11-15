@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-help-button',
@@ -6,4 +7,10 @@ import { Component } from '@angular/core';
   imports: [],
   templateUrl: './help-button.html'
 })
-export class HelpButtonComponent {}
+export class HelpButtonComponent {
+  private router = inject(Router);
+
+  navigateToHelp(): void {
+    this.router.navigate(['/help']);
+  }
+}

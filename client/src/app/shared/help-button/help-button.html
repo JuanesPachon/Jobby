@@ -1,5 +1,6 @@
 <button 
-  class="fixed bottom-10 right-8 w-14 h-14 lg:w-16 lg:h-16 flex items-center justify-center lg:right-[calc((100vw-1024px)/2+1rem)] xl:right-[calc((100vw-1280px)/2+1rem)] 2xl:right-[calc((100vw-1536px)/2+1rem)] z-3 bg-main-yelllow p-2 rounded-full border-[1px] border-black"
+  (click)="navigateToHelp()"
+  class="fixed bottom-10 right-8 w-14 h-14 lg:w-16 lg:h-16 lg:bottom-14 flex items-center justify-center lg:right-[calc((100vw-1024px)/2+1rem)] xl:right-[calc((100vw-1280px)/2+1rem)] 2xl:right-[calc((100vw-1536px)/2+1rem)] z-3 bg-main-yelllow p-2 rounded-full border-[1px] border-black cursor-pointer hover:bg-yellow-400 transition-colors"
   aria-label="Botón de ayuda"
 >
   <img class="w-8 h-8 lg:w-9 lg:h-9" src="/icons/help_icon.svg" alt="Botón de ayuda" />
