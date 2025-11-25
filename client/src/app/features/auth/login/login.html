@@ -5,7 +5,7 @@
       <img src="/icons/return-pg_icon.svg" alt="Atrás" class="w-7 h-7 md:w-7 md:h-7">
     </a>
 
-    <a class="absolute top-7 right-7">
+    <a [routerLink]="'/help'" class="absolute top-7 right-7">
       <img src="/icons/help_icon_2.svg" alt="Ayuda" class="w-7 h-7 md:w-7 md:h-7">
     </a>
 
@@ -41,7 +41,7 @@
         <div class="mb-3 md:mb-2">
           <label for="password" class="text-sm md:text-sm text-black block mb-1.5 md:mb-1">Contraseña *</label>
           <div class="relative">
-            <input id="password" name="password" [type]="showPassword() ? 'text' : 'password'" class="w-full px-3.5 md:px-3 py-2.5 md:py-2 pr-10 text-sm md:text-sm border border-gray-400 rounded-md focus:ring-2 focus:ring-black focus:outline-none" formControlName="password" required
+            <input id="password" name="password" [type]="showPassword() ? 'text' : 'password'" autocomplete="off" class="w-full px-3.5 md:px-3 py-2.5 md:py-2 pr-10 text-sm md:text-sm border border-gray-400 rounded-md focus:ring-2 focus:ring-black focus:outline-none" formControlName="password" required
             [ngClass]="loginForm.get('password')?.invalid && loginForm.get('password')?.touched ? 'border-red-600 focus:ring-red-600' : 'border-gray-400 focus:ring-black'">
             <button type="button" (click)="togglePasswordVisibility()" class="absolute inset-y-0 right-0 flex items-center pr-3 cursor-pointer">
               @if (showPassword()) {
@@ -75,9 +75,9 @@
           {{ isLoading() ? 'Cargando...' : 'Iniciar sesión' }}
         </button>
 
-        <button type="button" class="w-full mb-5 md:mb-4 flex items-center justify-center cursor-pointer bg-white border-1 border-black text-black text-sm md:text-sm py-2.5 md:py-2 rounded-xl transition hover:bg-gray-50">
-          <img src="https://www.google.com/images/branding/googleg/1x/googleg_standard_color_64dp.png" alt="Google" class="w-5 md:w-5 h-5 md:h-5 mr-2.5 md:mr-2">
-          Iniciar con Google
+        <button type="button" disabled class="w-full mb-5 md:mb-4 flex items-center justify-center cursor-not-allowed bg-gray-200 border-1 border-gray-400 text-gray-500 text-sm md:text-sm py-2.5 md:py-2 rounded-xl">
+          <img src="https://www.google.com/images/branding/googleg/1x/googleg_standard_color_64dp.png" alt="Google" class="w-5 md:w-5 h-5 md:h-5 mr-2.5 md:mr-2 opacity-50">
+          Próximamente
         </button>
       </form>
             
