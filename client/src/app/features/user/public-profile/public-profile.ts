@@ -71,4 +71,10 @@ export default class PublicProfile implements OnInit {
       img.src = '/images/WebP/profile_mock.png';
     }
   }
+
+  formatDate(dateString: string): string {
+    const datePart = dateString.split('T')[0];
+    const [year, month, day] = datePart.split('-');
+    return `${day}-${month}-${year}`;
+  }
 }

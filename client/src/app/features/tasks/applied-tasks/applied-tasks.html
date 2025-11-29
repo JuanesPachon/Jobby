@@ -15,9 +15,15 @@
   <div class="mx-auto container p-4 sm:p-6 md:p-8 lg:p-12 font-poppins">
     <div class="mb-6 sm:mb-8">
       <div class="flex items-center mb-4 lg:gap-x-4">
-        <a [routerLink]="'/my-tasks'" class="mr-4">
-          <img src="/icons/return-pg_icon.svg" alt="Atrás" class="w-6 h-6 sm:w-7 sm:h-7" />
-        </a>
+        @if (fromOrigin() === 'profile') {
+          <a [routerLink]="'/profile'" class="mr-4">
+            <img src="/icons/return-pg_icon.svg" alt="Atrás" class="w-6 h-6 sm:w-7 sm:h-7" />
+          </a>
+        } @else {
+          <a [routerLink]="'/my-tasks'" class="mr-4">
+            <img src="/icons/return-pg_icon.svg" alt="Atrás" class="w-6 h-6 sm:w-7 sm:h-7" />
+          </a>
+        }
         <h1 class="text-2xl sm:text-3xl font-bold text-black">Mis Aplicaciones</h1>
       </div>
 
@@ -65,11 +71,11 @@
         <div class="text-center py-5">
           <div class="bg-gray-50 border border-black rounded-lg p-8 max-w-md mx-auto">
             <svg class="w-16 h-16 mx-auto text-black mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
             </svg>
             <h3 class="text-lg font-medium text-gray-900 mb-2">{{ getEmptyStateMessage().title }}</h3>
             <p class="text-gray-600 mb-4">{{ getEmptyStateMessage().description }}</p>
-            <a [routerLink]="'/dashboard'" class="bg-main-blue text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors text-sm font-medium">
+            <a [routerLink]="'/dashboard'" class="bg-main-blue text-white px-4 py-2 rounded-full border border-black hover:bg-blue-600 transition-colors text-sm font-medium">
               Explorar tareas
             </a>
           </div>

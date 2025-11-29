@@ -23,6 +23,7 @@ export class EditPhoto {
   ]);
 
   selectedFileName = signal<string>('');
+  previewUrl = signal<string | null>(null);
 
   closeModal(): void {
     this.close.emit();
@@ -44,6 +45,7 @@ export class EditPhoto {
         this.hasError.set(true);
         this.photoControl.setValue(null);
         this.selectedFileName.set('');
+        this.previewUrl.set(null);
         return;
       }
       
@@ -52,6 +54,7 @@ export class EditPhoto {
         this.hasError.set(true);
         this.photoControl.setValue(null);
         this.selectedFileName.set('');
+        this.previewUrl.set(null);
         return;
       }
       
@@ -59,6 +62,25 @@ export class EditPhoto {
       this.selectedFileName.set(file.name);
       this.hasError.set(false);
       this.errorMessage.set('');
+      
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        this.previewUrl.set(e.target?.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+
+  cancelPreview(): void {
+    this.photoControl.setValue(null);
+    this.selectedFileName.set('');
+    this.previewUrl.set(null);
+    this.hasError.set(false);
+    this.errorMessage.set('');
+    
+    const fileInput = document.querySelector('input[type="file"]') as HTMLInputElement;
+    if (fileInput) {
+      fileInput.value = '';
     }
   }
 

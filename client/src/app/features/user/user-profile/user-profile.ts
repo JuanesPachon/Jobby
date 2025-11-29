@@ -110,6 +110,12 @@ export default class UserProfile implements OnInit, OnDestroy {
       img.src = '/images/WebP/profile_mock.png';
     }
   }
+
+  formatDate(dateString: string): string {
+    const datePart = dateString.split('T')[0];
+    const [year, month, day] = datePart.split('-');
+    return `${day}-${month}-${year}`;
+  }
   
   //Description
 

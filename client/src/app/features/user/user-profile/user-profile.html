@@ -80,7 +80,10 @@
                     class="bg-gray-200 border-[1px] border-black text-black py-3 px-4 rounded-lg font-medium hover:bg-gray-300 transition-colors flex items-center justify-center space-x-2 cursor-pointer">
                     <span class="text-sm sm:text-base">TAREAS PUBLICADAS</span>
                   </button>
-                  <button class="bg-gray-200 border-[1px] border-black text-black py-3 px-4 rounded-lg font-medium hover:bg-gray-300 transition-colors flex items-center justify-center space-x-2">
+                  <button class="bg-gray-200 border-[1px] border-black text-black py-3 px-4 rounded-lg font-medium hover:bg-gray-300 transition-colors flex items-center justify-center space-x-2 cursor-pointer"
+                    [routerLink]="'/applied-tasks'"
+                    [queryParams]="{ from: 'profile' }"
+                    >
                     <span class="text-sm sm:text-base">TAREAS REALIZADAS</span>
                   </button>
                 </div>
@@ -184,7 +187,7 @@
                       <div class="w-2 h-2 bg-blue-600 rounded-full"></div>
                       <div class="flex-1">
                         <h4 class="font-medium text-gray-900">{{ experience.title + " - " + experience.company }}</h4>
-                        <p class="text-sm text-gray-600 font-inter">{{ experience.start_date | date:'dd-MM-yyyy' }} - {{ experience.end_date ? (experience.end_date | date:'dd-MM-yyyy') : 'Actualmente' }}</p>
+                        <p class="text-sm text-gray-600 font-inter">{{ formatDate(experience.start_date) }} - {{ experience.end_date ? formatDate(experience.end_date) : 'Actualmente' }}</p>
                       </div>
                       <div class="flex items-center space-x-2">
                         <button class="text-gray-600 hover:text-gray-800 cursor-pointer" (click)="openExperienceModal(experience)">
@@ -345,11 +348,6 @@
             <div class="bg-white rounded-xl shadow-sm border border-black p-4">
               <div class="flex items-center justify-between mb-3">
                 <h3 class="text-lg font-semibold text-gray-900">Idioma del perfil</h3>
-                <button class="text-gray-600 hover:text-gray-800">
-                  <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                    <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"></path>
-                  </svg>
-                </button>
               </div>
               <p class="text-gray-600 text-sm">Español</p>
             </div>
@@ -357,12 +355,8 @@
             <div class="bg-white rounded-xl shadow-sm border border-black p-4">
               <div class="flex items-center justify-between mb-3">
                 <h3 class="text-lg font-semibold text-gray-900">Preferencias</h3>
-                <button class="text-gray-600 hover:text-gray-800">
-                  <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                    <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"></path>
-                  </svg>
-                </button>
               </div>
+              <p class="text-gray-600 text-sm">Proximamente...</p>
             </div>
 
             <div class="bg-white rounded-xl shadow-sm border border-black overflow-hidden">

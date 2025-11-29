@@ -70,12 +70,12 @@
       } @else if (publishedTasks().length === 0) {
         <div class="text-center py-12">
           <div class="bg-gray-50 border border-blackk rounded-lg p-8 max-w-md mx-auto">
-            <svg class="w-16 h-16 mx-auto text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+            <svg class="w-16 h-16 mx-auto text-black mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
             </svg>
             <h3 class="text-lg font-medium text-gray-900 mb-2">No se encontró ninguna coincidencia</h3>
             <p class="text-gray-600 mb-4">Crea una nueva tarea.</p>
-            <a [routerLink]="'/post-task'" class="bg-main-blue text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors text-sm font-medium">
+            <a [routerLink]="'/post-task'" class="bg-main-blue text-white px-4 py-2 rounded-full border border-black hover:bg-blue-600 transition-colors text-sm font-medium">
               Publicar tarea
             </a>
           </div>

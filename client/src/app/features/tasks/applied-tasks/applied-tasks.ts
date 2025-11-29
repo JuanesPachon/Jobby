@@ -1,5 +1,5 @@
 import { Component, inject, OnInit, OnDestroy, computed, signal } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { TaskService } from '../services/task.service';
 import { DashboardNavbar } from '../../../shared/dashboard-navbar/dashboard-navbar';
 import { AppliedTaskCard } from '../components/applied-task-card/applied-task-card';
@@ -13,6 +13,7 @@ import { HelpButtonComponent } from '../../../shared/help-button/help-button';
   styleUrl: './applied-tasks.css'
 })
 export default class AppliedTasks implements OnInit, OnDestroy {
+  private route = inject(ActivatedRoute);
   private taskService = inject(TaskService);
   private timeoutId?: number;
 
@@ -23,6 +24,7 @@ export default class AppliedTasks implements OnInit, OnDestroy {
   totalTasks = signal<number>(0);
   isLoading = signal<boolean>(false);
   error = signal<string | null>(null);
+  fromOrigin = signal<'my-tasks' | 'profile'>('my-tasks');
   
   currentPage = signal<number>(1);
   itemsPerPage = 10;
@@ -38,6 +40,15 @@ export default class AppliedTasks implements OnInit, OnDestroy {
   ];
 
   ngOnInit() {
+
+    const from = this.route.snapshot.queryParamMap.get('from');
+    
+    if (from === 'profile') {
+      this.fromOrigin.set('profile');
+    } else {
+      this.fromOrigin.set('my-tasks');
+    }
+
     if (this.taskNotification()) {
       this.timeoutId = window.setTimeout(() => {
         this.taskService.taskNotification.set(false);
