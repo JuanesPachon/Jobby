@@ -104,7 +104,7 @@ export class TaskService {
   }
 
   getCurrentUser(): Observable<any> {
-    return this.http.get<any>(`${environment.apiUrl}/profile`, {
+    return this.http.get<any>(`${environment.apiUrl}/user/profile`, {
       withCredentials: true
     });
   }

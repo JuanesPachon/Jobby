@@ -41,9 +41,11 @@
 
   <section class="relative w-full h-64 md:h-72">
     <img
-      src="/images/WebP/Dashboard_postular.png"
+      src="/images/WebP/Dashboard_postular.webp"
       alt="Imagen de fondo"
       class="absolute inset-0 w-full h-full object-cover"
+      loading="eager"
+      fetchpriority="high"
     />
     <div class="absolute inset-0 bg-black/30"></div>
     <form 
@@ -121,6 +123,7 @@
               src="/images/WebP/background_collage_for_registration_login17.webp"
               alt="Jobby Premium"
               class="w-full h-full object-cover"
+              loading="lazy"
             />
             <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
             <div class="absolute inset-0 flex items-center justify-center px-4 sm:justify-start sm:pl-6 lg:pl-8">
@@ -155,6 +158,7 @@
         src="/images/LOGO/png_sin_fondo/fondo_blanco.png"
         alt="Jobby Logo"
         class="h-5 sm:h-6"
+        loading="lazy"
       />
     </div>
   </footer>
