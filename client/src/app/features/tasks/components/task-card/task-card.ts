@@ -3,11 +3,11 @@ import { Task } from '../../interfaces/SearchTasks';
 import { environment } from '../../../../../environments/environment';
 import { RouterLink } from '@angular/router';
 import { TaskService } from '../../services/task.service';
-import { CurrencyColombianPipe, SpanishDatePipe } from '../../../../shared/pipes';
+import { CurrencyColombianPipe, SpanishDatePipe, CapitalizePipe } from '../../../../shared/pipes';
 
 @Component({
   selector: 'app-task-card',
-  imports: [RouterLink, CurrencyColombianPipe, SpanishDatePipe],
+  imports: [RouterLink, CurrencyColombianPipe, SpanishDatePipe, CapitalizePipe],
   templateUrl: './task-card.html',
   styleUrl: './task-card.css'
 })

@@ -1,7 +1,7 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { DashboardNavbar } from '../../../shared/dashboard-navbar/dashboard-navbar';
-import { CurrencyColombianPipe, SpanishDatePipe } from '../../../shared/pipes';
+import { CurrencyColombianPipe, SpanishDatePipe, CapitalizePipe } from '../../../shared/pipes';
 import { TaskService } from '../services/task.service';
 import { TaskDetail, Applicant } from '../interfaces';
 import { NgClass } from '@angular/common';
@@ -11,7 +11,7 @@ import { HelpButtonComponent } from '../../../shared/help-button/help-button';
 
 @Component({
   selector: 'app-published-task-detail',
-  imports: [DashboardNavbar, RouterLink, CurrencyColombianPipe, SpanishDatePipe, NgClass, CancelTaskModal, HelpButtonComponent],
+  imports: [DashboardNavbar, RouterLink, CurrencyColombianPipe, SpanishDatePipe, CapitalizePipe, NgClass, CancelTaskModal, HelpButtonComponent],
   templateUrl: './published-task-detail.html',
   styleUrl: './published-task-detail.css'
 })

@@ -18,7 +18,7 @@
       <div class="w-px bg-black flex-shrink-0"></div>
       <div class="flex-1 min-w-0">
         <div class="flex justify-between items-start mb-3">
-          <h3 class="text-lg sm:text-xl md:text-lg font-semibold text-black truncate pr-2 flex-1 min-w-0">{{displayTask.title}}</h3>
+          <h3 class="text-lg sm:text-xl md:text-lg font-semibold text-black truncate pr-2 flex-1 min-w-0">{{displayTask.title | capitalize}}</h3>
           <span class="text-xs sm:text-sm text-gray-500 flex-shrink-0 ml-2">{{displayTask.created_at | spanishDate:'short'}}</span>
         </div>
         <div class="flex items-center gap-4 sm:gap-6 mb-3">
@@ -68,7 +68,7 @@
     <div class="w-px bg-black flex-shrink-0"></div>
     <div class="flex-1 min-w-0">
       <div class="flex justify-between items-start mb-3 xl:mb-4">
-        <h3 class="text-lg xl:text-xl font-semibold text-black truncate pr-2 flex-1 min-w-0">{{displayTask.title}}</h3>
+        <h3 class="text-lg xl:text-xl font-semibold text-black truncate pr-2 flex-1 min-w-0">{{displayTask.title | capitalize}}</h3>
         <span class="text-sm text-gray-500 flex-shrink-0 ml-2">{{displayTask.created_at | spanishDate:'medium'}}</span>
       </div>
       <div class="flex items-center gap-6 xl:gap-8 mb-3 xl:mb-4">

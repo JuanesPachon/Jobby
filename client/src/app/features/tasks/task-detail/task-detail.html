@@ -65,7 +65,7 @@
       </a>
 
       <div class="block md:hidden pl-1 pb-1 mt-13">
-        <h1 class="text-base font-extrabold">{{ task()?.title }}</h1>
+        <h1 class="text-base font-extrabold">{{ task()?.title | capitalize }}</h1>
         <p class="text-xs mt-1">{{ statusText }}</p>
         <h2 class="text-xs mt-1">{{ task()?.created_at | spanishDate:'full' }}</h2>
       </div>
@@ -120,7 +120,7 @@
           </div>
 
           <h1 class="hidden md:block text-xl md:text-2xl lg:text-3xl font-extrabold mt-1">
-            {{ task()?.title }}
+            {{ task()?.title | capitalize }}
           </h1>
 
           <p class="desc text-sm md:text-sm lg:text-base to-black leading-6 -mt-7 md:mt-3 whitespace-pre-wrap flex-1">{{ task()?.description }}</p>

@@ -1,7 +1,7 @@
 <div class="bg-white border border-black rounded-2xl shadow-md p-4 sm:p-4 lg:p-5">
 
     <div class="flex items-center justify-between gap-4 mb-3">
-        <h3 class="text-sm sm:text-base lg:text-lg font-semibold text-black mb-3 truncate flex-1 min-w-0">{{ displayTask.title }}</h3>
+        <h3 class="text-sm sm:text-base lg:text-lg font-semibold text-black mb-3 truncate flex-1 min-w-0">{{ displayTask.title | capitalize }}</h3>
         <div class="text-xs sm:text-sm text-gray-500 mb-3 whitespace-nowrap">{{ displayTask.created_at | spanishDate:'full' }}</div>
     </div>
     

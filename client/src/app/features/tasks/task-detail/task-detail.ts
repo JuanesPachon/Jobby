@@ -4,12 +4,12 @@ import { TaskService } from '../services/task.service';
 import { Task } from '../interfaces/SearchTasks';
 import { DashboardNavbar } from '../../../shared/dashboard-navbar/dashboard-navbar';
 import { environment } from '../../../../environments/environment';
-import { CurrencyColombianPipe, SpanishDatePipe } from '../../../shared/pipes';
+import { CurrencyColombianPipe, SpanishDatePipe, CapitalizePipe } from '../../../shared/pipes';
 import { HelpButtonComponent } from '../../../shared/help-button/help-button';
 
 @Component({
   selector: 'app-task-detail',
-  imports: [DashboardNavbar, RouterLink, CurrencyColombianPipe, SpanishDatePipe, HelpButtonComponent],
+  imports: [DashboardNavbar, RouterLink, CurrencyColombianPipe, SpanishDatePipe, CapitalizePipe, HelpButtonComponent],
   templateUrl: './task-detail.html',
   styleUrl: './task-detail.css'
 })

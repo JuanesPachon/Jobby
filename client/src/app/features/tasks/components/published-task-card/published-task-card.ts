@@ -1,11 +1,11 @@
 import { Component, Input, inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { CurrencyColombianPipe, SpanishDatePipe } from '../../../../shared/pipes';
+import { CurrencyColombianPipe, SpanishDatePipe, CapitalizePipe } from '../../../../shared/pipes';
 import { PublishedTask } from '../../interfaces';
 
 @Component({
   selector: 'app-published-task-card',
-  imports: [CurrencyColombianPipe, SpanishDatePipe],
+  imports: [CurrencyColombianPipe, SpanishDatePipe, CapitalizePipe],
   templateUrl: './published-task-card.html',
   styleUrl: './published-task-card.css'
 })

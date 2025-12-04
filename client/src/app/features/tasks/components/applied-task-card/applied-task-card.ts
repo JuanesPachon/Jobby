@@ -1,13 +1,13 @@
 import { Component, Input } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { CurrencyColombianPipe, SpanishDatePipe } from '../../../../shared/pipes';
+import { CurrencyColombianPipe, SpanishDatePipe, CapitalizePipe } from '../../../../shared/pipes';
 import { environment } from '../../../../../environments/environment';
 import { AppliedTask } from '../../interfaces';
 
 @Component({
   selector: 'app-applied-task-card',
   standalone: true,
-  imports: [RouterLink, CurrencyColombianPipe, SpanishDatePipe],
+  imports: [RouterLink, CurrencyColombianPipe, SpanishDatePipe, CapitalizePipe],
   templateUrl: './applied-task-card.html',
   styleUrl: './applied-task-card.css'
 })

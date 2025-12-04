@@ -37,8 +37,8 @@ export default class Register {
   }
   
   signUpForm = new FormGroup({
-    firstName: new FormControl('', [Validators.required, Validators.pattern(/^[A-Za-z]+$/)]),
-    lastName: new FormControl('', [Validators.required, Validators.pattern(/^[A-Za-z]+$/)]),
+    firstName: new FormControl('', [Validators.required, Validators.pattern(/^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ]+(?:\s[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ]+)*$/)]),
+    lastName: new FormControl('', [Validators.required, Validators.pattern(/^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ]+(?:\s[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ]+)*$/)]),
     birthDay: new FormControl('', [Validators.required, this.ageValidator.bind(this)]),
     idType: new FormControl('', [Validators.required]),
     idNumber: new FormControl('', [Validators.required, Validators.pattern(/^\d{10}$/)]),
