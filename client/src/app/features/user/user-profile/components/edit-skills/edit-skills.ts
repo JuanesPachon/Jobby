@@ -23,6 +23,7 @@ export class EditSkills {
     Validators.required,
     Validators.minLength(2),
     Validators.maxLength(50),
+    Validators.pattern(/^[\p{L}0-9 ]+$/u)
   ]);
 
   closeModal(): void {

@@ -10,7 +10,7 @@
     </div>
 
     <div class="p-6">
-      <form class="space-y-6">
+      <form (ngSubmit)="$event.preventDefault()" class="space-y-6">
         @if (!previewUrl()) {
           <div>
             <label class="block text-sm font-medium text-gray-900 mb-3">

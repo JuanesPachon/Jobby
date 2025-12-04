@@ -91,15 +91,15 @@ export class TaskCard implements OnInit {
   get creatorAvatar(): string {
     const task = this.displayTask;
     if (!task.creator.photo_url) {
-      return '/images/WebP/profile_mock.png';
+      return '/images/WebP/profile_mock.webp';
     }
     return `${environment.supabaseStorageUrl}/${task.creator.photo_url}`;
   }
 
   onImageError(event: Event): void {
     const img = event.target as HTMLImageElement;
-    if (img && img.src !== '/images/WebP/profile_mock.png') {
-      img.src = '/images/WebP/profile_mock.png';
+    if (img && img.src !== '/images/WebP/profile_mock.webp') {
+      img.src = '/images/WebP/profile_mock.webp';
     }
   }
 

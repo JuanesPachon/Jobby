@@ -10,7 +10,7 @@
     </div>
 
     <div class="p-6">
-      <form class="space-y-2" enctype="multipart/form-data">
+      <form (ngSubmit)="$event.preventDefault()" class="space-y-2" enctype="multipart/form-data">
         <div class="grid grid-cols-1 gap-6">
           <div>
             <label class="block text-sm font-medium text-gray-900 mb-2">

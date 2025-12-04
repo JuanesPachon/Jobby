@@ -106,8 +106,8 @@ export default class UserProfile implements OnInit, OnDestroy {
 
   onImageError(event: Event): void {
     const img = event.target as HTMLImageElement;
-    if (img && img.src !== '/images/WebP/profile_mock.png') {
-      img.src = '/images/WebP/profile_mock.png';
+    if (img && img.src !== '/images/WebP/profile_mock.webp') {
+      img.src = '/images/WebP/profile_mock.webp';
     }
   }
 

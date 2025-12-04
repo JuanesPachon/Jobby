@@ -41,7 +41,7 @@ export const updateProfileValidations = [
 
   check("description")
     .optional()
-    .isLength({ max: 500 })
+    .isLength({ max: 2000 })
     .withMessage("Description must not exceed 500 characters"),
 
   body("experiences")

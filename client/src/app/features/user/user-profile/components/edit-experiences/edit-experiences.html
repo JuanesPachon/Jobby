@@ -12,7 +12,7 @@
     </div>
 
     <div class="p-6">
-      <form [formGroup]="experienceForm" (ngSubmit)="onSubmit()" class="space-y-6">
+      <form [formGroup]="experienceForm" (ngSubmit)="onSubmit(); $event.preventDefault()" class="space-y-6">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
             <label class="block text-sm font-medium text-gray-900 mb-2">Puesto *:</label>

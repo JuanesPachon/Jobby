@@ -4,37 +4,42 @@
 
 @font-face {
     font-family: 'Poppins';
-    src: url('../public/fonts/poppins/Poppins-Regular.ttf') format('truetype');
+    src: url('../public/fonts/poppins/Poppins-Regular.woff2') format('woff2');
     font-weight: normal;
     font-style: normal;
+    font-display: swap;
 }
 
 @font-face {
     font-family: 'Poppins';
-    src: url('../public/fonts/poppins/Poppins-Medium.ttf') format('truetype');
+    src: url('../public/fonts/poppins/Poppins-Medium.woff2') format('woff2');
     font-weight: 500;
     font-style: normal;
+    font-display: swap;
 }
 
 @font-face {
     font-family: 'Poppins';
-    src: url('../public/fonts/poppins/Poppins-SemiBold.ttf') format('truetype');
+    src: url('../public/fonts/poppins/Poppins-SemiBold.woff2') format('woff2');
     font-weight: 600;
     font-style: normal;
+    font-display: swap;
 }
 
 @font-face {
     font-family: 'Inter';
-    src: url('../public/fonts/inter/Inter_24pt-Regular.ttf') format('truetype');
+    src: url('../public/fonts/inter/Inter_24pt-Regular.woff2') format('woff2');
     font-weight: normal;
     font-style: normal;
+    font-display: swap;
 }
 
 @font-face {
     font-family: 'Inter';
-    src: url('../public/fonts/inter/Inter_24pt-Medium.ttf') format('truetype');
+    src: url('../public/fonts/inter/Inter_24pt-Medium.woff2') format('woff2');
     font-weight: 500;
     font-style: normal;
+    font-display: swap;
 }
 
 /* Global variables */

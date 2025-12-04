@@ -48,7 +48,7 @@ export class UserService {
 
   getPhotoUrl(photoPath: string | null | undefined): string {
     if (!photoPath) {
-      return '/images/WebP/profile_mock.png';
+      return '/images/WebP/profile_mock.webp';
     }
     return `${environment.supabaseStorageUrl}/${photoPath}`;
   }

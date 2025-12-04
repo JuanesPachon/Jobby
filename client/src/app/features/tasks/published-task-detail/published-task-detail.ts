@@ -347,14 +347,14 @@ export default class PublishedTaskDetail implements OnInit {
 
   onImageError(event: Event): void {
     const img = event.target as HTMLImageElement;
-    if (img && img.src !== '/images/WebP/profile_mock.png') {
-      img.src = '/images/WebP/profile_mock.png';
+    if (img && img.src !== '/images/WebP/profile_mock.webp') {
+      img.src = '/images/WebP/profile_mock.webp';
     }
   }
 
   getPhotoUrl(photoPath: string | null | undefined): string {
-    if (!photoPath || photoPath === '/images/WebP/profile_mock.png') {
-      return '/images/WebP/profile_mock.png';
+    if (!photoPath || photoPath === '/images/WebP/profile_mock.webp') {
+      return '/images/WebP/profile_mock.webp';
     }
     return `${environment.supabaseStorageUrl}${photoPath}`;
   }
