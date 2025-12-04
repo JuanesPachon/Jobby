@@ -64,7 +64,30 @@ export const userValidations = [
     .isEmail()
     .withMessage("Please enter a valid email address")
     .isLength({ max: 100 })
-    .withMessage("Email must not exceed 100 characters"),
+    .withMessage("Email must not exceed 100 characters")
+    .custom((value: string) => {
+      const allowedDomains = [
+        'gmail.com',
+        'hotmail.com',
+        'outlook.com',
+        'yahoo.com',
+        'yahoo.es',
+        'icloud.com',
+        'live.com',
+        'msn.com',
+        'hotmail.es',
+        'outlook.es'
+      ];
+      
+      const emailLower = value.toLowerCase();
+      const domain = emailLower.split('@')[1];
+      
+      if (!allowedDomains.includes(domain)) {
+        throw new Error("Only Gmail, Hotmail, Outlook, Yahoo, or iCloud email domains are allowed");
+      }
+      
+      return true;
+    }),
 
   check("phone")
     .notEmpty()

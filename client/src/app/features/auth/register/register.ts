@@ -35,6 +35,35 @@ export default class Register {
     
     return age >= 18 ? null : { underAge: true };
   }
+
+  private emailDomainValidator(control: AbstractControl): ValidationErrors | null {
+    if (!control.value) return null;
+    
+    const email = control.value.toLowerCase();
+    const allowedDomains = [
+      'gmail.com',
+      'hotmail.com',
+      'outlook.com',
+      'yahoo.com',
+      'yahoo.es',
+      'icloud.com',
+      'live.com',
+      'msn.com',
+      'hotmail.es',
+      'outlook.es'
+    ];
+    
+    const emailParts = email.split('@');
+    if (emailParts.length !== 2) return { invalidDomain: true };
+    
+    const domain = emailParts[1];
+    
+    if (!allowedDomains.includes(domain)) {
+      return { invalidDomain: true };
+    }
+    
+    return null;
+  }
   
   signUpForm = new FormGroup({
     firstName: new FormControl('', [Validators.required, Validators.pattern(/^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ]+(?:\s[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ]+)*$/)]),
@@ -42,7 +71,7 @@ export default class Register {
     birthDay: new FormControl('', [Validators.required, this.ageValidator.bind(this)]),
     idType: new FormControl('', [Validators.required]),
     idNumber: new FormControl('', [Validators.required, Validators.pattern(/^\d{10}$/)]),
-    email: new FormControl('', [Validators.required, Validators.email]),
+    email: new FormControl('', [Validators.required, Validators.email, this.emailDomainValidator.bind(this)]),
     phone: new FormControl('', [Validators.required, Validators.pattern(/^\d{10}$/)]),
     password: new FormControl('', [Validators.required, Validators.pattern('^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[^A-Za-z\\d]).{8,}$')]),
     termsAndConditions: new FormControl(false, [Validators.requiredTrue])
