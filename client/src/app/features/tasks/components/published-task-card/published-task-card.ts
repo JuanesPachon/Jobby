@@ -28,7 +28,7 @@ export class PublishedTaskCard {
       city: 'Bogotá',
       neighborhood: 'Chapinero',
       salary: 350000,
-      duration_days: 3,
+      duration_hours: 24,
       applications_count: 7,
       created_at: '2024-12-15',
       status: 'available'
@@ -36,8 +36,8 @@ export class PublishedTaskCard {
   }
 
   get durationText(): string {
-    const days = this.displayTask.duration_days;
-    return days === 1 ? '1 día' : `${days} días`;
+    const hours = this.displayTask.duration_hours;
+    return hours === 1 ? '1 hora' : `${hours} horas`;
   }
 
   get applicationsText(): string {

@@ -38,7 +38,7 @@ export interface TaskWithApplications {
   description: string;
   city: string;
   neighborhood?: string;
-  duration_days: number;
+  duration_hours: number;
   salary: number;
   status: 'available' | 'in_progress' | 'completed' | 'cancelled';
   created_at: Date;

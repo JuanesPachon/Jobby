@@ -70,7 +70,7 @@ export interface CreateTaskResult {
         description: string;
         city: string;
         neighborhood?: string | null;
-        duration_days: number;
+        duration_hours: number;
         salary: number;
         status: 'available' | 'in_progress' | 'completed' | 'cancelled';
         created_at: Date;
@@ -90,7 +90,7 @@ export interface GetTaskByIdResult {
         description: string;
         city: string;
         neighborhood?: string | null;
-        duration_days: number;
+        duration_hours: number;
         salary: number;
         status: 'available' | 'in_progress' | 'completed' | 'cancelled';
         created_at: Date;
@@ -124,7 +124,7 @@ export interface GetTasksResult {
             description: string;
             city: string;
             neighborhood?: string | null;
-            duration_days: number;
+            duration_hours: number;
             salary: number;
             status: 'available' | 'in_progress' | 'completed' | 'cancelled';
             created_at: Date;
@@ -173,7 +173,7 @@ export interface GetUserTasksResult {
             description: string;
             city: string;
             neighborhood?: string | null;
-            duration_days: number;
+            duration_hours: number;
             salary: number;
             status: 'available' | 'in_progress' | 'completed' | 'cancelled';
             created_at: Date;
@@ -262,7 +262,7 @@ export interface GetUserApplicationsResult {
             description: string;
             city: string;
             neighborhood?: string | null;
-            duration_days: number;
+            duration_hours: number;
             salary: number;
             status: 'available' | 'in_progress' | 'completed' | 'cancelled';
             created_at: Date;

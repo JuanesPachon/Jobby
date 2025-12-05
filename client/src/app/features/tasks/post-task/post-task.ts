@@ -38,11 +38,11 @@ export default class PostTaskComponent {
       Validators.maxLength(100),
       Validators.pattern(/^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ0-9\s\-.,()]*$/)
     ]),
-    duration_days: new FormControl('', [
+    duration_hours: new FormControl('', [
       Validators.required,
       Validators.pattern(/^[1-9]\d*$/),
       Validators.min(1),
-      Validators.max(365)
+      Validators.max(720)
     ]),
     salary: new FormControl('', [
       Validators.required,
@@ -69,7 +69,7 @@ export default class PostTaskComponent {
         description: formData.description!,
         city: formData.city!,
         neighborhood: formData.neighborhood || undefined,
-        duration_days: parseInt(formData.duration_days!, 10),
+        duration_hours: parseInt(formData.duration_hours!, 10),
         salary: parseFloat(formData.salary!)
       };
 

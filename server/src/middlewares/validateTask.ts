@@ -28,11 +28,11 @@ export const createTaskValidations = [
     .matches(/^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ0-9\s\-.,()]*$/)
     .withMessage("Neighborhood contains invalid characters"),
 
-  check("duration_days")
+  check("duration_hours")
     .notEmpty()
-    .withMessage("Duration in days is required")
-    .isInt({ min: 1, max: 365 })
-    .withMessage("Duration must be between 1 and 365 days")
+    .withMessage("Duration in hours is required")
+    .isInt({ min: 1, max: 720 })
+    .withMessage("Duration must be between 1 and 720 hours")
     .toInt(),
 
   check("salary")

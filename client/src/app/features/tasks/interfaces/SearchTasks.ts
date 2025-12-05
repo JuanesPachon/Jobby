@@ -13,7 +13,7 @@ export interface Task {
   description: string;
   city: string;
   neighborhood?: string;
-  duration_days: number;
+  duration_hours: number;
   salary: number;
   status: string;
   created_at: string;

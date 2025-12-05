@@ -35,8 +35,8 @@ export default class AppliedTasks implements OnInit, OnDestroy {
     { value: 'applied', label: 'Postulado', color: 'bg-blue-100 text-blue-800' },
     { value: 'selected', label: 'Seleccionado', color: 'bg-yellow-100 text-yellow-800' },
     { value: 'in_progress', label: 'En Progreso', color: 'bg-orange-100 text-orange-800' },
-    { value: 'completed', label: 'Completado', color: 'bg-green-100 text-green-800' },
-    { value: 'cancelled', label: 'Cancelada', color: 'bg-red-100 text-red-800' }
+    { value: 'completed', label: 'Completadas', color: 'bg-green-100 text-green-800' },
+    { value: 'cancelled', label: 'Canceladas', color: 'bg-red-100 text-red-800' }
   ];
 
   ngOnInit() {

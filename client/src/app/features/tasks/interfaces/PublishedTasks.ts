@@ -6,7 +6,7 @@ export interface PublishedTask {
   description: string;
   city: string;
   neighborhood?: string | null;
-  duration_days: number;
+  duration_hours: number;
   salary: number;
   status: 'available' | 'in_progress' | 'completed' | 'cancelled';
   created_at: string;
@@ -21,7 +21,7 @@ export interface TaskDetail {
   description: string;
   city: string;
   neighborhood?: string | null;
-  duration_days: number;
+  duration_hours: number;
   salary: number;
   status: 'available' | 'in_progress' | 'completed' | 'cancelled';
   created_at: string;
@@ -45,7 +45,7 @@ export interface TaskWithApplications {
   description: string;
   city: string;
   neighborhood?: string | null;
-  duration_days: number;
+  duration_hours: number;
   salary: string;
   status: 'available' | 'in_progress' | 'completed' | 'cancelled';
   created_at: string;

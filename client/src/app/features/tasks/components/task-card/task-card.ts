@@ -70,7 +70,7 @@ export class TaskCard implements OnInit {
       city: 'Bogotá',
       neighborhood: 'Centro',
       salary: 200000,
-      duration_days: 2,
+      duration_hours: 16,
       status: 'available',
       created_at: '2024-05-09',
       updated_at: '2024-05-09',
@@ -107,7 +107,7 @@ export class TaskCard implements OnInit {
 
   get durationText(): string {
     const task = this.displayTask;
-    return task.duration_days === 1 ? '1 día' : `${task.duration_days} días`;
+    return task.duration_hours === 1 ? '1 hora' : `${task.duration_hours} horas`;
   }
 
   get locationText(): string {

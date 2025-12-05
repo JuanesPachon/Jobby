@@ -67,7 +67,7 @@ export default class PublishedTaskDetail implements OnInit {
             description: response.data.description,
             city: response.data.city,
             neighborhood: response.data.neighborhood,
-            duration_days: response.data.duration_days,
+            duration_hours: response.data.duration_hours,
             salary: parseFloat(response.data.salary),
             status: response.data.status,
             created_at: response.data.created_at
@@ -166,8 +166,8 @@ export default class PublishedTaskDetail implements OnInit {
     const task = this.taskDetail();
     if (!task) return '';
     
-    const days = task.duration_days;
-    return days === 1 ? '1 día' : `${days} días`;
+    const hours = task.duration_hours;
+    return hours === 1 ? '1 hora' : `${hours} horas`;
   }
 
   onSelectApplicant(applicant: Applicant): void {
@@ -342,7 +342,7 @@ export default class PublishedTaskDetail implements OnInit {
 
   getStartTaskButtonText(): string {
     const isLoading = this.isStartingTask();
-    return isLoading ? 'Iniciando...' : this.taskDetail()?.status === 'in_progress'? 'Tarea iniciada' : 'Empezar tarea'; 
+    return isLoading ? 'Iniciando...' : this.taskDetail()?.status === 'in_progress'? 'Tarea iniciada' : this.taskDetail()?.status === 'completed'? 'Calificar' : 'Empezar tarea'; 
   }
 
   onImageError(event: Event): void {

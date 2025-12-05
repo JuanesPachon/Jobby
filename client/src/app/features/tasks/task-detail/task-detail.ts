@@ -118,7 +118,7 @@ export default class TaskDetail implements OnInit {
     const taskData = this.task();
     if (!taskData) return '';
     
-    return taskData.duration_days === 1 ? '1 día' : `${taskData.duration_days} días`;
+    return taskData.duration_hours === 1 ? '1 hora' : `${taskData.duration_hours} horas`;
   }
 
   get locationText(): string {

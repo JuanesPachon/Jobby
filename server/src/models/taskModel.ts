@@ -12,14 +12,14 @@ const createTask = async (creator_id: number, taskData: CreateTaskRequest): Prom
             taskData.description,
             taskData.city,
             taskData.neighborhood || null,
-            taskData.duration_days,
+            taskData.duration_hours,
             taskData.salary
         ];
         
         const [result] = await pool.query<ResultSetHeader>(
             `INSERT INTO tasks (
                 creator_id, title, description, city, neighborhood, 
-                duration_days, salary
+                duration_hours, salary
             ) VALUES (?, ?, ?, ?, ?, ?, ?)`,
             queryValues
         );
@@ -34,7 +34,7 @@ const createTask = async (creator_id: number, taskData: CreateTaskRequest): Prom
                 description: taskData.description,
                 city: taskData.city,
                 neighborhood: taskData.neighborhood || null,
-                duration_days: taskData.duration_days,
+                duration_hours: taskData.duration_hours,
                 salary: taskData.salary,
                 status: 'available' as const,
                 created_at: currentDate,
@@ -69,7 +69,7 @@ const createTask = async (creator_id: number, taskData: CreateTaskRequest): Prom
             return {
                 success: false,
                 error: 'constraint_violation',
-                message: 'Invalid data: duration_days must be greater than 0 and salary must be >= 0'
+                message: 'Invalid data: duration_hours must be greater than 0 and salary must be >= 0'
             };
         }
 
@@ -126,7 +126,7 @@ const getTaskById = async (taskId: number, userId?: number): Promise<GetTaskById
                 description: task.description,
                 city: task.city,
                 neighborhood: task.neighborhood,
-                duration_days: task.duration_days,
+                duration_hours: task.duration_hours,
                 salary: task.salary,
                 status: task.status,
                 created_at: task.created_at,
@@ -156,7 +156,7 @@ const getTasks = async (filters: GetTasksFilters): Promise<GetTasksResult> => {
         let query = `
             SELECT 
                 t.id, t.creator_id, t.title, t.description, 
-                t.city, t.neighborhood, t.duration_days, t.salary, t.status, 
+                t.city, t.neighborhood, t.duration_hours, t.salary, t.status, 
                 t.created_at, t.updated_at,
                 u.first_name as creator_first_name,
                 u.last_name as creator_last_name,
@@ -223,7 +223,7 @@ const getTasks = async (filters: GetTasksFilters): Promise<GetTasksResult> => {
             description: row.description,
             city: row.city,
             neighborhood: row.neighborhood,
-            duration_days: row.duration_days,
+            duration_hours: row.duration_hours,
             salary: row.salary,
             status: row.status,
             created_at: row.created_at,
@@ -266,7 +266,7 @@ const getUserTasks = async (creator_id: number, filters?: GetUserTasksFilters): 
                 t.description,
                 t.city,
                 t.neighborhood,
-                t.duration_days,
+                t.duration_hours,
                 t.salary,
                 t.status,
                 t.created_at,
@@ -323,7 +323,7 @@ const getUserTasks = async (creator_id: number, filters?: GetUserTasksFilters): 
             description: row.description,
             city: row.city,
             neighborhood: row.neighborhood,
-            duration_days: row.duration_days,
+            duration_hours: row.duration_hours,
             salary: row.salary,
             status: row.status,
             created_at: row.created_at,
@@ -355,7 +355,7 @@ const getTaskWithApplications = async (task_id: number, creator_id: number): Pro
         const [taskRows] = await pool.query<RowDataPacket[]>(
             `SELECT 
                 id, creator_id, selected_user_id, title, description, 
-                city, neighborhood, duration_days, salary, status, 
+                city, neighborhood, duration_hours, salary, status, 
                 created_at, updated_at
             FROM tasks 
             WHERE id = ? AND creator_id = ? AND deleted_at IS NULL`,
@@ -436,7 +436,7 @@ const getTaskWithApplications = async (task_id: number, creator_id: number): Pro
             description: task.description,
             city: task.city,
             neighborhood: task.neighborhood,
-            duration_days: task.duration_days,
+            duration_hours: task.duration_hours,
             salary: task.salary,
             status: task.status,
             created_at: task.created_at,
@@ -1099,7 +1099,7 @@ const getUserApplications = async (userId: number, filters: GetUserApplicationsF
                 t.description,
                 t.city,
                 t.neighborhood,
-                t.duration_days,
+                t.duration_hours,
                 t.salary,
                 t.status,
                 t.created_at,
@@ -1156,7 +1156,7 @@ const getUserApplications = async (userId: number, filters: GetUserApplicationsF
                 description: row.description,
                 city: row.city,
                 neighborhood: row.neighborhood,
-                duration_days: row.duration_days,
+                duration_hours: row.duration_hours,
                 salary: row.salary,
                 status: row.status,
                 created_at: row.created_at,
