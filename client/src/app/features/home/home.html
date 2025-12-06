@@ -1,0 +1,72 @@
+<app-home-navbar/>
+
+<main class="relative mx-auto font-poppins max-w-[2200px]">
+
+    <!-- mobile hero section -->
+    <section class="lg:hidden relative flex flex-col items-center py-28 overflow-hidden">
+        <img
+            ngSrc="/images/WebP/home_collage_vertical3.webp" alt="Collage vertical informativo" width="800" height="1200" priority           
+            class="absolute inset-0 w-full h-full object-cover object-center"
+        />
+        <div class="absolute inset-0 bg-black/50"></div>
+        <div class="relative z-2 flex flex-col items-center">
+            <h1 class="text-[2.5rem] text-center mb-11 text-white">Conectamos personas con oportunidades</h1>
+            <a [routerLink]="'/register'" class="bg-bg-white py-2 px-4 rounded-3xl">Conviertete en un Jobbie</a>
+        </div>
+    </section>
+
+    <!-- desktop hero section -->
+    <section class="hidden relative h-[30vw] w-full 2xl:max-w left-1/2 -translate-x-1/2 overflow-hidden lg:flex gap-x-5 justify-center items-center bg-[url('/images/WebP/home_background_call_to_action.webp')] bg-cover bg-no-repeat bg-center">
+        <div class="absolute inset-0 bg-black/80"></div>
+
+        <div class="container mx-auto relative z-10 h-full flex items-center justify-between gap-x-5">
+            <div class="relative z-2 flex flex-col items-center">
+                <h1 class="text-4xl xl:text-5xl 2xl:text-6xl text-center mb-11 text-white w-[125%] mr-[-15%] px-10 xl:px-20">Conectamos personas con oportunidades</h1>
+                <a [routerLink]="'/register'" class="bg-bg-white py-2 px-6 rounded-3xl mr-[-15%] text-lg">Conviertete en un Jobbie</a>
+            </div>
+            <div class="relative z-3 w-full h-full">
+                <img class="absolute inset-0 object-cover object-center" ngSrc="images/WebP/hero_bg.webp" priority fill alt="Imagen de portada">
+            </div>
+        </div>
+    </section>
+
+
+
+
+    <section class="flex flex-col gap-y-2 px-4 py-10">
+        <h2 class="text-center text-2xl"><span class="font-semibold">Jobby</span> es la <span class="text-main-blue">primer plataforma</span> en Colombia</h2>
+        <p class="text-center">que conecta a personas con tareas especificas de forma rapida, flexible y sin complicaciones.</p>
+    </section>
+
+    <section class="relative w-full left-1/2 -translate-x-1/2">
+        <h3 class="text-main-yelllow bg-black p-4 text-center font-semibold">¡Gana dinero en tu tiempo libre y encuentra oportunidades cerca de ti!</h3>
+    </section>
+
+    <section class="relative w-full left-1/2 -translate-x-1/2">
+
+        <div class="absolute inset-0 bg-black/40"></div>
+        <picture class="w-full h-[40vh] block relative">
+            <div class="absolute inset-0 bg-black/40"></div>
+            <source
+                media="(min-width: 1024px)"
+                srcset="/images/WebP/home_collage_horizontal2.webp"
+            />
+            <img
+                src="/images/WebP/home_below_jobby_information.webp"
+                alt="imagen informativa de fondo"
+                class="w-full h-full object-cover object-center"
+                loading="lazy"
+                fetchpriority="high"
+            />
+        </picture>
+    </section>
+
+    <app-home-rating/>
+
+    <app-home-info/>
+
+    <app-help-button />
+
+</main>
+
+<app-home-footer/>

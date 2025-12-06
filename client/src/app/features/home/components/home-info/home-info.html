@@ -1,0 +1,51 @@
+<section class="container w-full mx-auto p-2">
+  <h2 class="text-3xl font-bold mb-15 text-center">
+    ¿Por qué usar <span class="text-blue-600">Jobby</span>?
+  </h2>
+
+  <!-- Mobile section -->
+  <div class="block sm:hidden mb-6">
+    @for (tab of tabInfo; track tab.id) {
+      <div class="mb-4">
+        <button (click)="setTab(tab.id)" class="tab-button w-full p-4 mb-2 transition duration-300 ease-in-out hover:bg-main-blue/30 border-[1px] border-black rounded-xl shadow cursor-pointer"
+          [ngClass]="activeTab() === tab.id ? 'text-white bg-main-blue hover:bg-main-blue/100' : ''">
+          {{ getTabLabel(tab.id) }}
+        </button>
+        
+        @if (activeTab() === tab.id) {
+          <article class="tab-content p-4 mb-8 border-[1px] border-black rounded-xl shadow">
+            <h3 class="text-xl font-semibold mb-2">{{ tab.title }}</h3>
+            <p>{{ tab.content }}</p>
+          </article>
+        }
+      </div>
+    }
+  </div>
+
+  <!-- Desktop section -->
+  <div class="hidden sm:block">
+    <div class="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6">
+      @for (tab of tabInfo; track tab.id) {
+        <button (click)="setTab(tab.id)" class="tab-button p-4 mb-2 transition duration-300 ease-in-out hover:bg-main-blue/30 border-[1px] border-black rounded-xl shadow cursor-pointer"
+          [ngClass]="activeTab() === tab.id ? 'text-white bg-main-blue hover:bg-main-blue/100' : ''">
+          {{ getTabLabel(tab.id) }}
+        </button>
+      }
+    </div>
+
+    @for (tab of tabInfo; track tab.id) {
+      @if (activeTab() === tab.id) {
+        <article class="tab-content p-4 mb-6 border-[1px] border-black rounded-xl shadow">
+          <h3 class="text-xl font-semibold mb-2">{{ tab.title }}</h3>
+          <p>{{ tab.content }}</p>
+        </article>
+      }
+    }
+  </div>
+
+  <div class="py-8 mb-10 text-center">
+    <p class="text-lg mb-8">¿Listo para empezar?</p>
+    <a [routerLink]="'/register'" class="bg-blue-600 text-white border-[1px] border-black py-3 px-4 rounded-full shadow hover:bg-blue-700">Regístrate
+      ahora</a>
+  </div>
+</section>

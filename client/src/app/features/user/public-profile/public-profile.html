@@ -1,0 +1,219 @@
+@if (loading()) {
+  <app-user-profile-skeleton></app-user-profile-skeleton>
+} @else if (error()) {
+  <app-user-profile-error 
+    [errorMessage]="error()" 
+    (retry)="loadPublicProfile(userId || '')">
+  </app-user-profile-error>
+} @else {
+<app-dashboard-navbar/>
+
+<div class="min-h-screen font-poppins">
+  <main class="flex justify-center py-6 container mx-auto">
+    <div class="max-w-6xl w-full mx-auto px-2 sm:px-4">
+      <div class="grid grid-cols-1 lg:grid-cols-4">
+        <div class="lg:col-span-3">
+          <div class="grid grid-cols-1 gap-6 lg:pr-8">
+
+            <div class="bg-white rounded-xl shadow-sm border border-black overflow-hidden">
+              <div class="h-32 sm:h-40 relative" 
+                  style="background-image: url('/images/WebP/banner_profile_picture_background1.webp'); background-size: cover; background-position: center;">
+                <a [routerLink]="'/dashboard'" class="absolute top-7 right-7 z-20">
+                    <img src="/icons/return-pg_icon.svg" alt="Atrás" class="w-7 h-7 md:w-7 md:h-7 filter invert brightness-0 saturate-0">
+                </a>
+                <div class="absolute inset-0 bg-gradient-to-r from-black/60 via-black/40 to-black/30"></div>
+                
+                <div class="absolute -bottom-12 left-6">
+                  <div class="relative">
+                    <img [src]="getPhotoUrl(userData.profile?.photo_url)" 
+                        [alt]="userData.first_name + ' ' + userData.last_name" class="w-24 h-24 sm:w-32 sm:h-32 rounded-full border-4 border-white shadow-lg object-cover" (error)="onImageError($event)">
+                  </div>
+                </div>
+              </div>
+
+              <div class="pt-16 pb-4 px-6">
+                <div class="flex items-start justify-between mb-4">
+                  <div class="font-inter">
+                    <h2 class="text-2xl font-bold text-gray-900 font-poppins mb-2">{{userData.first_name}} {{userData.last_name}}</h2>
+                    @if (userData.profile?.occupation) {
+                      <p class="text-black mb-2">{{userData.profile?.occupation}}</p>
+                    } @else {
+                      <p class="text-gray-400 italic mb-2">Sin ocupación especificada</p>
+                    }
+                    @if (userData.profile?.current_location) {
+                      <p class="text-black text-sm">{{userData.profile?.current_location}}</p>
+                    } @else {
+                      <p class="text-gray-400 italic text-sm">Sin ubicación especificada</p>
+                    }
+                    <div class="flex items-center space-x-1 mt-3">
+                      <span class="text-yellow-400 text-sm">★</span>
+                      <span class="text-sm text-gray-600">5.0 (23 calificaciones)</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="flex flex-col sm:flex-row justify-center items-center gap-4 sm:gap-8 mb-6">
+                  <div class="flex items-center space-x-3 text-black">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                      <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"></path>
+                      <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"></path>
+                    </svg>
+                    <span class="text-sm">{{ userData.profile?.mock_email || userData.email }}</span>
+                  </div>
+                  <div class="flex items-center space-x-3 text-black">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                      <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"></path>
+                    </svg>
+                    <span class="text-sm">{{userData.phone}}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-sm border border-black p-6">
+              <div class="flex items-center justify-between mb-3">
+                <h3 class="text-lg font-semibold text-gray-900">Descripción</h3>
+              </div>
+              @if (userData.profile?.description) {
+                <p class="text-black leading-relaxed font-inter">
+                  {{userData.profile?.description}}
+                </p>
+              } @else {
+                <p class="text-gray-400 italic leading-relaxed font-inter">
+                  Este usuario no ha agregado una descripción.
+                </p>
+              }
+            </div>
+
+            <div class="bg-white rounded-xl shadow-sm border border-black p-6">
+              <div class="flex items-center justify-between mb-3">
+                <h3 class="text-lg font-semibold text-gray-900">Experiencia</h3>
+              </div>
+              @if (userData.experiences && userData.experiences.length > 0) {
+                <div class="space-y-4">
+                  @for (experience of userData.experiences; track experience.id) {
+                    <div class="flex items-center space-x-3">
+                      <div class="w-2 h-2 bg-blue-600 rounded-full"></div>
+                      <div class="flex-1">
+                        <h4 class="font-medium text-gray-900">{{ experience.title + " - " + experience.company }}</h4>
+                        <p class="text-sm text-gray-600 font-inter">{{ formatDate(experience.start_date) }} - {{ experience.end_date ? formatDate(experience.end_date) : 'Actualmente' }}</p>
+                      </div>
+                    </div>
+                  }
+                </div>
+              } @else {
+                <p class="text-gray-400 italic leading-relaxed font-inter">
+                  Este usuario no ha agregado experiencia laboral.
+                </p>
+              }
+            </div>
+
+            <div class="bg-white rounded-xl shadow-sm border border-black p-6">
+              <div class="flex items-center justify-between mb-3">
+                <h3 class="text-lg font-semibold text-gray-900">Habilidades</h3>
+              </div>
+              @if (userData.skills && userData.skills.length > 0) {
+                <div class="flex flex-wrap gap-2">
+                  @for (skill of userData.skills; track skill.id) {
+                    <span class="bg-blue-600 text-white px-3 py-1 rounded-lg text-sm font-medium">
+                      {{ skill.skill_name }}
+                    </span>
+                  }
+                </div>
+              } @else {
+                <p class="text-gray-400 italic leading-relaxed font-inter">
+                  Este usuario no ha agregado habilidades.
+                </p>
+              }
+            </div>
+
+            <div class="bg-white rounded-xl shadow-sm border border-black p-6">
+              <div class="flex items-center justify-between mb-3">
+                <h3 class="text-lg font-semibold text-gray-900">Documentos adjuntos</h3>
+              </div>
+              @if (userData.documents && userData.documents.length > 0) {
+                <div class="space-y-2">
+                  @for (document of userData.documents; track document.id) {
+                    <div class="flex items-center space-x-3 p-3 bg-gray-200 rounded-lg">
+                      <svg class="w-6 h-6 text-gray-600 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd"></path>
+                      </svg>
+                      <span class="text-sm text-black flex-1 truncate">{{ document.file_url.split('-').pop() }}</span>
+                      <button 
+                        class="text-gray-600 hover:text-black flex-shrink-0 cursor-pointer"
+                        (click)="viewDocument(document.file_url)"
+                        title="Ver documento"
+                      >
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                          <path d="M10 12a2 2 0 100-4 2 2 0 000 4z"></path>
+                          <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd"></path>
+                        </svg>
+                      </button>
+                    </div>
+                  }
+                </div>
+              } @else {
+                <p class="text-gray-400 italic leading-relaxed font-inter">
+                  Este usuario no ha subido documentos.
+                </p>
+              }
+            </div>
+
+          </div>
+        </div>
+
+        <div class="lg:col-span-1">
+          <div class="grid grid-cols-1 gap-6">
+            
+            <div class="bg-white rounded-xl shadow-sm border border-black p-4">
+              <div class="flex items-center justify-between mb-3">
+                <h3 class="text-lg font-semibold text-gray-900">Idioma del perfil</h3>
+              </div>
+              <p class="text-gray-600 text-sm">Español</p>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-sm border border-black overflow-hidden">
+              <div class="relative h-48">
+                <img
+                  src="/images/WebP/background_collage_for_registration_login17.webp"
+                  alt="See who's hiring"
+                  class="w-full h-full object-cover brightness-60"
+                />
+                <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
+                <div class="absolute inset-0 flex items-center pl-4">
+                  <div>
+                    <h3 class="text-white font-semibold text-lg mb-2">
+                      ¿Buscas talento?
+                    </h3>
+                    <p class="text-white text-sm mb-4">
+                      Publica tus tareas y conecta con profesionales calificados
+                    </p>
+                    <button
+                      [routerLink]="'/task'"
+                      class="bg-[#EBC636] text-gray-900 px-4 py-2 rounded-lg font-medium hover:bg-gray-100 transition-colors text-sm cursor-pointer"
+                    >
+                      Publicar tarea
+                    </button>
+                  </div>
+                </div> 
+              </div> 
+            </div> 
+          </div> 
+        </div> 
+
+      </div> 
+    </div> 
+
+    <app-help-button />
+
+  </main>
+  
+  <footer class="w-full border-t border-black">
+    <div class="mx-auto pt-3 pb-3 flex items-center justify-between px-4 container">
+      <p class="text-xs md:text-xs text-black">© ADSO - 2025</p>
+      <img src="/images/LOGO/png_sin_fondo/fondo_blanco.png" alt="Jobby Logo" class="h-5 sm:h-6" />
+    </div>
+  </footer>
+</div>
+
+}
