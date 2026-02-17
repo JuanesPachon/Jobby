@@ -1,247 +1,260 @@
-import { Request, Response } from "express";
-import errorHandler from "../utils/errorHandler.js";
-import { loginUser, registerUser, verifyResetCode, resetPassword } from "../models/authModel.js";
-import { ResetTokenPayload } from "../interfaces/resetPassword.interface.js";
-import jwt from "jsonwebtoken";
-import pool from "../config/db_config.js";
-import { GeneralResponse } from "../interfaces/response.interface.js";
-import { saveResetPassword } from "../models/passwordResetModel.js";
-import { ResetPassword } from "../interfaces/resetPassword.interface.js";
-import { RowDataPacket } from "mysql2/promise";
-import MailService from "../utils/MailService.js";
+import { Request, Response } from 'express';
+import errorHandler from '../utils/errorHandler.js';
+import { loginUser, registerUser, verifyResetCode, resetPassword } from '../models/authModel.js';
+import { ResetTokenPayload } from '../interfaces/resetPassword.interface.js';
+import jwt from 'jsonwebtoken';
+import pool from '../config/db_config.js';
+import { GeneralResponse } from '../interfaces/response.interface.js';
+import { saveResetPassword } from '../models/passwordResetModel.js';
+import { ResetPassword } from '../interfaces/resetPassword.interface.js';
+import { RowDataPacket } from 'mysql2/promise';
+import MailService from '../utils/MailService.js';
 
 const mailService = new MailService();
 
 const registerController = async (req: Request, res: Response) => {
-  try {
-    const body = req.body;
-    const response = await registerUser(body);
+    try {
+        const body = req.body;
+        const response = await registerUser(body);
 
-    if (response.success) {
-      return res.status(201).json({
-        success: true,
-        message: "User registered successfully",
-      });
-    } else if (response.error === "duplicate") {
-      return errorHandler.handleDuplicateError(res, "User already exists");
-    } else {
-      return errorHandler.handleServerError(res, "Internal server error during registration");
+        if (response.success) {
+            return res.status(201).json({
+                success: true,
+                message: 'User registered successfully',
+            });
+        } else if (response.error === 'duplicate') {
+            return errorHandler.handleDuplicateError(res, 'User already exists');
+        } else {
+            return errorHandler.handleServerError(res, 'Internal server error during registration');
+        }
+    } catch (error) {
+        return errorHandler.handleServerError(res, 'Internal server error during registration');
     }
-
-  } catch (error) {
-    return errorHandler.handleServerError(res, "Internal server error during registration");
-  }
 };
 
 const loginController = async (req: Request, res: Response) => {
-  try {
-    
-    const credentials = req.body;
-    const response = await loginUser(credentials);
+    try {
+        const credentials = req.body;
+        const response = await loginUser(credentials);
 
-    if (response.success && response.user) {
+        if (response.success && response.user) {
+            const tokenPayload = {
+                sub: response.user.id,
+            };
 
-      const tokenPayload = {
-        sub: response.user.id,
-      }
+            const token = jwt.sign(tokenPayload, process.env.JWT_SECRET as string, {
+                expiresIn: '14d',
+            });
 
-      const token = jwt.sign(tokenPayload, (process.env.JWT_SECRET as string), {
-        expiresIn: '14d'
-      });
+            const cookieOptions = {
+                httpOnly: true,
+                secure: process.env.SERVER_PROD === 'true',
+                sameSite: process.env.SERVER_PROD === 'true' ? ('none' as const) : ('lax' as const),
+                maxAge: 14 * 24 * 60 * 60 * 1000,
+                path: '/',
+            };
 
-      const cookieOptions = {
-        httpOnly: true,
-        secure: process.env.SERVER_PROD === 'true',
-        sameSite: process.env.SERVER_PROD === 'true' ? 'none' as const : 'lax' as const,
-        maxAge: 14 * 24 * 60 * 60 * 1000,
-        path: '/'
-      };
+            return res.cookie('access_token', token, cookieOptions).status(200).json({
+                success: true,
+                message: 'Login successful',
+            });
+        }
 
-      return res.cookie('access_token', token, cookieOptions).status(200).json({
-        success: true,
-        message: "Login successful",
-      });
-    } 
-
-    switch (response.error) {
-      case 'invalid_credentials':
-        return errorHandler.handleInvalidCredentialsError(res);
-      case 'server':
-        return errorHandler.handleServerError(res, "Internal server error during login");
-      default:
-        return errorHandler.handleServerError(res, "Internal server error during login");
+        switch (response.error) {
+            case 'invalid_credentials':
+                return errorHandler.handleInvalidCredentialsError(res);
+            case 'server':
+                return errorHandler.handleServerError(res, 'Internal server error during login');
+            default:
+                return errorHandler.handleServerError(res, 'Internal server error during login');
+        }
+    } catch (error) {
+        return errorHandler.handleServerError(res, 'Login process failed');
     }
-
-  } catch (error) {
-    return errorHandler.handleServerError(res, "Login process failed");
-    
-  }
-}
+};
 
 const validateTokenController = async (_req: Request, res: Response) => {
-  try {
-    return res.status(200).json({
-      success: true,
-      message: "Token is valid",
-    });
-  } catch (error) {
-    return errorHandler.handleServerError(res, "Internal server error during token validation");
-  }
+    try {
+        return res.status(200).json({
+            success: true,
+            message: 'Token is valid',
+        });
+    } catch (error) {
+        return errorHandler.handleServerError(res, 'Internal server error during token validation');
+    }
 };
 
 const logoutController = async (_req: Request, res: Response) => {
-  try {
-    const cookieOptions = {
-      httpOnly: true,
-      secure: process.env.SERVER_PROD === 'true',
-      sameSite: process.env.SERVER_PROD === 'true' ? 'none' as const : 'lax' as const,
-      path: '/'
-    };
+    try {
+        const cookieOptions = {
+            httpOnly: true,
+            secure: process.env.SERVER_PROD === 'true',
+            sameSite: process.env.SERVER_PROD === 'true' ? ('none' as const) : ('lax' as const),
+            path: '/',
+        };
 
-    return res.clearCookie('access_token', cookieOptions).status(200).json({
-      success: true,
-      message: "Logout successful"
-    });
-  } catch (error) {
-    return errorHandler.handleServerError(res, "Internal server error during logout");
-  }
+        return res.clearCookie('access_token', cookieOptions).status(200).json({
+            success: true,
+            message: 'Logout successful',
+        });
+    } catch (error) {
+        return errorHandler.handleServerError(res, 'Internal server error during logout');
+    }
 };
 
 const verifyCodeController = async (req: Request, res: Response) => {
-  try {
-    const verifyData = req.body;
-    const response = await verifyResetCode(verifyData);
+    try {
+        const verifyData = req.body;
+        const response = await verifyResetCode(verifyData);
 
-    if (response.success && response.userId && response.resetId) {
-      const resetToken = jwt.sign(
-        { 
-          userId: response.userId,
-          resetId: response.resetId,
-          purpose: 'password_reset'
-        },
-        process.env.JWT_SECRET as string,
-        { expiresIn: '15m' }
-      );
+        if (response.success && response.userId && response.resetId) {
+            const resetToken = jwt.sign(
+                {
+                    userId: response.userId,
+                    resetId: response.resetId,
+                    purpose: 'password_reset',
+                },
+                process.env.JWT_SECRET as string,
+                { expiresIn: '15m' }
+            );
 
-      const cookieOptions = {
-        httpOnly: true,
-        secure: process.env.SERVER_PROD === 'true',
-        sameSite: process.env.SERVER_PROD === 'true' ? 'none' as const : 'lax' as const,
-        maxAge: 15 * 60 * 1000,
-        path: '/'
-      };
+            const cookieOptions = {
+                httpOnly: true,
+                secure: process.env.SERVER_PROD === 'true',
+                sameSite: process.env.SERVER_PROD === 'true' ? ('none' as const) : ('lax' as const),
+                maxAge: 15 * 60 * 1000,
+                path: '/',
+            };
 
-      return res.cookie('reset_token', resetToken, cookieOptions).status(200).json({
-        success: true,
-        message: "Reset code verified successfully",
-      });
+            return res.cookie('reset_token', resetToken, cookieOptions).status(200).json({
+                success: true,
+                message: 'Reset code verified successfully',
+            });
+        }
+
+        switch (response.error) {
+            case 'invalid_code':
+                return errorHandler.handleValidationError(res, 'Invalid reset code');
+            case 'code_expired':
+                return errorHandler.handleValidationError(res, 'Reset code has expired');
+            case 'code_used':
+                return errorHandler.handleValidationError(res, 'Reset code has already been used');
+            case 'user_not_found':
+                return errorHandler.handleNotFoundError(res, 'User not found');
+            case 'server':
+                return errorHandler.handleServerError(
+                    res,
+                    'Internal server error during code verification'
+                );
+            default:
+                return errorHandler.handleServerError(
+                    res,
+                    'Internal server error during code verification'
+                );
+        }
+    } catch (error) {
+        return errorHandler.handleServerError(
+            res,
+            'Internal server error during code verification'
+        );
     }
-
-    switch (response.error) {
-      case 'invalid_code':
-        return errorHandler.handleValidationError(res, "Invalid reset code");
-      case 'code_expired':
-        return errorHandler.handleValidationError(res, "Reset code has expired");
-      case 'code_used':
-        return errorHandler.handleValidationError(res, "Reset code has already been used");
-      case 'user_not_found':
-        return errorHandler.handleNotFoundError(res, "User not found");
-      case 'server':
-        return errorHandler.handleServerError(res, "Internal server error during code verification");
-      default:
-        return errorHandler.handleServerError(res, "Internal server error during code verification");
-    }
-
-  } catch (error) {
-    return errorHandler.handleServerError(res, "Internal server error during code verification");
-  }
 };
 
 const resetPasswordController = async (req: Request, res: Response) => {
-  try {
-    const resetData = req.body;
-    const resetToken = req.cookies.reset_token;
+    try {
+        const resetData = req.body;
+        const resetToken = req.cookies.reset_token;
 
-    if (!resetToken) {
-      return res.status(401).json({
-        success: false,
-        error: "Reset token required. Please verify your code first."
-      });
-    }
-
-    const decoded = jwt.verify(resetToken, process.env.JWT_SECRET as string) as ResetTokenPayload;
-    
-    if (!decoded) {
-      return errorHandler.handleValidationError(res, "Invalid or expired reset token");
-    }
-    
-    if (decoded.purpose !== 'password_reset') {
-      return errorHandler.handleValidationError(res, "Invalid token purpose");
-    }
-
-    const response = await resetPassword(resetData, decoded.userId);
-
-    if (response.success) {
-      const cookieOptions = {
-        httpOnly: true,
-        secure: process.env.SERVER_PROD === 'true',
-        sameSite: process.env.SERVER_PROD === 'true' ? 'none' as const : 'lax' as const,
-        path: '/'
-      };
-
-      return res.clearCookie('reset_token', cookieOptions).status(200).json({
-        success: true,
-        message: "Password updated successfully",
-      });
-    }
-
-    switch (response.error) {
-      case 'server':
-        return errorHandler.handleServerError(res, "Internal server error during password reset");
-      default:
-        return errorHandler.handleServerError(res, "Internal server error during password reset");
-    }
-
-  } catch (error) {
-    return errorHandler.handleServerError(res, "Internal server error during password reset");
-  }
-};
-
-
-const requestCodeController = async (_req: Request, res: Response) => {
-  try {
-    const [users]  = await pool.query<RowDataPacket[]>(`SELECT email, id, first_name FROM users WHERE email = ?`, [_req.body.email])
-    if (users.length === 0) {
-      const response : GeneralResponse = {
-        success: false,
-        message: "Invalid email"
-      }
-      return res.status(400).json(response) 
-    } else {
-      const userData = users[0];
-      var expiresAt = new Date(new Date().getTime()+ 15*60*1000);
-      
-      const newResetPassword: ResetPassword = {
-        user_id: userData.id,
-        reset_code: Math.floor(Math.random() * 900000) + 100000,
-        expires_at: expiresAt,
-        created_at: new Date()
-      }
-
-      const resetPasswordSaved = await saveResetPassword(newResetPassword);
-      if (!resetPasswordSaved) {
-        throw new Error("Error trying to reset password")
-      }else {
-        const mailData = {
-          userName: userData.first_name,
-          code: newResetPassword.reset_code,
-          to: userData.email,
-          subject: "Recuperación de contraseña",
+        if (!resetToken) {
+            return res.status(401).json({
+                success: false,
+                error: 'Reset token required. Please verify your code first.',
+            });
         }
 
-        const imageUrl = process.env.SUPABASE_URL || '';
+        const decoded = jwt.verify(
+            resetToken,
+            process.env.JWT_SECRET as string
+        ) as ResetTokenPayload;
 
-        const mailTemplate = `
+        if (!decoded) {
+            return errorHandler.handleValidationError(res, 'Invalid or expired reset token');
+        }
+
+        if (decoded.purpose !== 'password_reset') {
+            return errorHandler.handleValidationError(res, 'Invalid token purpose');
+        }
+
+        const response = await resetPassword(resetData, decoded.userId);
+
+        if (response.success) {
+            const cookieOptions = {
+                httpOnly: true,
+                secure: process.env.SERVER_PROD === 'true',
+                sameSite: process.env.SERVER_PROD === 'true' ? ('none' as const) : ('lax' as const),
+                path: '/',
+            };
+
+            return res.clearCookie('reset_token', cookieOptions).status(200).json({
+                success: true,
+                message: 'Password updated successfully',
+            });
+        }
+
+        switch (response.error) {
+            case 'server':
+                return errorHandler.handleServerError(
+                    res,
+                    'Internal server error during password reset'
+                );
+            default:
+                return errorHandler.handleServerError(
+                    res,
+                    'Internal server error during password reset'
+                );
+        }
+    } catch (error) {
+        return errorHandler.handleServerError(res, 'Internal server error during password reset');
+    }
+};
+
+const requestCodeController = async (_req: Request, res: Response) => {
+    try {
+        const [users] = await pool.query<RowDataPacket[]>(
+            `SELECT email, id, first_name FROM users WHERE email = ?`,
+            [_req.body.email]
+        );
+        if (users.length === 0) {
+            const response: GeneralResponse = {
+                success: false,
+                message: 'Invalid email',
+            };
+            return res.status(400).json(response);
+        } else {
+            const userData = users[0];
+            var expiresAt = new Date(new Date().getTime() + 15 * 60 * 1000);
+
+            const newResetPassword: ResetPassword = {
+                user_id: userData.id,
+                reset_code: Math.floor(Math.random() * 900000) + 100000,
+                expires_at: expiresAt,
+                created_at: new Date(),
+            };
+
+            const resetPasswordSaved = await saveResetPassword(newResetPassword);
+            if (!resetPasswordSaved) {
+                throw new Error('Error trying to reset password');
+            } else {
+                const mailData = {
+                    userName: userData.first_name,
+                    code: newResetPassword.reset_code,
+                    to: userData.email,
+                    subject: 'Recuperación de contraseña',
+                };
+
+                const imageUrl = process.env.SUPABASE_URL || '';
+
+                const mailTemplate = `
           <body style="margin: 0; padding: 0; font-family: 'Arial', sans-serif; background-color: #f4f4f4;">
             <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 10px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
               
@@ -293,23 +306,35 @@ const requestCodeController = async (_req: Request, res: Response) => {
               
             </div>
           </body>
-        `
+        `;
 
-        const info = await mailService.sendMail(mailData.to, mailData.subject, "", mailTemplate);
+                const info = await mailService.sendMail(
+                    mailData.to,
+                    mailData.subject,
+                    '',
+                    mailTemplate
+                );
 
-        if (!info) {
-          throw new Error("Error trying to send email")
+                if (!info) {
+                    throw new Error('Error trying to send email');
+                }
+                return res.status(200).json({
+                    success: true,
+                    message: 'Email sent successfully',
+                });
+            }
         }
-        return res.status(200).json({
-          success: true,
-          message: "Email sent successfully",
-        });
-      }
+    } catch (error) {
+        return errorHandler.handleServerError(res, 'Internal server error during code request');
     }
-    
-  } catch (error) {
-    return errorHandler.handleServerError(res, "Internal server error during code request");
-  }
 };
 
-export { registerController, loginController, validateTokenController, logoutController, resetPasswordController, requestCodeController, verifyCodeController };
+export {
+    registerController,
+    loginController,
+    validateTokenController,
+    logoutController,
+    resetPasswordController,
+    requestCodeController,
+    verifyCodeController,
+};

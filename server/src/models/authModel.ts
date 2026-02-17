@@ -1,20 +1,25 @@
-import bcrypt from "bcryptjs"
-import pool from "../config/db_config.js";
-import { ResultSetHeader, RowDataPacket } from "mysql2/promise";
-import { DatabaseError, RegisterResult, LoginResult, ResetPasswordResult, VerifyCodeResult } from "../interfaces/database.interface.js";
-import { User } from "../interfaces/user.interface.js";
-import { Auth } from "../interfaces/auth.interface.js";
-import { ResetPasswordRequest, VerifyCodeRequest } from "../interfaces/resetPassword.interface.js";
+import bcrypt from 'bcryptjs';
+import pool from '../config/db_config.js';
+import { ResultSetHeader, RowDataPacket } from 'mysql2/promise';
+import {
+    DatabaseError,
+    RegisterResult,
+    LoginResult,
+    ResetPasswordResult,
+    VerifyCodeResult,
+} from '../interfaces/database.interface.js';
+import { User } from '../interfaces/user.interface.js';
+import { Auth } from '../interfaces/auth.interface.js';
+import { ResetPasswordRequest, VerifyCodeRequest } from '../interfaces/resetPassword.interface.js';
 
 const registerUser = async (user: User): Promise<RegisterResult> => {
     try {
-
         let hashedPassword: string | null = null;
 
         if (user.password) {
             hashedPassword = await bcrypt.hash(user.password, 10);
         }
-    
+
         const queryValues = [
             user.first_name,
             user.last_name,
@@ -28,9 +33,9 @@ const registerUser = async (user: User): Promise<RegisterResult> => {
             user.oauth_provider_id || null,
             user.avatar_url || null,
             user.email_verified || false,
-            user.accepted_terms
+            user.accepted_terms,
         ];
-        
+
         const [result] = await pool.query<ResultSetHeader>(
             `INSERT INTO users (
             first_name, last_name, birth_date, doc_type, doc_number, email, phone,
@@ -41,7 +46,7 @@ const registerUser = async (user: User): Promise<RegisterResult> => {
         );
 
         if (result.affectedRows > 0) {
-            return { 
+            return {
                 success: true,
                 message: 'User registered successfully',
             };
@@ -49,32 +54,30 @@ const registerUser = async (user: User): Promise<RegisterResult> => {
             return {
                 success: false,
                 error: 'server',
-                message: 'Error inserting user into the database'
+                message: 'Error inserting user into the database',
             };
         }
-
     } catch (error) {
         console.error('Error en registerUser:', error);
-        
+
         if (error instanceof Error && (error as DatabaseError).code === 'ER_DUP_ENTRY') {
-            return { 
-                success: false, 
+            return {
+                success: false,
                 error: 'duplicate',
-                message: 'Email or docNumber are already registered'
+                message: 'Email or docNumber are already registered',
             };
         } else {
-            return { 
-                success: false, 
+            return {
+                success: false,
                 error: 'server',
-                message: 'Internal server error'
+                message: 'Internal server error',
             };
         }
     }
-}
+};
 
 const loginUser = async (credentials: Auth): Promise<LoginResult> => {
     try {
-       
         const [rows] = await pool.query<RowDataPacket[]>(
             `SELECT id, password_hash, oauth_provider
              FROM users 
@@ -86,7 +89,7 @@ const loginUser = async (credentials: Auth): Promise<LoginResult> => {
             return {
                 success: false,
                 error: 'invalid_credentials',
-                message: 'Invalid email or password'
+                message: 'Invalid email or password',
             };
         }
 
@@ -95,7 +98,10 @@ const loginUser = async (credentials: Auth): Promise<LoginResult> => {
         let isPasswordValid: boolean = false;
 
         if (user.oauth_provider === 'local') {
-            isPasswordValid = await bcrypt.compare(credentials.password as string, user.password_hash);
+            isPasswordValid = await bcrypt.compare(
+                credentials.password as string,
+                user.password_hash
+            );
         } else {
             isPasswordValid = true;
         }
@@ -104,7 +110,7 @@ const loginUser = async (credentials: Auth): Promise<LoginResult> => {
             return {
                 success: false,
                 error: 'invalid_credentials',
-                message: 'Invalid email or password'
+                message: 'Invalid email or password',
             };
         }
 
@@ -113,18 +119,17 @@ const loginUser = async (credentials: Auth): Promise<LoginResult> => {
             message: 'Login successful',
             user: {
                 id: user.id,
-                email: credentials.email
-            }
+                email: credentials.email,
+            },
         };
-
     } catch (error) {
         return {
             success: false,
             error: 'server',
-            message: 'Internal server error'
+            message: 'Internal server error',
         };
     }
-}
+};
 
 const verifyResetCode = async (verifyData: VerifyCodeRequest): Promise<VerifyCodeResult> => {
     try {
@@ -141,7 +146,7 @@ const verifyResetCode = async (verifyData: VerifyCodeRequest): Promise<VerifyCod
             return {
                 success: false,
                 error: 'invalid_code',
-                message: 'Invalid reset code'
+                message: 'Invalid reset code',
             };
         }
 
@@ -151,18 +156,18 @@ const verifyResetCode = async (verifyData: VerifyCodeRequest): Promise<VerifyCod
             return {
                 success: false,
                 error: 'code_used',
-                message: 'Reset code has already been used'
+                message: 'Reset code has already been used',
             };
         }
 
         const now = new Date();
         const expiresAt = new Date(resetRecord.expires_at);
-        
+
         if (now > expiresAt) {
             return {
                 success: false,
                 error: 'code_expired',
-                message: 'Reset code has expired'
+                message: 'Reset code has expired',
             };
         }
 
@@ -175,20 +180,22 @@ const verifyResetCode = async (verifyData: VerifyCodeRequest): Promise<VerifyCod
             success: true,
             message: 'Reset code verified successfully',
             userId: resetRecord.user_id,
-            resetId: resetRecord.id
+            resetId: resetRecord.id,
         };
-
     } catch (error) {
         console.error('Error en verifyResetCode:', error);
         return {
             success: false,
             error: 'server',
-            message: 'Internal server error'
+            message: 'Internal server error',
         };
     }
-}
+};
 
-const resetPassword = async (resetData: ResetPasswordRequest, userId: number): Promise<ResetPasswordResult> => {
+const resetPassword = async (
+    resetData: ResetPasswordRequest,
+    userId: number
+): Promise<ResetPasswordResult> => {
     try {
         const hashedPassword = await bcrypt.hash(resetData.newPassword, 10);
 
@@ -200,23 +207,22 @@ const resetPassword = async (resetData: ResetPasswordRequest, userId: number): P
         if (result.affectedRows > 0) {
             return {
                 success: true,
-                message: 'Password updated successfully'
+                message: 'Password updated successfully',
             };
         } else {
             return {
                 success: false,
                 error: 'server',
-                message: 'Error updating password'
+                message: 'Error updating password',
             };
         }
-
     } catch (error) {
         return {
             success: false,
             error: 'server',
-            message: 'Internal server error'
+            message: 'Internal server error',
         };
     }
-}
+};
 
 export { registerUser, loginUser, verifyResetCode, resetPassword };

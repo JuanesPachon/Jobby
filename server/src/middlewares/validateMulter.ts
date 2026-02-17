@@ -17,10 +17,14 @@ const createUploadResult = (
     return { success, error, message, data };
 };
 
-const deleteOldImage = async (req: Request, _res: Response, next: NextFunction): Promise<void | Response> => {
+const deleteOldImage = async (
+    req: Request,
+    _res: Response,
+    next: NextFunction
+): Promise<void | Response> => {
     try {
-        const hasNewPhoto = Array.isArray(req.files) 
-            ? req.files.some(file => file.fieldname === 'photoUrl')
+        const hasNewPhoto = Array.isArray(req.files)
+            ? req.files.some((file) => file.fieldname === 'photoUrl')
             : req.files?.['photoUrl']?.[0];
 
         if (!hasNewPhoto || !req.user?.sub) {
@@ -36,10 +40,10 @@ const deleteOldImage = async (req: Request, _res: Response, next: NextFunction):
 
         if (profileRows.length > 0) {
             const oldPhotoUrl = profileRows[0].photo_url;
-            
+
             if (oldPhotoUrl && oldPhotoUrl.trim() !== '') {
                 let filePath = oldPhotoUrl;
-                
+
                 if (oldPhotoUrl.includes('supabase')) {
                     const urlParts = oldPhotoUrl.split('/');
                     filePath = urlParts[urlParts.length - 1];
@@ -62,10 +66,15 @@ const deleteOldImage = async (req: Request, _res: Response, next: NextFunction):
     }
 };
 
-const handleCombinedMulterError = (error: any, _req: Request, res: Response, next: NextFunction): void => {
+const handleCombinedMulterError = (
+    error: multer.MulterError | Error,
+    _req: Request,
+    res: Response,
+    next: NextFunction
+): void => {
     if (error instanceof multer.MulterError) {
-        let message = 'Error uploading files';
-        
+        let message: string;
+
         switch (error.code) {
             case 'LIMIT_FILE_COUNT':
                 message = 'Maximum 4 files allowed (1 image + 3 PDFs)';
@@ -79,56 +88,68 @@ const handleCombinedMulterError = (error: any, _req: Request, res: Response, nex
             default:
                 message = error.message || 'Error uploading files';
         }
-        
+
         const result = createUploadResult(false, 'invalid_file', message);
         res.status(400).json(result);
         return;
     }
-    
-    if (error.message?.includes('Profile photo must be') || 
-        error.message?.includes('Documents must be') || 
-        error.message === 'Unexpected field') {
+
+    if (
+        error.message?.includes('Profile photo must be') ||
+        error.message?.includes('Documents must be') ||
+        error.message === 'Unexpected field'
+    ) {
         const result = createUploadResult(false, 'invalid_file', error.message);
         res.status(400).json(result);
         return;
     }
-    
+
     next(error);
 };
 
-const uploadCombinedToSupabase = async (req: Request, res: Response, next: NextFunction): Promise<void | Response> => {
+const uploadCombinedToSupabase = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+): Promise<void | Response> => {
     try {
-        const photoFile = Array.isArray(req.files) 
-            ? req.files.find(file => file.fieldname === 'photoUrl')
+        const photoFile = Array.isArray(req.files)
+            ? req.files.find((file) => file.fieldname === 'photoUrl')
             : req.files?.['photoUrl']?.[0];
 
         if (photoFile) {
             const { originalname, buffer } = photoFile;
-            
+
             const sanitizedName = originalname
                 .normalize('NFD')
-                .replace(/[\u0300-\u036f]/g, '') 
-                .replace(/\s+/g, '_') 
+                .replace(/[\u0300-\u036f]/g, '')
+                .replace(/\s+/g, '_')
                 .replace(/[^a-zA-Z0-9._-]/g, '');
-            
+
             const filePath = `${Date.now()}-${sanitizedName}`;
             const fileBase64 = decode(buffer.toString('base64'));
 
-            const { error } = await supabaseClient.storage.from('Jobby_files').upload(filePath, fileBase64, {
-                contentType: 'image/' + path.extname(sanitizedName).substring(1),
-            });
+            const { error } = await supabaseClient.storage
+                .from('Jobby_files')
+                .upload(filePath, fileBase64, {
+                    contentType: 'image/' + path.extname(sanitizedName).substring(1),
+                });
 
             if (error) {
                 console.error('Error uploading profile image:', error);
-                const result = createUploadResult(false, 'upload_failed', 'Error uploading profile image');
+                const result = createUploadResult(
+                    false,
+                    'upload_failed',
+                    'Error uploading profile image'
+                );
                 return res.status(500).json(result);
             }
 
             req.body.photoUrl = filePath;
         }
 
-        const documentFiles = Array.isArray(req.files) 
-            ? req.files.filter(file => file.fieldname === 'documents')
+        const documentFiles = Array.isArray(req.files)
+            ? req.files.filter((file) => file.fieldname === 'documents')
             : req.files?.['documents'] || [];
 
         if (documentFiles.length > 0) {
@@ -136,13 +157,13 @@ const uploadCombinedToSupabase = async (req: Request, res: Response, next: NextF
 
             for (const file of documentFiles) {
                 const { originalname, buffer } = file;
-                
+
                 const sanitizedName = originalname
                     .normalize('NFD')
                     .replace(/[\u0300-\u036f]/g, '')
                     .replace(/\s+/g, '_')
                     .replace(/[^a-zA-Z0-9._-]/g, '');
-                
+
                 const filePath = `documents/${Date.now()}-${Math.random().toString(36).substring(2)}-${sanitizedName}`;
                 const fileBase64 = decode(buffer.toString('base64'));
 
@@ -167,7 +188,6 @@ const uploadCombinedToSupabase = async (req: Request, res: Response, next: NextF
         }
 
         next();
-
     } catch (uploadError) {
         console.error('Error in combined upload process:', uploadError);
         const result = createUploadResult(false, 'server', 'Error processing files');

@@ -11,7 +11,7 @@ const transporter = nodemailer.createTransport({
 });
 
 export default class MailService {
-    async sendMail(to:string, subject:string, text:string, html:string) {
+    async sendMail(to: string, subject: string, text: string, html: string) {
         return await transporter.sendMail({
             from: `"${process.env.FROM_NAME || 'No-Reply'}" <${process.env.FROM_EMAIL || process.env.SMTP_USER}>`,
             to,

@@ -4,8 +4,8 @@ export interface Auth {
 }
 
 export interface AuthenticatedRequest extends Request {
-  user?: {
-    sub: string;
-    iat: number;
-  };
+    user?: {
+        sub: string;
+        iat: number;
+    };
 }

@@ -1,9 +1,15 @@
-import pool from "../config/db_config.js";
-import { RowDataPacket } from "mysql2/promise";
-import { User, UserSkill, UserDocument, UserExperience, UserProfile } from "../interfaces/user.interface.js";
-import { getUserByIdResult, UpdateProfileResult } from "../interfaces/database.interface.js";
-import { UpdateProfileRequest } from "../interfaces/updateProfile.interface.js";
-import { supabaseClient } from "../config/multer.config.js";
+import pool from '../config/db_config.js';
+import { RowDataPacket } from 'mysql2/promise';
+import {
+    User,
+    UserSkill,
+    UserDocument,
+    UserExperience,
+    UserProfile,
+} from '../interfaces/user.interface.js';
+import { getUserByIdResult, UpdateProfileResult } from '../interfaces/database.interface.js';
+import { UpdateProfileRequest } from '../interfaces/updateProfile.interface.js';
+import { supabaseClient } from '../config/multer.config.js';
 
 const getUserById = async (userId: number): Promise<getUserByIdResult> => {
     try {
@@ -28,7 +34,7 @@ const getUserById = async (userId: number): Promise<getUserByIdResult> => {
             return {
                 success: false,
                 error: 'user_not_found',
-                message: 'User not found'
+                message: 'User not found',
             };
         }
 
@@ -92,43 +98,51 @@ const getUserById = async (userId: number): Promise<getUserByIdResult> => {
                 current_location: profileRows[0].current_location,
                 mock_email: profileRows[0].mock_email,
                 created_at: profileRows[0].created_at,
-                updated_at: profileRows[0].updated_at
+                updated_at: profileRows[0].updated_at,
             } as UserProfile;
         }
 
-        user.experiences = experienceRows.map(row => ({
-            id: row.id,
-            title: row.title,
-            company: row.company,
-            start_date: row.start_date,
-            end_date: row.end_date,
-            created_at: row.created_at,
-            updated_at: row.updated_at
-        } as UserExperience));
+        user.experiences = experienceRows.map(
+            (row) =>
+                ({
+                    id: row.id,
+                    title: row.title,
+                    company: row.company,
+                    start_date: row.start_date,
+                    end_date: row.end_date,
+                    created_at: row.created_at,
+                    updated_at: row.updated_at,
+                }) as UserExperience
+        );
 
-        user.skills = skillRows.map(row => ({
-            id: row.id,
-            skill_name: row.skill_name
-        } as UserSkill));
+        user.skills = skillRows.map(
+            (row) =>
+                ({
+                    id: row.id,
+                    skill_name: row.skill_name,
+                }) as UserSkill
+        );
 
-        user.documents = documentRows.map(row => ({
-            id: row.id,
-            file_url: row.file_url,
-            uploaded_at: row.uploaded_at
-        } as UserDocument));
+        user.documents = documentRows.map(
+            (row) =>
+                ({
+                    id: row.id,
+                    file_url: row.file_url,
+                    uploaded_at: row.uploaded_at,
+                }) as UserDocument
+        );
 
         return {
             success: true,
             message: 'User data retrieved successfully',
-            user: user
+            user: user,
         };
-
     } catch (error) {
         console.error('Error getting user data:', error);
         return {
             success: false,
             error: 'server',
-            message: 'Internal server error while retrieving user data'
+            message: 'Internal server error while retrieving user data',
         };
     }
 };
@@ -153,7 +167,7 @@ const getUserByIdFiltered = async (userId: number): Promise<getUserByIdResult> =
             return {
                 success: false,
                 error: 'user_not_found',
-                message: 'User not found'
+                message: 'User not found',
             };
         }
 
@@ -217,53 +231,65 @@ const getUserByIdFiltered = async (userId: number): Promise<getUserByIdResult> =
                 current_location: profileRows[0].current_location,
                 mock_email: profileRows[0].mock_email,
                 created_at: profileRows[0].created_at,
-                updated_at: profileRows[0].updated_at
+                updated_at: profileRows[0].updated_at,
             } as UserProfile;
         }
 
-        user.experiences = experienceRows.map(row => ({
-            id: row.id,
-            title: row.title,
-            company: row.company,
-            start_date: row.start_date,
-            end_date: row.end_date,
-            created_at: row.created_at,
-            updated_at: row.updated_at
-        } as UserExperience));
+        user.experiences = experienceRows.map(
+            (row) =>
+                ({
+                    id: row.id,
+                    title: row.title,
+                    company: row.company,
+                    start_date: row.start_date,
+                    end_date: row.end_date,
+                    created_at: row.created_at,
+                    updated_at: row.updated_at,
+                }) as UserExperience
+        );
 
-        user.skills = skillRows.map(row => ({
-            id: row.id,
-            skill_name: row.skill_name
-        } as UserSkill));
+        user.skills = skillRows.map(
+            (row) =>
+                ({
+                    id: row.id,
+                    skill_name: row.skill_name,
+                }) as UserSkill
+        );
 
-        user.documents = documentRows.map(row => ({
-            id: row.id,
-            file_url: row.file_url,
-            uploaded_at: row.uploaded_at
-        } as UserDocument));
+        user.documents = documentRows.map(
+            (row) =>
+                ({
+                    id: row.id,
+                    file_url: row.file_url,
+                    uploaded_at: row.uploaded_at,
+                }) as UserDocument
+        );
 
         return {
             success: true,
             message: 'User data retrieved successfully',
-            user: user
+            user: user,
         };
-
     } catch (error) {
         console.error('Error getting filtered user data:', error);
         return {
             success: false,
             error: 'server',
-            message: 'Internal server error while retrieving user data'
+            message: 'Internal server error while retrieving user data',
         };
     }
 };
 
-const updateUserProfile = async (userId: number, updateData: UpdateProfileRequest, photoUrl?: string): Promise<UpdateProfileResult> => {
+const updateUserProfile = async (
+    userId: number,
+    updateData: UpdateProfileRequest,
+    photoUrl?: string
+): Promise<UpdateProfileResult> => {
     const connection = await pool.getConnection();
-    
+
     try {
         await connection.beginTransaction();
-        
+
         let updatedUser = false;
         let updatedProfile = false;
         let experiencesProcessed = 0;
@@ -305,7 +331,13 @@ const updateUserProfile = async (userId: number, updateData: UpdateProfileReques
             updatedUser = true;
         }
 
-        if (updateData.description !== undefined || photoUrl || updateData.occupation !== undefined || updateData.current_location !== undefined || updateData.mock_email !== undefined) {
+        if (
+            updateData.description !== undefined ||
+            photoUrl ||
+            updateData.occupation !== undefined ||
+            updateData.current_location !== undefined ||
+            updateData.mock_email !== undefined
+        ) {
             const [existingProfile] = await connection.query<RowDataPacket[]>(
                 'SELECT user_id FROM profiles WHERE user_id = ?',
                 [userId]
@@ -347,7 +379,14 @@ const updateUserProfile = async (userId: number, updateData: UpdateProfileReques
             } else {
                 await connection.query(
                     'INSERT INTO profiles (user_id, description, photo_url, occupation, current_location, mock_email) VALUES (?, ?, ?, ?, ?, ?)',
-                    [userId, updateData.description || null, photoUrl || null, updateData.occupation || null, updateData.current_location || null, updateData.mock_email || userEmail]
+                    [
+                        userId,
+                        updateData.description || null,
+                        photoUrl || null,
+                        updateData.occupation || null,
+                        updateData.current_location || null,
+                        updateData.mock_email || userEmail,
+                    ]
                 );
                 updatedProfile = true;
             }
@@ -357,39 +396,33 @@ const updateUserProfile = async (userId: number, updateData: UpdateProfileReques
         if (updateData.experiences && updateData.experiences.length > 0) {
             for (const exp of updateData.experiences) {
                 switch (exp.action) {
-                    case "add":
+                    case 'add':
                         await connection.query(
-                            "INSERT INTO experiences (user_id, title, company, start_date, end_date) VALUES (?, ?, ?, ?, ?)",
-                            [
-                                userId,
-                                exp.title,
-                                exp.company,
-                                exp.start_date,
-                                exp.end_date,
-                            ]
+                            'INSERT INTO experiences (user_id, title, company, start_date, end_date) VALUES (?, ?, ?, ?, ?)',
+                            [userId, exp.title, exp.company, exp.start_date, exp.end_date]
                         );
                         experiencesProcessed++;
                         break;
 
-                    case "update":
+                    case 'update':
                         if (exp.id) {
                             const updateFields: string[] = [];
                             const updateValues: any[] = [];
 
                             if (exp.title) {
-                                updateFields.push("title = ?");
+                                updateFields.push('title = ?');
                                 updateValues.push(exp.title);
                             }
                             if (exp.company !== undefined) {
-                                updateFields.push("company = ?");
+                                updateFields.push('company = ?');
                                 updateValues.push(exp.company);
                             }
                             if (exp.start_date !== undefined) {
-                                updateFields.push("start_date = ?");
+                                updateFields.push('start_date = ?');
                                 updateValues.push(exp.start_date);
                             }
                             if (exp.end_date !== undefined) {
-                                updateFields.push("end_date = ?");
+                                updateFields.push('end_date = ?');
                                 updateValues.push(exp.end_date);
                             }
 
@@ -397,7 +430,7 @@ const updateUserProfile = async (userId: number, updateData: UpdateProfileReques
                                 updateValues.push(exp.id, userId);
                                 await connection.query(
                                     `UPDATE experiences SET ${updateFields.join(
-                                        ", "
+                                        ', '
                                     )}, updated_at = CURRENT_TIMESTAMP WHERE id = ? AND user_id = ?`,
                                     updateValues
                                 );
@@ -406,10 +439,10 @@ const updateUserProfile = async (userId: number, updateData: UpdateProfileReques
                         }
                         break;
 
-                    case "delete":
+                    case 'delete':
                         if (exp.id) {
                             await connection.query(
-                                "DELETE FROM experiences WHERE id = ? AND user_id = ?",
+                                'DELETE FROM experiences WHERE id = ? AND user_id = ?',
                                 [exp.id, userId]
                             );
                             experiencesProcessed++;
@@ -423,18 +456,18 @@ const updateUserProfile = async (userId: number, updateData: UpdateProfileReques
         if (updateData.skills && updateData.skills.length > 0) {
             for (const skill of updateData.skills) {
                 switch (skill.action) {
-                    case "add":
+                    case 'add':
                         await connection.query(
-                            "INSERT INTO user_skills (user_id, skill_name) VALUES (?, ?)",
+                            'INSERT INTO user_skills (user_id, skill_name) VALUES (?, ?)',
                             [userId, skill.skill_name]
                         );
                         skillsProcessed++;
                         break;
 
-                    case "delete":
+                    case 'delete':
                         if (skill.id) {
                             await connection.query(
-                                "DELETE FROM user_skills WHERE id = ? AND user_id = ?",
+                                'DELETE FROM user_skills WHERE id = ? AND user_id = ?',
                                 [skill.id, userId]
                             );
                             skillsProcessed++;
@@ -448,22 +481,20 @@ const updateUserProfile = async (userId: number, updateData: UpdateProfileReques
         if (updateData.documents && updateData.documents.length > 0) {
             for (const doc of updateData.documents) {
                 switch (doc.action) {
-                    case "add":
+                    case 'add':
                         if (doc.file_url) {
                             await connection.query(
-                                "INSERT INTO user_documents (user_id, file_url) VALUES (?, ?)",
+                                'INSERT INTO user_documents (user_id, file_url) VALUES (?, ?)',
                                 [userId, doc.file_url]
                             );
                             documentsProcessed++;
                         }
                         break;
 
-                    case "delete":
+                    case 'delete':
                         if (doc.id) {
-                            const [documentRows] = await connection.query<
-                                RowDataPacket[]
-                            >(
-                                "SELECT file_url FROM user_documents WHERE id = ? AND user_id = ? AND deleted_at IS NULL",
+                            const [documentRows] = await connection.query<RowDataPacket[]>(
+                                'SELECT file_url FROM user_documents WHERE id = ? AND user_id = ? AND deleted_at IS NULL',
                                 [doc.id, userId]
                             );
 
@@ -471,34 +502,32 @@ const updateUserProfile = async (userId: number, updateData: UpdateProfileReques
                                 const fileUrl = documentRows[0].file_url;
 
                                 await connection.query(
-                                    "DELETE FROM user_documents WHERE id = ? AND user_id = ?",
+                                    'DELETE FROM user_documents WHERE id = ? AND user_id = ?',
                                     [doc.id, userId]
                                 );
 
-                                if (fileUrl && fileUrl.trim() !== "") {
+                                if (fileUrl && fileUrl.trim() !== '') {
                                     try {
                                         let filePath = fileUrl;
 
-                                        if (fileUrl.includes("supabase")) {
-                                            const urlParts = fileUrl.split("/");
-                                            filePath =
-                                                urlParts[urlParts.length - 1];
+                                        if (fileUrl.includes('supabase')) {
+                                            const urlParts = fileUrl.split('/');
+                                            filePath = urlParts[urlParts.length - 1];
                                         }
 
-                                        const { error } =
-                                            await supabaseClient.storage
-                                                .from("Jobby_files")
-                                                .remove([filePath]);
+                                        const { error } = await supabaseClient.storage
+                                            .from('Jobby_files')
+                                            .remove([filePath]);
 
                                         if (error) {
                                             console.log(
-                                                "No se pudo eliminar el documento de Supabase:",
+                                                'No se pudo eliminar el documento de Supabase:',
                                                 error
                                             );
                                         }
                                     } catch (supabaseError) {
                                         console.log(
-                                            "Error al eliminar documento de Supabase:",
+                                            'Error al eliminar documento de Supabase:',
                                             supabaseError
                                         );
                                     }
@@ -514,7 +543,7 @@ const updateUserProfile = async (userId: number, updateData: UpdateProfileReques
 
         await connection.commit();
         const userData = await getUserByIdFiltered(userId);
-        
+
         return {
             success: true,
             message: 'Profile updated successfully',
@@ -524,17 +553,16 @@ const updateUserProfile = async (userId: number, updateData: UpdateProfileReques
                 experiences_processed: experiencesProcessed,
                 skills_processed: skillsProcessed,
                 documents_processed: documentsProcessed,
-                user: userData.success ? userData.user : undefined
-            }
+                user: userData.success ? userData.user : undefined,
+            },
         };
-
     } catch (error) {
         await connection.rollback();
         console.error('Error updating user profile:', error);
         return {
             success: false,
             error: 'server',
-            message: 'Internal server error while updating profile'
+            message: 'Internal server error while updating profile',
         };
     } finally {
         connection.release();

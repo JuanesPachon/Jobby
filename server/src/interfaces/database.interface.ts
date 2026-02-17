@@ -1,5 +1,9 @@
-import { User } from "./user.interface.js";
-import { Application, ApplicationWithApplicantInfo, TaskWithApplications } from "./application.interface.js";
+import { User } from './user.interface.js';
+import {
+    Application,
+    ApplicationWithApplicantInfo,
+    TaskWithApplications,
+} from './application.interface.js';
 
 export interface DatabaseError extends Error {
     code?: string;
@@ -193,7 +197,13 @@ export interface GetTaskWithApplicationsResult {
 
 export interface SelectApplicantResult {
     success: boolean;
-    error?: 'task_not_found' | 'unauthorized' | 'applicant_not_found' | 'task_not_available' | 'already_selected' | 'server';
+    error?:
+        | 'task_not_found'
+        | 'unauthorized'
+        | 'applicant_not_found'
+        | 'task_not_available'
+        | 'already_selected'
+        | 'server';
     message?: string;
     data?: {
         task_id: number;
@@ -206,7 +216,13 @@ export interface SelectApplicantResult {
 
 export interface DeselectApplicantResult {
     success: boolean;
-    error?: 'task_not_found' | 'unauthorized' | 'task_not_available' | 'already_selected' | 'applicant_not_found' | 'server';
+    error?:
+        | 'task_not_found'
+        | 'unauthorized'
+        | 'task_not_available'
+        | 'already_selected'
+        | 'applicant_not_found'
+        | 'server';
     message?: string;
     data?: {
         task_id: number;
@@ -217,7 +233,12 @@ export interface DeselectApplicantResult {
 
 export interface StartTaskResult {
     success: boolean;
-    error?: 'task_not_found' | 'unauthorized' | 'task_not_available' | 'already_selected' | 'server';
+    error?:
+        | 'task_not_found'
+        | 'unauthorized'
+        | 'task_not_available'
+        | 'already_selected'
+        | 'server';
     message?: string;
     data?: {
         task_id: number;
@@ -229,7 +250,12 @@ export interface StartTaskResult {
 
 export interface CancelTaskResult {
     success: boolean;
-    error?: 'task_not_found' | 'unauthorized' | 'task_not_cancellable' | 'has_selected_applicant' | 'server';
+    error?:
+        | 'task_not_found'
+        | 'unauthorized'
+        | 'task_not_cancellable'
+        | 'has_selected_applicant'
+        | 'server';
     message?: string;
     data?: {
         task_id: number;
@@ -240,7 +266,12 @@ export interface CancelTaskResult {
 
 export interface CompleteTaskResult {
     success: boolean;
-    error?: 'task_not_found' | 'unauthorized' | 'task_not_in_progress' | 'no_selected_user' | 'server';
+    error?:
+        | 'task_not_found'
+        | 'unauthorized'
+        | 'task_not_in_progress'
+        | 'no_selected_user'
+        | 'server';
     message?: string;
     data?: {
         task_id: number;
@@ -274,7 +305,12 @@ export interface GetUserApplicationsResult {
                 photo_url?: string | null;
             };
             application_status: 'applied' | 'selected' | 'withdrawn';
-            user_relation_status: 'applied' | 'selected' | 'in_progress' | 'completed' | 'cancelled';
+            user_relation_status:
+                | 'applied'
+                | 'selected'
+                | 'in_progress'
+                | 'completed'
+                | 'cancelled';
             applied_at: Date;
             status_changed_at?: Date | null;
         }[];

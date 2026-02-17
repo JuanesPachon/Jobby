@@ -1,9 +1,18 @@
-import pool from "../config/db_config.js";
-import { ResultSetHeader, RowDataPacket } from "mysql2/promise";
-import { CreateApplicationRequest, ApplicationWithApplicantInfo } from "../interfaces/application.interface.js";
-import { CreateApplicationResult, GetApplicationsByTaskResult } from "../interfaces/database.interface.js";
+import pool from '../config/db_config.js';
+import { ResultSetHeader, RowDataPacket } from 'mysql2/promise';
+import {
+    CreateApplicationRequest,
+    ApplicationWithApplicantInfo,
+} from '../interfaces/application.interface.js';
+import {
+    CreateApplicationResult,
+    GetApplicationsByTaskResult,
+} from '../interfaces/database.interface.js';
 
-const createApplication = async (applicant_id: number, applicationData: CreateApplicationRequest): Promise<CreateApplicationResult> => {
+const createApplication = async (
+    applicant_id: number,
+    applicationData: CreateApplicationRequest
+): Promise<CreateApplicationResult> => {
     try {
         const [taskRows] = await pool.query<RowDataPacket[]>(
             'SELECT id, creator_id, status FROM tasks WHERE id = ? AND deleted_at IS NULL',
@@ -14,7 +23,7 @@ const createApplication = async (applicant_id: number, applicationData: CreateAp
             return {
                 success: false,
                 error: 'task_not_found',
-                message: 'Task not found'
+                message: 'Task not found',
             };
         }
 
@@ -24,7 +33,7 @@ const createApplication = async (applicant_id: number, applicationData: CreateAp
             return {
                 success: false,
                 error: 'task_not_available',
-                message: 'Task is not available for applications'
+                message: 'Task is not available for applications',
             };
         }
 
@@ -32,7 +41,7 @@ const createApplication = async (applicant_id: number, applicationData: CreateAp
             return {
                 success: false,
                 error: 'own_task',
-                message: 'You cannot apply to your own task'
+                message: 'You cannot apply to your own task',
             };
         }
 
@@ -43,17 +52,19 @@ const createApplication = async (applicant_id: number, applicationData: CreateAp
 
         if (existingRows.length > 0) {
             const existingApplication = existingRows[0];
-            
-            if (existingApplication.status === 'applied' || 
-                existingApplication.status === 'selected' || 
-                existingApplication.status === 'completed') {
+
+            if (
+                existingApplication.status === 'applied' ||
+                existingApplication.status === 'selected' ||
+                existingApplication.status === 'completed'
+            ) {
                 return {
                     success: false,
                     error: 'already_applied',
-                    message: 'You have already applied to this task'
+                    message: 'You have already applied to this task',
                 };
             }
-            
+
             if (existingApplication.status === 'withdrawn') {
                 await pool.query(
                     'UPDATE applications SET status = ?, applied_at = NOW(), status_changed_at = NOW() WHERE id = ?',
@@ -62,7 +73,7 @@ const createApplication = async (applicant_id: number, applicationData: CreateAp
 
                 return {
                     success: true,
-                    message: 'Application submitted successfully'
+                    message: 'Application submitted successfully',
                 };
             }
         }
@@ -80,42 +91,44 @@ const createApplication = async (applicant_id: number, applicationData: CreateAp
                 applicant_id: applicant_id,
                 applied_at: currentDate,
                 status: 'applied' as const,
-                status_changed_at: currentDate
+                status_changed_at: currentDate,
             };
 
-            return { 
+            return {
                 success: true,
                 message: 'Application submitted successfully',
-                data: applicationCreated
+                data: applicationCreated,
             };
         } else {
             return {
                 success: false,
                 error: 'server',
-                message: 'Failed to create application'
+                message: 'Failed to create application',
             };
         }
-
     } catch (error: any) {
         console.error('Error in createApplication:', error);
-        
+
         if (error.code === 'ER_DUP_ENTRY') {
             return {
                 success: false,
                 error: 'already_applied',
-                message: 'You have already applied to this task'
+                message: 'You have already applied to this task',
             };
         }
 
         return {
             success: false,
             error: 'server',
-            message: 'Internal server error during application creation'
+            message: 'Internal server error during application creation',
         };
     }
 };
 
-const getApplicationsByTask = async (task_id: number, creator_id: number): Promise<GetApplicationsByTaskResult> => {
+const getApplicationsByTask = async (
+    task_id: number,
+    creator_id: number
+): Promise<GetApplicationsByTaskResult> => {
     try {
         const [taskRows] = await pool.query<RowDataPacket[]>(
             'SELECT id, creator_id FROM tasks WHERE id = ? AND creator_id = ? AND deleted_at IS NULL',
@@ -126,7 +139,7 @@ const getApplicationsByTask = async (task_id: number, creator_id: number): Promi
             return {
                 success: false,
                 error: 'task_not_found',
-                message: 'Task not found or you are not authorized to view its applications'
+                message: 'Task not found or you are not authorized to view its applications',
             };
         }
 
@@ -148,7 +161,7 @@ const getApplicationsByTask = async (task_id: number, creator_id: number): Promi
             [task_id]
         );
 
-        const applications: ApplicationWithApplicantInfo[] = applicationRows.map(row => ({
+        const applications: ApplicationWithApplicantInfo[] = applicationRows.map((row) => ({
             id: row.id,
             task_id: row.task_id,
             applicant_id: row.applicant_id,
@@ -157,21 +170,20 @@ const getApplicationsByTask = async (task_id: number, creator_id: number): Promi
             status_changed_at: row.status_changed_at,
             first_name: row.first_name,
             last_name: row.last_name,
-            avatar_url: row.avatar_url
+            avatar_url: row.avatar_url,
         }));
 
         return {
             success: true,
             message: 'Applications retrieved successfully',
-            data: applications
+            data: applications,
         };
-
     } catch (error: any) {
         console.error('Error in getApplicationsByTask:', error);
         return {
             success: false,
             error: 'server',
-            message: 'Internal server error while retrieving applications'
+            message: 'Internal server error while retrieving applications',
         };
     }
 };

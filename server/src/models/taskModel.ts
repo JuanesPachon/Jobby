@@ -1,10 +1,30 @@
-import pool from "../config/db_config.js";
-import { ResultSetHeader, RowDataPacket } from "mysql2/promise";
-import { CreateTaskRequest, GetTasksFilters, GetUserTasksFilters, GetUserApplicationsFilters } from "../interfaces/task.interface.js";
-import { TaskWithApplications } from "../interfaces/application.interface.js";
-import { CreateTaskResult, GetTaskByIdResult, GetTasksResult, GetUserTasksResult, GetTaskWithApplicationsResult, SelectApplicantResult, DeselectApplicantResult, StartTaskResult, CancelTaskResult, CompleteTaskResult, GetUserApplicationsResult } from "../interfaces/database.interface.js";
+import pool from '../config/db_config.js';
+import { ResultSetHeader, RowDataPacket } from 'mysql2/promise';
+import {
+    CreateTaskRequest,
+    GetTasksFilters,
+    GetUserTasksFilters,
+    GetUserApplicationsFilters,
+} from '../interfaces/task.interface.js';
+import { TaskWithApplications } from '../interfaces/application.interface.js';
+import {
+    CreateTaskResult,
+    GetTaskByIdResult,
+    GetTasksResult,
+    GetUserTasksResult,
+    GetTaskWithApplicationsResult,
+    SelectApplicantResult,
+    DeselectApplicantResult,
+    StartTaskResult,
+    CancelTaskResult,
+    CompleteTaskResult,
+    GetUserApplicationsResult,
+} from '../interfaces/database.interface.js';
 
-const createTask = async (creator_id: number, taskData: CreateTaskRequest): Promise<CreateTaskResult> => {
+const createTask = async (
+    creator_id: number,
+    taskData: CreateTaskRequest
+): Promise<CreateTaskResult> => {
     try {
         const queryValues = [
             creator_id,
@@ -13,9 +33,9 @@ const createTask = async (creator_id: number, taskData: CreateTaskRequest): Prom
             taskData.city,
             taskData.neighborhood || null,
             taskData.duration_hours,
-            taskData.salary
+            taskData.salary,
         ];
-        
+
         const [result] = await pool.query<ResultSetHeader>(
             `INSERT INTO tasks (
                 creator_id, title, description, city, neighborhood, 
@@ -38,30 +58,29 @@ const createTask = async (creator_id: number, taskData: CreateTaskRequest): Prom
                 salary: taskData.salary,
                 status: 'available' as const,
                 created_at: currentDate,
-                updated_at: currentDate
+                updated_at: currentDate,
             };
 
-            return { 
+            return {
                 success: true,
                 message: 'Task created successfully',
-                data: taskData_created
+                data: taskData_created,
             };
         } else {
             return {
                 success: false,
                 error: 'server',
-                message: 'Failed to create task'
+                message: 'Failed to create task',
             };
         }
-
     } catch (error: any) {
         console.error('Error creating task:', error);
-        
+
         if (error.code === 'ER_NO_REFERENCED_ROW_2') {
             return {
                 success: false,
                 error: 'invalid_creator',
-                message: 'Invalid creator user ID'
+                message: 'Invalid creator user ID',
             };
         }
 
@@ -69,14 +88,15 @@ const createTask = async (creator_id: number, taskData: CreateTaskRequest): Prom
             return {
                 success: false,
                 error: 'constraint_violation',
-                message: 'Invalid data: duration_hours must be greater than 0 and salary must be >= 0'
+                message:
+                    'Invalid data: duration_hours must be greater than 0 and salary must be >= 0',
             };
         }
 
         return {
             success: false,
             error: 'server',
-            message: 'Internal server error while creating task'
+            message: 'Internal server error while creating task',
         };
     }
 };
@@ -110,7 +130,7 @@ const getTaskById = async (taskId: number, userId?: number): Promise<GetTaskById
             return {
                 success: false,
                 error: 'task_not_found',
-                message: 'Task not found'
+                message: 'Task not found',
             };
         }
 
@@ -136,17 +156,16 @@ const getTaskById = async (taskId: number, userId?: number): Promise<GetTaskById
                     id: task.creator_id,
                     first_name: task.creator_first_name,
                     last_name: task.creator_last_name,
-                    photo_url: task.creator_photo_url
+                    photo_url: task.creator_photo_url,
                 },
-            }
+            },
         };
-
     } catch (error: any) {
         console.error('Error getting task: ', error);
         return {
             success: false,
             error: 'server',
-            message: 'Internal server error while retrieving task'
+            message: 'Internal server error while retrieving task',
         };
     }
 };
@@ -166,14 +185,14 @@ const getTasks = async (filters: GetTasksFilters): Promise<GetTasksResult> => {
             LEFT JOIN profiles up ON u.id = up.user_id
             WHERE t.deleted_at IS NULL AND t.status = 'available'
         `;
-        
+
         const queryParams: any[] = [];
-        
+
         if (filters.position && filters.position.trim() !== '') {
             query += ' AND title LIKE ?';
             queryParams.push(`%${filters.position.trim()}%`);
         }
-        
+
         if (filters.city && filters.city.trim() !== '') {
             query += ' AND city = ?';
             queryParams.push(filters.city.trim());
@@ -183,40 +202,40 @@ const getTasks = async (filters: GetTasksFilters): Promise<GetTasksResult> => {
             query += ' AND t.creator_id != ?';
             queryParams.push(filters.currentUserId);
         }
-        
+
         query += ' ORDER BY created_at DESC';
-        
+
         const limit = filters.limit || 20;
         const page = filters.page || 1;
         const offset = (page - 1) * limit;
-        
+
         query += ' LIMIT ? OFFSET ?';
         queryParams.push(limit, offset);
-        
+
         const [taskRows] = await pool.query<RowDataPacket[]>(query, queryParams);
-        
+
         let countQuery = `
             SELECT COUNT(*) as total
             FROM tasks 
             WHERE deleted_at IS NULL AND status = 'available'
         `;
-        
+
         const countParams: any[] = [];
-        
+
         if (filters.position && filters.position.trim() !== '') {
             countQuery += ' AND title LIKE ?';
             countParams.push(`%${filters.position.trim()}%`);
         }
-        
+
         if (filters.city && filters.city.trim() !== '') {
             countQuery += ' AND city = ?';
             countParams.push(filters.city.trim());
         }
-        
+
         const [countRows] = await pool.query<RowDataPacket[]>(countQuery, countParams);
         const total = countRows[0].total;
-        
-        const tasks = taskRows.map(row => ({
+
+        const tasks = taskRows.map((row) => ({
             id: row.id,
             creator_id: row.creator_id,
             title: row.title,
@@ -232,30 +251,32 @@ const getTasks = async (filters: GetTasksFilters): Promise<GetTasksResult> => {
                 id: row.creator_id,
                 first_name: row.creator_first_name,
                 last_name: row.creator_last_name,
-                photo_url: row.creator_photo_url
+                photo_url: row.creator_photo_url,
             },
         }));
-        
+
         return {
             success: true,
             message: 'Tasks retrieved successfully',
             data: {
                 tasks,
-                total
-            }
+                total,
+            },
         };
-        
     } catch (error: any) {
         console.error('Error getting tasks:', error);
         return {
             success: false,
             error: 'server',
-            message: 'Internal server error while retrieving tasks'
+            message: 'Internal server error while retrieving tasks',
         };
     }
 };
 
-const getUserTasks = async (creator_id: number, filters?: GetUserTasksFilters): Promise<GetUserTasksResult> => {
+const getUserTasks = async (
+    creator_id: number,
+    filters?: GetUserTasksFilters
+): Promise<GetUserTasksResult> => {
     try {
         let query = `
             SELECT 
@@ -276,14 +297,14 @@ const getUserTasks = async (creator_id: number, filters?: GetUserTasksFilters): 
             LEFT JOIN applications a ON t.id = a.task_id
             WHERE t.creator_id = ? AND t.deleted_at IS NULL
         `;
-        
+
         const queryParams: any[] = [creator_id];
-        
+
         if (filters?.status) {
             query += ' AND t.status = ?';
             queryParams.push(filters.status);
         }
-        
+
         query += `
             GROUP BY t.id
             ORDER BY t.created_at DESC
@@ -292,10 +313,10 @@ const getUserTasks = async (creator_id: number, filters?: GetUserTasksFilters): 
         const limit = filters?.limit || 20;
         const page = filters?.page || 1;
         const offset = (page - 1) * limit;
-        
+
         query += ' LIMIT ? OFFSET ?';
         queryParams.push(limit, offset);
-        
+
         const [taskRows] = await pool.query<RowDataPacket[]>(query, queryParams);
 
         let countQuery = `
@@ -303,19 +324,19 @@ const getUserTasks = async (creator_id: number, filters?: GetUserTasksFilters): 
             FROM tasks t
             WHERE t.creator_id = ? AND t.deleted_at IS NULL
         `;
-        
+
         const countParams: any[] = [creator_id];
-        
+
         if (filters?.status) {
             countQuery += ' AND t.status = ?';
             countParams.push(filters.status);
         }
 
         const [countRows] = await pool.query<RowDataPacket[]>(countQuery, countParams);
-        
+
         const total = countRows[0].total;
 
-        const tasks = taskRows.map(row => ({
+        const tasks = taskRows.map((row) => ({
             id: row.id,
             creator_id: row.creator_id,
             selected_user_id: row.selected_user_id,
@@ -328,7 +349,7 @@ const getUserTasks = async (creator_id: number, filters?: GetUserTasksFilters): 
             status: row.status,
             created_at: row.created_at,
             updated_at: row.updated_at,
-            applications_count: row.applications_count
+            applications_count: row.applications_count,
         }));
 
         return {
@@ -336,21 +357,23 @@ const getUserTasks = async (creator_id: number, filters?: GetUserTasksFilters): 
             message: 'User tasks retrieved successfully',
             data: {
                 tasks,
-                total
-            }
+                total,
+            },
         };
-
     } catch (error: any) {
         console.error('Error getting user tasks:', error);
         return {
             success: false,
             error: 'server',
-            message: 'Internal server error while retrieving user tasks'
+            message: 'Internal server error while retrieving user tasks',
         };
     }
 };
 
-const getTaskWithApplications = async (task_id: number, creator_id: number): Promise<GetTaskWithApplicationsResult> => {
+const getTaskWithApplications = async (
+    task_id: number,
+    creator_id: number
+): Promise<GetTaskWithApplicationsResult> => {
     try {
         const [taskRows] = await pool.query<RowDataPacket[]>(
             `SELECT 
@@ -366,7 +389,7 @@ const getTaskWithApplications = async (task_id: number, creator_id: number): Pro
             return {
                 success: false,
                 error: 'task_not_found',
-                message: 'Task not found or you are not authorized to view it'
+                message: 'Task not found or you are not authorized to view it',
             };
         }
 
@@ -392,7 +415,7 @@ const getTaskWithApplications = async (task_id: number, creator_id: number): Pro
                     id: userRow.id,
                     first_name: userRow.first_name,
                     last_name: userRow.last_name,
-                    photo_url: userRow.photo_url
+                    photo_url: userRow.photo_url,
                 };
             }
         }
@@ -416,7 +439,7 @@ const getTaskWithApplications = async (task_id: number, creator_id: number): Pro
             [task_id]
         );
 
-        const applications = applicationRows.map(row => ({
+        const applications = applicationRows.map((row) => ({
             id: row.id,
             task_id: row.task_id,
             applicant_id: row.applicant_id,
@@ -425,7 +448,7 @@ const getTaskWithApplications = async (task_id: number, creator_id: number): Pro
             status_changed_at: row.status_changed_at,
             first_name: row.first_name,
             last_name: row.last_name,
-            photo_url: row.photo_url
+            photo_url: row.photo_url,
         }));
 
         const taskWithApplications: TaskWithApplications = {
@@ -442,28 +465,31 @@ const getTaskWithApplications = async (task_id: number, creator_id: number): Pro
             created_at: task.created_at,
             updated_at: task.updated_at,
             applications: applications,
-            selected_user: selectedUser
+            selected_user: selectedUser,
         };
 
         return {
             success: true,
             message: 'Task with applications retrieved successfully',
-            data: taskWithApplications
+            data: taskWithApplications,
         };
-
     } catch (error: any) {
         console.error('Error getting task with applications:', error);
         return {
             success: false,
             error: 'server',
-            message: 'Internal server error while retrieving task with applications'
+            message: 'Internal server error while retrieving task with applications',
         };
     }
 };
 
-const selectApplicant = async (task_id: number, creator_id: number, applicant_id: number): Promise<SelectApplicantResult> => {
+const selectApplicant = async (
+    task_id: number,
+    creator_id: number,
+    applicant_id: number
+): Promise<SelectApplicantResult> => {
     const connection = await pool.getConnection();
-    
+
     try {
         await connection.beginTransaction();
 
@@ -477,7 +503,7 @@ const selectApplicant = async (task_id: number, creator_id: number, applicant_id
             return {
                 success: false,
                 error: 'task_not_found',
-                message: 'Task not found or you are not authorized to select applicants'
+                message: 'Task not found or you are not authorized to select applicants',
             };
         }
 
@@ -488,7 +514,7 @@ const selectApplicant = async (task_id: number, creator_id: number, applicant_id
             return {
                 success: false,
                 error: 'task_not_available',
-                message: 'Task is not available for applicant selection'
+                message: 'Task is not available for applicant selection',
             };
         }
 
@@ -497,7 +523,7 @@ const selectApplicant = async (task_id: number, creator_id: number, applicant_id
             return {
                 success: false,
                 error: 'already_selected',
-                message: 'This task already has a selected applicant'
+                message: 'This task already has a selected applicant',
             };
         }
 
@@ -511,7 +537,7 @@ const selectApplicant = async (task_id: number, creator_id: number, applicant_id
             return {
                 success: false,
                 error: 'applicant_not_found',
-                message: 'The specified user has not applied to this task'
+                message: 'The specified user has not applied to this task',
             };
         }
 
@@ -522,7 +548,7 @@ const selectApplicant = async (task_id: number, creator_id: number, applicant_id
             return {
                 success: false,
                 error: 'applicant_not_found',
-                message: 'The application is not in a valid state for selection'
+                message: 'The application is not in a valid state for selection',
             };
         }
 
@@ -536,7 +562,7 @@ const selectApplicant = async (task_id: number, creator_id: number, applicant_id
             return {
                 success: false,
                 error: 'server',
-                message: 'Failed to update task'
+                message: 'Failed to update task',
             };
         }
 
@@ -550,7 +576,7 @@ const selectApplicant = async (task_id: number, creator_id: number, applicant_id
             return {
                 success: false,
                 error: 'server',
-                message: 'Failed to update application'
+                message: 'Failed to update application',
             };
         }
 
@@ -565,26 +591,28 @@ const selectApplicant = async (task_id: number, creator_id: number, applicant_id
                 selected_user_id: applicant_id,
                 task_status: 'available',
                 application_status: 'selected',
-                updated_at: currentDate
-            }
+                updated_at: currentDate,
+            },
         };
-
     } catch (error: any) {
         await connection.rollback();
         console.error('Error in selectApplicant:', error);
         return {
             success: false,
             error: 'server',
-            message: 'Internal server error while selecting applicant'
+            message: 'Internal server error while selecting applicant',
         };
     } finally {
         connection.release();
     }
 };
 
-const deselectApplicant = async (task_id: number, creator_id: number): Promise<DeselectApplicantResult> => {
+const deselectApplicant = async (
+    task_id: number,
+    creator_id: number
+): Promise<DeselectApplicantResult> => {
     const connection = await pool.getConnection();
-    
+
     try {
         await connection.beginTransaction();
 
@@ -598,7 +626,7 @@ const deselectApplicant = async (task_id: number, creator_id: number): Promise<D
             return {
                 success: false,
                 error: 'task_not_found',
-                message: 'Task not found or you are not authorized to deselect applicants'
+                message: 'Task not found or you are not authorized to deselect applicants',
             };
         }
 
@@ -609,7 +637,7 @@ const deselectApplicant = async (task_id: number, creator_id: number): Promise<D
             return {
                 success: false,
                 error: 'task_not_available',
-                message: 'Cannot deselect applicant from a task that is not available'
+                message: 'Cannot deselect applicant from a task that is not available',
             };
         }
 
@@ -618,7 +646,7 @@ const deselectApplicant = async (task_id: number, creator_id: number): Promise<D
             return {
                 success: false,
                 error: 'already_selected',
-                message: 'No applicant is currently selected for this task'
+                message: 'No applicant is currently selected for this task',
             };
         }
 
@@ -632,7 +660,7 @@ const deselectApplicant = async (task_id: number, creator_id: number): Promise<D
             return {
                 success: false,
                 error: 'applicant_not_found',
-                message: 'Selected application not found or is in invalid state'
+                message: 'Selected application not found or is in invalid state',
             };
         }
 
@@ -648,7 +676,7 @@ const deselectApplicant = async (task_id: number, creator_id: number): Promise<D
             return {
                 success: false,
                 error: 'server',
-                message: 'Failed to update task'
+                message: 'Failed to update task',
             };
         }
 
@@ -662,7 +690,7 @@ const deselectApplicant = async (task_id: number, creator_id: number): Promise<D
             return {
                 success: false,
                 error: 'server',
-                message: 'Failed to update application'
+                message: 'Failed to update application',
             };
         }
 
@@ -675,24 +703,26 @@ const deselectApplicant = async (task_id: number, creator_id: number): Promise<D
             data: {
                 task_id: task_id,
                 task_status: 'available',
-                updated_at: currentDate
-            }
+                updated_at: currentDate,
+            },
         };
-
     } catch (error: any) {
         await connection.rollback();
         console.error('Error in deselectApplicant:', error);
         return {
             success: false,
             error: 'server',
-            message: 'Internal server error while deselecting applicant'
+            message: 'Internal server error while deselecting applicant',
         };
     } finally {
         connection.release();
     }
 };
 
-const checkUserApplication = async (task_id: number, applicant_id: number): Promise<{ hasApplied: boolean }> => {
+const checkUserApplication = async (
+    task_id: number,
+    applicant_id: number
+): Promise<{ hasApplied: boolean }> => {
     try {
         const [rows] = await pool.query<RowDataPacket[]>(
             'SELECT id, status FROM applications WHERE task_id = ? AND applicant_id = ? AND status != ?',
@@ -702,19 +732,19 @@ const checkUserApplication = async (task_id: number, applicant_id: number): Prom
         const hasApplied = rows.length > 0;
 
         return {
-            hasApplied
+            hasApplied,
         };
     } catch (error: any) {
         console.error('Error checking user application:', error);
         return {
-            hasApplied: false
+            hasApplied: false,
         };
     }
 };
 
 const startTask = async (task_id: number, creator_id: number): Promise<StartTaskResult> => {
     const connection = await pool.getConnection();
-    
+
     try {
         await connection.beginTransaction();
 
@@ -728,7 +758,7 @@ const startTask = async (task_id: number, creator_id: number): Promise<StartTask
             return {
                 success: false,
                 error: 'task_not_found',
-                message: 'Task not found or you are not authorized to start this task'
+                message: 'Task not found or you are not authorized to start this task',
             };
         }
 
@@ -739,7 +769,7 @@ const startTask = async (task_id: number, creator_id: number): Promise<StartTask
             return {
                 success: false,
                 error: 'task_not_available',
-                message: 'Task is not available to be started'
+                message: 'Task is not available to be started',
             };
         }
 
@@ -748,7 +778,7 @@ const startTask = async (task_id: number, creator_id: number): Promise<StartTask
             return {
                 success: false,
                 error: 'already_selected',
-                message: 'Cannot start task without a selected applicant'
+                message: 'Cannot start task without a selected applicant',
             };
         }
 
@@ -762,7 +792,7 @@ const startTask = async (task_id: number, creator_id: number): Promise<StartTask
             return {
                 success: false,
                 error: 'server',
-                message: 'Failed to start task'
+                message: 'Failed to start task',
             };
         }
 
@@ -776,26 +806,28 @@ const startTask = async (task_id: number, creator_id: number): Promise<StartTask
                 task_id: task_id,
                 selected_user_id: task.selected_user_id,
                 task_status: 'in_progress',
-                updated_at: currentDate
-            }
+                updated_at: currentDate,
+            },
         };
-
     } catch (error: any) {
         await connection.rollback();
         console.error('Error in startTask:', error);
         return {
             success: false,
             error: 'server',
-            message: 'Internal server error while starting task'
+            message: 'Internal server error while starting task',
         };
     } finally {
         connection.release();
     }
 };
 
-const withdrawApplication = async (task_id: number, applicant_id: number): Promise<{ success: boolean; message: string; error?: string }> => {
+const withdrawApplication = async (
+    task_id: number,
+    applicant_id: number
+): Promise<{ success: boolean; message: string; error?: string }> => {
     const connection = await pool.getConnection();
-    
+
     try {
         await connection.beginTransaction();
 
@@ -810,7 +842,7 @@ const withdrawApplication = async (task_id: number, applicant_id: number): Promi
             return {
                 success: false,
                 error: 'application_not_found',
-                message: 'Application not found or already withdrawn'
+                message: 'Application not found or already withdrawn',
             };
         }
 
@@ -821,7 +853,7 @@ const withdrawApplication = async (task_id: number, applicant_id: number): Promi
             return {
                 success: false,
                 error: 'cannot_withdraw',
-                message: 'Cannot withdraw application. Application status is not "applied"'
+                message: 'Cannot withdraw application. Application status is not "applied"',
             };
         }
 
@@ -836,16 +868,15 @@ const withdrawApplication = async (task_id: number, applicant_id: number): Promi
 
         return {
             success: true,
-            message: 'Application withdrawn successfully'
+            message: 'Application withdrawn successfully',
         };
-
     } catch (error: any) {
         await connection.rollback();
         console.error('Error withdrawing application:', error);
         return {
             success: false,
             error: 'server',
-            message: 'Internal server error while withdrawing application'
+            message: 'Internal server error while withdrawing application',
         };
     } finally {
         connection.release();
@@ -854,7 +885,7 @@ const withdrawApplication = async (task_id: number, applicant_id: number): Promi
 
 const cancelTask = async (task_id: number, creator_id: number): Promise<CancelTaskResult> => {
     const connection = await pool.getConnection();
-    
+
     try {
         await connection.beginTransaction();
 
@@ -868,7 +899,7 @@ const cancelTask = async (task_id: number, creator_id: number): Promise<CancelTa
             return {
                 success: false,
                 error: 'task_not_found',
-                message: 'Task not found or you are not authorized to cancel this task'
+                message: 'Task not found or you are not authorized to cancel this task',
             };
         }
 
@@ -879,7 +910,7 @@ const cancelTask = async (task_id: number, creator_id: number): Promise<CancelTa
             return {
                 success: false,
                 error: 'task_not_cancellable',
-                message: 'Cannot cancel a task that is already cancelled or completed'
+                message: 'Cannot cancel a task that is already cancelled or completed',
             };
         }
 
@@ -888,7 +919,8 @@ const cancelTask = async (task_id: number, creator_id: number): Promise<CancelTa
             return {
                 success: false,
                 error: 'has_selected_applicant',
-                message: 'Cannot cancel a task that has a selected applicant. Please deselect the applicant first'
+                message:
+                    'Cannot cancel a task that has a selected applicant. Please deselect the applicant first',
             };
         }
 
@@ -902,7 +934,7 @@ const cancelTask = async (task_id: number, creator_id: number): Promise<CancelTa
             return {
                 success: false,
                 error: 'server',
-                message: 'Failed to cancel task'
+                message: 'Failed to cancel task',
             };
         }
 
@@ -922,17 +954,16 @@ const cancelTask = async (task_id: number, creator_id: number): Promise<CancelTa
             data: {
                 task_id: task_id,
                 task_status: 'cancelled',
-                updated_at: currentDate
-            }
+                updated_at: currentDate,
+            },
         };
-
     } catch (error: any) {
         await connection.rollback();
         console.error('Error in cancelTask:', error);
         return {
             success: false,
             error: 'server',
-            message: 'Internal server error while cancelling task'
+            message: 'Internal server error while cancelling task',
         };
     } finally {
         connection.release();
@@ -941,7 +972,7 @@ const cancelTask = async (task_id: number, creator_id: number): Promise<CancelTa
 
 const completeTask = async (task_id: number, creator_id: number): Promise<CompleteTaskResult> => {
     const connection = await pool.getConnection();
-    
+
     try {
         await connection.beginTransaction();
 
@@ -955,7 +986,7 @@ const completeTask = async (task_id: number, creator_id: number): Promise<Comple
             return {
                 success: false,
                 error: 'task_not_found',
-                message: 'Task not found or you are not authorized to complete this task'
+                message: 'Task not found or you are not authorized to complete this task',
             };
         }
 
@@ -966,7 +997,7 @@ const completeTask = async (task_id: number, creator_id: number): Promise<Comple
             return {
                 success: false,
                 error: 'task_not_in_progress',
-                message: 'Only tasks in progress can be completed'
+                message: 'Only tasks in progress can be completed',
             };
         }
 
@@ -975,7 +1006,7 @@ const completeTask = async (task_id: number, creator_id: number): Promise<Comple
             return {
                 success: false,
                 error: 'no_selected_user',
-                message: 'Cannot complete a task without a selected user'
+                message: 'Cannot complete a task without a selected user',
             };
         }
 
@@ -989,7 +1020,7 @@ const completeTask = async (task_id: number, creator_id: number): Promise<Comple
             return {
                 success: false,
                 error: 'server',
-                message: 'Failed to complete task'
+                message: 'Failed to complete task',
             };
         }
 
@@ -1002,31 +1033,30 @@ const completeTask = async (task_id: number, creator_id: number): Promise<Comple
             data: {
                 task_id: task_id,
                 task_status: 'completed',
-                updated_at: currentDate
-            }
+                updated_at: currentDate,
+            },
         };
-
     } catch (error: any) {
         await connection.rollback();
         console.error('Error in completeTask:', error);
         return {
             success: false,
             error: 'server',
-            message: 'Internal server error while completing task'
+            message: 'Internal server error while completing task',
         };
     } finally {
         connection.release();
     }
 };
 
-const getUserApplications = async (userId: number, filters: GetUserApplicationsFilters): Promise<GetUserApplicationsResult> => {
+const getUserApplications = async (
+    userId: number,
+    filters: GetUserApplicationsFilters
+): Promise<GetUserApplicationsResult> => {
     try {
-
         let whereConditions = ['a.applicant_id = ?'];
         let queryParams: any[] = [userId];
 
-    
-        
         if (filters.status) {
             switch (filters.status) {
                 case 'applied':
@@ -1050,7 +1080,6 @@ const getUserApplications = async (userId: number, filters: GetUserApplicationsF
                     queryParams.push(userId, 'completed');
                     break;
                 case 'cancelled':
-
                     whereConditions.push('t.status = ?');
                     whereConditions.push('DATEDIFF(NOW(), t.updated_at) <= 7');
                     whereConditions.push('(t.selected_user_id = ? OR a.status = ?)');
@@ -1072,7 +1101,6 @@ const getUserApplications = async (userId: number, filters: GetUserApplicationsF
         const [countResult] = await pool.query<RowDataPacket[]>(countQuery, queryParams);
         const totalTasks = countResult[0]?.total || 0;
 
-
         if (totalTasks === 0) {
             return {
                 success: true,
@@ -1081,8 +1109,8 @@ const getUserApplications = async (userId: number, filters: GetUserApplicationsF
                     tasks: [],
                     total: 0,
                     currentPage: filters.page || 1,
-                    totalPages: 0
-                }
+                    totalPages: 0,
+                },
             };
         }
 
@@ -1123,10 +1151,14 @@ const getUserApplications = async (userId: number, filters: GetUserApplicationsF
 
         const [tasksResult] = await pool.query<RowDataPacket[]>(tasksQuery, queryParams);
 
+        const tasks = tasksResult.map((row) => {
+            let userRelationStatus:
+                | 'applied'
+                | 'selected'
+                | 'in_progress'
+                | 'completed'
+                | 'cancelled';
 
-        const tasks = tasksResult.map(row => {
-            let userRelationStatus: 'applied' | 'selected' | 'in_progress' | 'completed' | 'cancelled';
-            
             if (row.selected_user_id === userId) {
                 switch (row.status) {
                     case 'available':
@@ -1165,12 +1197,12 @@ const getUserApplications = async (userId: number, filters: GetUserApplicationsF
                     id: row.creator_id,
                     first_name: row.first_name,
                     last_name: row.last_name,
-                    photo_url: row.photo_url
+                    photo_url: row.photo_url,
                 },
                 application_status: row.application_status,
                 applied_at: row.applied_at,
                 status_changed_at: row.status_changed_at,
-                user_relation_status: userRelationStatus
+                user_relation_status: userRelationStatus,
             };
         });
 
@@ -1183,21 +1215,24 @@ const getUserApplications = async (userId: number, filters: GetUserApplicationsF
                 tasks,
                 total: totalTasks,
                 currentPage: page,
-                totalPages
-            }
+                totalPages,
+            },
         };
-
     } catch (error: any) {
         console.error('Error in getUserApplications:', error);
         return {
             success: false,
             error: 'server',
-            message: 'Internal server error while fetching user applications'
+            message: 'Internal server error while fetching user applications',
         };
     }
 };
 
-const cleanupOldCancelledTasks = async (): Promise<{ success: boolean; message: string; deletedCount?: number }> => {
+const cleanupOldCancelledTasks = async (): Promise<{
+    success: boolean;
+    message: string;
+    deletedCount?: number;
+}> => {
     try {
         // Eliminar tareas canceladas que tienen más de 7 días
         const [result] = await pool.query<ResultSetHeader>(
@@ -1211,15 +1246,30 @@ const cleanupOldCancelledTasks = async (): Promise<{ success: boolean; message: 
         return {
             success: true,
             message: `Cleanup completed. ${result.affectedRows} cancelled tasks marked as deleted.`,
-            deletedCount: result.affectedRows
+            deletedCount: result.affectedRows,
         };
     } catch (error: any) {
         console.error('Error in cleanupOldCancelledTasks:', error);
         return {
             success: false,
-            message: 'Error during cleanup of old cancelled tasks'
+            message: 'Error during cleanup of old cancelled tasks',
         };
     }
 };
 
-export { createTask, getTaskById, getTasks, getUserTasks, getTaskWithApplications, selectApplicant, deselectApplicant, startTask, checkUserApplication, withdrawApplication, cancelTask, completeTask, getUserApplications, cleanupOldCancelledTasks };
+export {
+    createTask,
+    getTaskById,
+    getTasks,
+    getUserTasks,
+    getTaskWithApplications,
+    selectApplicant,
+    deselectApplicant,
+    startTask,
+    checkUserApplication,
+    withdrawApplication,
+    cancelTask,
+    completeTask,
+    getUserApplications,
+    cleanupOldCancelledTasks,
+};

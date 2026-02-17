@@ -9,7 +9,7 @@ const access: PoolOptions = {
     connectionLimit: 10,
     waitForConnections: true,
     queueLimit: 0,
-}
+};
 
 const pool = mysql.createPool(access);
 
