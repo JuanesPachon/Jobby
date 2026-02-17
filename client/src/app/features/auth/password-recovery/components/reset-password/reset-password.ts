@@ -73,7 +73,11 @@ export class ResetPassword {
             this.isLoading.set(false);
           }
           else{
-             this.authErrorMessage.set(error.status === 400 ?"No se ha validado ningún código,intentalo de nuevo" :"Error interno al procesar la solicitud, vuelve a intentarlo mas tarde " );
+             this.authErrorMessage.set(
+              error.status === 400 ? "No se ha validado ningún código, intenta de nuevo" :
+              error.status === 429 ? "Demasiados intentos de restablecimiento. Por favor, intenta más tarde." :
+              "Error interno al procesar la solicitud, vuelve a intentarlo mas tarde"
+            );
             this.authError.set(true);
             this.isLoading.set(false);
 

@@ -43,7 +43,11 @@ export class RequestCode {
           this.onNextStep.emit(2)
         },
         error: (error) => {
-          this.authErrorMessage.set(error.status === 400 ? 'Correo no registrado, vuelve a intentarlo' : 'Error al procesar la solicitud, vuelve a intentarlo mas tarde');
+          this.authErrorMessage.set(
+            error.status === 400 ? 'Correo no registrado, vuelve a intentarlo' :
+            error.status === 429 ? 'Demasiados intentos de recuperación. Por favor, intenta más tarde.' :
+            'Error al procesar la solicitud, vuelve a intentarlo mas tarde'
+          );
           this.authError.set(true);
           this.isLoading.set(false);
         }

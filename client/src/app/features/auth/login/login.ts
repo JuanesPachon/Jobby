@@ -70,7 +70,11 @@ export default class Login implements OnInit, OnDestroy {
           this.router.navigate(['/dashboard']);
         },
         error: (error) => {
-          this.authErrorMessage.set(error.status === 401 ? 'Credenciales incorrectas, vuelve a intentarlo' : 'Error del servidor, vuelve a intentarlo mas tarde');
+          this.authErrorMessage.set(
+            error.status === 401 ? 'Credenciales incorrectas, vuelve a intentarlo' :
+            error.status === 429 ? 'Demasiados intentos de inicio de sesión. Por favor, intenta más tarde.' :
+            'Error del servidor, vuelve a intentarlo mas tarde'
+          );
           this.authError.set(true);
           this.isLoading.set(false);
         }

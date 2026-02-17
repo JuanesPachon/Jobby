@@ -6,6 +6,7 @@ import authRouter from "./routes/authRoutes.js";
 import userRouter from "./routes/userRoutes.js";
 import taskRouter from "./routes/taskRoutes.js";
 import cookieParser from "cookie-parser";
+import { apiLimiter } from "./middlewares/rateLimiter.js";
 
 const PORT = process.env.PORT ?? 3002;
 const app = express();
@@ -32,6 +33,8 @@ app.use(helmet());
 app.use(cookieParser());
 app.use(express.json());
 app.disable("x-powered-by");
+
+app.use("/api/v1/", apiLimiter);
 
 app.use("/api/v1/", authRouter);
 app.use("/api/v1/", userRouter);

@@ -41,7 +41,11 @@ export class VerifyCode {
           this.onNextStep.emit(3)
         },
         error: (error) => {
-          this.authErrorMessage.set(error.status === 400 ? 'El código es inválido o ya expiró' : 'Error al procesar la solicitud, vuelve a intentarlo más tarde');
+          this.authErrorMessage.set(
+            error.status === 400 ? 'El código es inválido o ya expiró' :
+            error.status === 429 ? 'Demasiados intentos de verificación. Por favor, intenta más tarde.' :
+            'Error al procesar la solicitud, vuelve a intentarlo más tarde'
+          );
           this.authError.set(true);
           this.isLoading.set(false);
         }

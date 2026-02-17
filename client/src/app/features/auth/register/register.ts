@@ -112,8 +112,12 @@ export default class Register {
           this.router.navigate(['/login']);
         },
         error: (error) => {
-          this.authErrorMessage.set(error.status === 400 ? 'Algo fallo en el formulario, vuelve a intentarlo.' : 
-          error.status === 409 ? 'Ya fue creado un usuario con este correo electrónico o este numero de identificación.' : 'Error en el servidor, por favor intenta más tarde.');
+          this.authErrorMessage.set(
+            error.status === 400 ? 'Algo fallo en el formulario, vuelve a intentarlo.' : 
+            error.status === 409 ? 'Ya fue creado un usuario con este correo electrónico o este numero de identificación.' :
+            error.status === 429 ? 'Demasiados intentos de registro. Por favor, intenta más tarde.' :
+            'Error en el servidor, por favor intenta más tarde.'
+          );
 
           this.authError.update(value => !value);
           this.isLoading.update(value => !value);
