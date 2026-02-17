@@ -1,29 +1,39 @@
 <h3 class="text-center py-3">Se enviará un codigo de verificación a su correo.</h3>
 
 <form id="requestCodeForm" [formGroup]="requestCodeForm" (ngSubmit)="attemptRequestCode($event)">
-  <div class="mb-5 md:mb-4">
-    <label for="email" class="text-sm md:text-sm text-black block mb-1.5 md:mb-1">Correo de recuperación</label>
-    <input id="email" name="email" type="email"
-      class="w-full px-3.5 md:px-3 py-2.5 md:py-2 text-sm md:text-sm border rounded-md focus:ring-2 focus:ring-black focus:outline-none"
-      [ngClass]="requestCodeForm.get('email')?.invalid && requestCodeForm.get('email')?.touched ? 'border-red-600 focus:ring-red-600' : 'border-gray-400 focus:ring-black'"
-      formControlName="email" required>
+    <div class="mb-5 md:mb-4">
+        <label for="email" class="text-sm md:text-sm text-black block mb-1.5 md:mb-1">
+            Correo de recuperación
+        </label>
+        <input
+            id="email"
+            name="email"
+            type="email"
+            class="w-full px-3.5 md:px-3 py-2.5 md:py-2 text-sm md:text-sm border rounded-md focus:ring-2 focus:ring-black focus:outline-none"
+            [ngClass]="requestCodeForm.get('email')?.invalid && requestCodeForm.get('email')?.touched ? 'border-red-600 focus:ring-red-600' : 'border-gray-400 focus:ring-black'"
+            formControlName="email"
+            required
+        />
 
-      @if (requestCodeForm.get('email')?.hasError('required') && requestCodeForm.get('email')?.touched) {
+        @if (requestCodeForm.get('email')?.hasError('required') &&
+        requestCodeForm.get('email')?.touched) {
         <small class="text-red-600">Este campo es obligatorio</small>
-      } @else if (requestCodeForm.get('email')?.hasError('email')) {
+        } @else if (requestCodeForm.get('email')?.hasError('email')) {
         <small class="text-red-600">Por favor, ingresa un correo electrónico válido</small>
-      }
-      
-  </div>
-
-  @if (authError()) {
-    <div class="text-center mb-3">
-      <span class="text-red-600 text-sm"> {{authErrorMessage()}} </span>
+        }
     </div>
-  }
 
-  <button type="submit" [disabled]="requestCodeForm.invalid || isLoading()" class="w-full border-1 mb-5 md:mb-4 cursor-pointer border-black bg-main-blue hover:bg-blue-700 disabled:bg-gray-400 disabled:border-gray-400 disabled:text-gray-600 disabled:cursor-not-allowed disabled:opacity-60 text-white text-sm md:text-sm py-2.5 md:py-2 rounded-xl transition">
-    {{ isLoading() ? 'Cargando...' : 'Enviar' }}
-  </button>
+    @if (authError()) {
+    <div class="text-center mb-3">
+        <span class="text-red-600 text-sm">{{authErrorMessage()}}</span>
+    </div>
+    }
 
+    <button
+        type="submit"
+        [disabled]="requestCodeForm.invalid || isLoading()"
+        class="w-full border-1 mb-5 md:mb-4 cursor-pointer border-black bg-main-blue hover:bg-blue-700 disabled:bg-gray-400 disabled:border-gray-400 disabled:text-gray-600 disabled:cursor-not-allowed disabled:opacity-60 text-white text-sm md:text-sm py-2.5 md:py-2 rounded-xl transition"
+    >
+        {{ isLoading() ? 'Cargando...' : 'Enviar' }}
+    </button>
 </form>

@@ -8,13 +8,17 @@ import { RouterLink } from '@angular/router';
 import { HelpButtonComponent } from '../../shared/help-button/help-button';
 
 @Component({
-  selector: 'app-home',
-  imports: [HomeNavbar, HomeFooter, HomeRating, HomeInfo, NgOptimizedImage, RouterLink, HelpButtonComponent],
-  templateUrl: './home.html',
-  styleUrl: './home.css'
+    selector: 'app-home',
+    imports: [
+        HomeNavbar,
+        HomeFooter,
+        HomeRating,
+        HomeInfo,
+        NgOptimizedImage,
+        RouterLink,
+        HelpButtonComponent,
+    ],
+    templateUrl: './home.html',
+    styleUrl: './home.css',
 })
-export class Home {
-
-
-
-}
+export class Home {}

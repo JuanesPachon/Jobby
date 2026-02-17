@@ -1,6 +1,6 @@
 export interface RatingInfo {
-  id: number;
-  name: string;
-  comment: string;
-  photoUrl: string;
+    id: number;
+    name: string;
+    comment: string;
+    photoUrl: string;
 }

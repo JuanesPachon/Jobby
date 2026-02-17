@@ -3,21 +3,20 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { HomeNavbar } from './home-navbar';
 
 describe('HomeNavbar', () => {
-  let component: HomeNavbar;
-  let fixture: ComponentFixture<HomeNavbar>;
+    let component: HomeNavbar;
+    let fixture: ComponentFixture<HomeNavbar>;
 
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      imports: [HomeNavbar]
-    })
-    .compileComponents();
+    beforeEach(async () => {
+        await TestBed.configureTestingModule({
+            imports: [HomeNavbar],
+        }).compileComponents();
 
-    fixture = TestBed.createComponent(HomeNavbar);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
-  });
+        fixture = TestBed.createComponent(HomeNavbar);
+        component = fixture.componentInstance;
+        fixture.detectChanges();
+    });
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
-  });
+    it('should create', () => {
+        expect(component).toBeTruthy();
+    });
 });

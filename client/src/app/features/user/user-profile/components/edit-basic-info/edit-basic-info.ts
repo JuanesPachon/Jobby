@@ -5,93 +5,95 @@ import { NgClass } from '@angular/common';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 
 @Component({
-  selector: 'app-edit-basic-info',
-  imports: [ReactiveFormsModule, NgClass],
-  templateUrl: './edit-basic-info.html',
-  styleUrl: './edit-basic-info.css',
+    selector: 'app-edit-basic-info',
+    imports: [ReactiveFormsModule, NgClass],
+    templateUrl: './edit-basic-info.html',
+    styleUrl: './edit-basic-info.css',
 })
 export class EditBasicInfo implements OnInit {
-  close = output();
-  userData = input<UserData>();
+    close = output();
+    userData = input<UserData>();
 
-  private userService = inject(UserService);
+    private userService = inject(UserService);
 
-  isLoading = signal<boolean>(false);
-  errorMessage = signal<string>('');
-  hasError = signal<boolean>(false);
+    isLoading = signal<boolean>(false);
+    errorMessage = signal<string>('');
+    hasError = signal<boolean>(false);
 
-  basicInfoForm!: FormGroup;
+    basicInfoForm!: FormGroup;
 
-  ngOnInit(): void {
-    this.initializeForm();
-  }
-
-  private initializeForm(): void {
-    const displayEmail = this.userData()?.profile?.mock_email || this.userData()?.email || '';
-    
-    this.basicInfoForm = new FormGroup({
-      mock_email: new FormControl(displayEmail, [
-        Validators.required,
-        Validators.email,
-        Validators.maxLength(100),
-      ]),
-      phone: new FormControl(this.userData()?.phone || '', [
-        Validators.required,
-        Validators.minLength(10),
-        Validators.maxLength(10),
-      ]),
-      occupation: new FormControl(this.userData()?.profile?.occupation || '', [
-        Validators.required,
-        Validators.maxLength(100),
-      ]),
-      current_location: new FormControl(
-        this.userData()?.profile?.current_location || '',
-        [Validators.required, Validators.maxLength(100)]
-      ),
-    });
-  }
-
-  onSubmit(event: Event): void {
-    event.preventDefault();
-
-    if (this.basicInfoForm.valid && !this.isLoading()) {
-      this.isLoading.set(true);
-      this.hasError.set(false);
-      this.errorMessage.set('');
-
-      const formValue = this.basicInfoForm.value;
-      const updateData = {
-        mock_email: formValue.mock_email || '',
-        phone: formValue.phone || '',
-        occupation: formValue.occupation || '',
-        current_location: formValue.current_location || ''
-      };
-
-      this.userService.editUserProfile(updateData).subscribe({
-        next: (response) => {
-          this.isLoading.set(false);
-          this.closeModal();
-        },
-        error: (error) => {
-          this.errorMessage.set('Error al actualizar la información, intentelo nuevamente más tarde.');
-          this.hasError.set(true);
-          this.isLoading.set(false);
-        },
-      });
-    } else {
-      this.basicInfoForm.markAllAsTouched();
-      this.errorMessage.set('Por favor, completa todos los campos correctamente.');
-      this.hasError.set(true);
+    ngOnInit(): void {
+        this.initializeForm();
     }
-  }
 
-  closeModal(): void {
-    this.close.emit();
-  }
+    private initializeForm(): void {
+        const displayEmail = this.userData()?.profile?.mock_email || this.userData()?.email || '';
 
-  onOverlayClick(event: Event): void {
-    if (event.target === event.currentTarget) {
-      this.closeModal();
+        this.basicInfoForm = new FormGroup({
+            mock_email: new FormControl(displayEmail, [
+                Validators.required,
+                Validators.email,
+                Validators.maxLength(100),
+            ]),
+            phone: new FormControl(this.userData()?.phone || '', [
+                Validators.required,
+                Validators.minLength(10),
+                Validators.maxLength(10),
+            ]),
+            occupation: new FormControl(this.userData()?.profile?.occupation || '', [
+                Validators.required,
+                Validators.maxLength(100),
+            ]),
+            current_location: new FormControl(this.userData()?.profile?.current_location || '', [
+                Validators.required,
+                Validators.maxLength(100),
+            ]),
+        });
     }
-  }
+
+    onSubmit(event: Event): void {
+        event.preventDefault();
+
+        if (this.basicInfoForm.valid && !this.isLoading()) {
+            this.isLoading.set(true);
+            this.hasError.set(false);
+            this.errorMessage.set('');
+
+            const formValue = this.basicInfoForm.value;
+            const updateData = {
+                mock_email: formValue.mock_email || '',
+                phone: formValue.phone || '',
+                occupation: formValue.occupation || '',
+                current_location: formValue.current_location || '',
+            };
+
+            this.userService.editUserProfile(updateData).subscribe({
+                next: (response) => {
+                    this.isLoading.set(false);
+                    this.closeModal();
+                },
+                error: (error) => {
+                    this.errorMessage.set(
+                        'Error al actualizar la información, intentelo nuevamente más tarde.'
+                    );
+                    this.hasError.set(true);
+                    this.isLoading.set(false);
+                },
+            });
+        } else {
+            this.basicInfoForm.markAllAsTouched();
+            this.errorMessage.set('Por favor, completa todos los campos correctamente.');
+            this.hasError.set(true);
+        }
+    }
+
+    closeModal(): void {
+        this.close.emit();
+    }
+
+    onOverlayClick(event: Event): void {
+        if (event.target === event.currentTarget) {
+            this.closeModal();
+        }
+    }
 }

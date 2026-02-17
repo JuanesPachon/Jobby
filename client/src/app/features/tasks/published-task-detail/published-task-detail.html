@@ -1,181 +1,218 @@
 <div class="min-h-[100dvh] grid grid-rows-[auto_1fr_auto]">
-  @if (taskNotification()) {
-    <div class="fixed top-4 right-4 left-4 sm:left-auto sm:top-6 sm:right-6 bg-main-yelllow px-4 py-3 sm:px-6 sm:py-4 rounded-lg shadow-lg z-50 sm:max-w-sm transform translate-x-0 opacity-100 transition-all duration-300 ease-out">
-      <div class="flex items-center space-x-2 sm:space-x-3">
-        <svg class="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
-        </svg>
-        <span class="text-sm sm:text-base font-medium leading-tight">{{ taskNotificationMessage() }}</span>
-      </div>
-    </div>
-  }
-
-  <app-dashboard-navbar />
-
-  <div class="mx-auto container p-4 sm:p-6 md:p-8 lg:p-12 font-poppins flex justify-center items-start min-h-[calc(100vh-140px)]">
-    
-    @if (isLoading()) {
-      <div class="text-center py-12">
-        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-main-blue mx-auto mb-4"></div>
-        <p class="text-gray-600">Cargando detalles de la tarea...</p>
-      </div>
-    } @else if (error()) {
-      <div class="text-center py-12">
-        <div class="bg-red-50 border border-red-200 rounded-lg p-8 max-w-md mx-auto">
-          <svg class="w-12 h-12 text-red-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
-          </svg>
-          <h3 class="text-lg font-medium text-gray-900 mb-2">Error</h3>
-          <p class="text-gray-600 mb-4">{{ error() }}</p>
-          <a [routerLink]="returnRoute()" class="bg-main-blue text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors text-sm font-medium">
-            Volver
-          </a>
-        </div>
-      </div>
-    } @else if (taskDetail()) {
-      <main class="relative max-w-lg sm:max-w-xl md:max-w-4xl lg:max-w-5xl xl:max-w-6xl 2xl:max-w-7xl w-full bg-white rounded-2xl p-6 sm:p-8 md:p-10 lg:p-12 shadow-sm border border-black">
-        
-        <a [routerLink]="returnRoute()" class="absolute top-8 left-8">
-          <img src="/icons/return-pg_icon.svg" alt="Atrás" class="w-6 h-6 sm:w-7 sm:h-7" />
-        </a>
-
-        <div class="flex justify-between items-start mb-6 pt-8">
-          <div class="flex items-center gap-3">
-            <div [class]="getStatusIndicatorClass()"></div>
-            <span [class]="getStatusTextClass()" class="font-medium">{{ statusText }}</span>
-          </div>
-          <div class="text-gray-500">
-            {{ taskDetail()!.created_at | spanishDate:'full' }}
-          </div>
-        </div>
-
-        <h1 class="text-xl md:text-2xl lg:text-3xl font-bold text-black mb-4">
-          {{ taskDetail()!.title | capitalize }}
-        </h1>
-
-        <div class="flex items-center gap-6 mb-6">
-          <div class="flex items-center gap-2">
-            <img src="/icons/peso_sign_icon.svg" alt="signo pesos" class="w-5 h-5 lg:w-6 lg:h-6"/>
-            <span class="text-sm md:text-base lg:text-lg font-medium text-gray-700">
-              {{ taskDetail()!.salary | currencyColombianPipe }}
-            </span>
-          </div>
-          <div class="flex items-center gap-2">
-            <img src="/icons/Clock_icon.svg" alt="reloj" class="w-5 h-5 lg:w-6 lg:h-6" />
-            <span class="text-sm md:text-base lg:text-lg font-medium text-gray-700">
-              {{ taskDetail()!.duration_hours }} {{ taskDetail()!.duration_hours === 1 ? 'hora' : 'horas' }}
-            </span>
-          </div>
-        </div>
-
-        <div class="mb-8">
-          <p class="text-black text-sm sm:text-base">
-            {{ taskDetail()!.description }}
-          </p>
-        </div>
-
-        <div class="bg-main-blue rounded-t-lg border border-black">
-          <div class="px-4 py-3">
-            <h3 class="text-white font-semibold text-base lg:text-lg">Personas postuladas</h3>
-          </div>
-        </div>
-
-        <div class="border border-gray-300 rounded-b-lg">
-          @if (applicants().length === 0) {
-            <div class="text-center py-8">
-              <p class="text-gray-600">No hay personas postuladas aún</p>
-            </div>
-          } @else {
-            @for (applicant of applicants(); track applicant.id) {
-              <div class="flex items-center justify-between px-4 py-3 border-b border-x border-black last:rounded-b-lg">
-                <div class="flex items-center gap-3">
-                  <img 
-                    [src]="getPhotoUrl(applicant.photo_url)" 
-                    [alt]="applicant.first_name + ' ' + applicant.last_name"
-                    class="w-10 h-10 sm:w-12 sm:h-12 rounded-full object-cover border border-gray-300 cursor-pointer hover:opacity-80 transition-opacity"
-                    (error)="onImageError($event)"
-                    [routerLink]="['/profile', applicant.id]"
-                  />
-                  <span class="text-sm sm:text-base font-medium text-black cursor-pointer hover:underline" [routerLink]="['/profile', applicant.id]">
-                    {{ applicant.first_name }} {{ applicant.last_name }}
-                  </span>
-                </div>
-
-                <button
-                  [class]="getButtonClass(applicant)"
-                  type="button"
-                  (click)="onSelectApplicant(applicant)"
-                  (mouseenter)="onMouseEnterApplicant(applicant.application_id)"
-                  (mouseleave)="onMouseLeaveApplicant()"
-                  [disabled]="isSelectingApplicant() === applicant.application_id || isSelectButtonDisabled()"
-                  [title]="getSelectButtonTooltip()"
-                >
-                  {{ getButtonText(applicant) }}
-                </button>
-              </div>
-            }
-          }
-        </div>
-
-        <div class="flex flex-col items-stretch gap-y-2 mt-6 sm:flex-row sm:items-center sm:justify-end sm:gap-x-6">
-          @if (taskDetail()?.status === 'available' && taskDetail()?.selected_user_id === null && !isStartingTask()) {
-            <p class="text-[12px]">Selecciona a un postulante para empezar la tarea*</p>
-          }
-          
-          <div class="flex flex-col sm:flex-row gap-2 sm:gap-4">
-            @if (canCancelTask() && taskDetail()?.status !== 'cancelled') {
-              <button
-                [class]="getCancelTaskButtonClass()"
-                type="button"
-                (click)="onCancelTask()"
-                [disabled]="!isCancelTaskEnabled()"
-              >
-                Cancelar tarea
-              </button>
-            }
-            
-            @if (!canCompleteTask()) {
-              <button
-              [ngClass]="getStartTaskButtonClass()"
-              class="w-full sm:w-auto"
-              type="button"
-              (click)="onStartTask()"
-              [disabled]="!canStartTask() || isStartingTask()"
+    @if (taskNotification()) {
+    <div
+        class="fixed top-4 right-4 left-4 sm:left-auto sm:top-6 sm:right-6 bg-main-yelllow px-4 py-3 sm:px-6 sm:py-4 rounded-lg shadow-lg z-50 sm:max-w-sm transform translate-x-0 opacity-100 transition-all duration-300 ease-out"
+    >
+        <div class="flex items-center space-x-2 sm:space-x-3">
+            <svg
+                class="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0"
+                fill="currentColor"
+                viewBox="0 0 20 20"
             >
-              {{ getStartTaskButtonText() }}
-            </button>
-            }
-            
-            @if (canCompleteTask()) {
-              <button
-                [class]="getCompleteTaskButtonClass()"
-                type="button"
-                (click)="onCompleteTask()"
-                [disabled]="isCompletingTask()"
-              >
-                {{ getCompleteTaskButtonText() }}
-              </button>
-            }
-          </div>
+                <path
+                    fill-rule="evenodd"
+                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                    clip-rule="evenodd"
+                ></path>
+            </svg>
+            <span class="text-sm sm:text-base font-medium leading-tight">
+                {{ taskNotificationMessage() }}
+            </span>
         </div>
-
-      </main>
-    }
-  </div>
-
-  <app-cancel-task-modal
-    [isOpen]="isCancelModalOpen"
-    [isLoading]="isCancellingTask"
-    (onConfirm)="onConfirmCancel()"
-    (onCancel)="onCancelModal()"
-  />
-
-  <app-help-button />
-
-  <footer class="w-full border-t border-black">
-    <div class="mx-auto pt-3 pb-3 flex items-center justify-between px-4 container">
-      <p class="text-xs md:text-xs text-black">© ADSO - 2025</p>
-      <img src="/images/LOGO/png_sin_fondo/fondo_blanco.png" alt="Jobby Logo" class="h-5 sm:h-6"/>
     </div>
-  </footer>
+    }
+
+    <app-dashboard-navbar />
+
+    <div
+        class="mx-auto container p-4 sm:p-6 md:p-8 lg:p-12 font-poppins flex justify-center items-start min-h-[calc(100vh-140px)]"
+    >
+        @if (isLoading()) {
+        <div class="text-center py-12">
+            <div
+                class="animate-spin rounded-full h-12 w-12 border-b-2 border-main-blue mx-auto mb-4"
+            ></div>
+            <p class="text-gray-600">Cargando detalles de la tarea...</p>
+        </div>
+        } @else if (error()) {
+        <div class="text-center py-12">
+            <div class="bg-red-50 border border-red-200 rounded-lg p-8 max-w-md mx-auto">
+                <svg
+                    class="w-12 h-12 text-red-400 mx-auto mb-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                >
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"
+                    ></path>
+                </svg>
+                <h3 class="text-lg font-medium text-gray-900 mb-2">Error</h3>
+                <p class="text-gray-600 mb-4">{{ error() }}</p>
+                <a
+                    [routerLink]="returnRoute()"
+                    class="bg-main-blue text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors text-sm font-medium"
+                >
+                    Volver
+                </a>
+            </div>
+        </div>
+        } @else if (taskDetail()) {
+        <main
+            class="relative max-w-lg sm:max-w-xl md:max-w-4xl lg:max-w-5xl xl:max-w-6xl 2xl:max-w-7xl w-full bg-white rounded-2xl p-6 sm:p-8 md:p-10 lg:p-12 shadow-sm border border-black"
+        >
+            <a [routerLink]="returnRoute()" class="absolute top-8 left-8">
+                <img src="/icons/return-pg_icon.svg" alt="Atrás" class="w-6 h-6 sm:w-7 sm:h-7" />
+            </a>
+
+            <div class="flex justify-between items-start mb-6 pt-8">
+                <div class="flex items-center gap-3">
+                    <div [class]="getStatusIndicatorClass()"></div>
+                    <span [class]="getStatusTextClass()" class="font-medium">{{ statusText }}</span>
+                </div>
+                <div class="text-gray-500">{{ taskDetail()!.created_at | spanishDate:'full' }}</div>
+            </div>
+
+            <h1 class="text-xl md:text-2xl lg:text-3xl font-bold text-black mb-4">
+                {{ taskDetail()!.title | capitalize }}
+            </h1>
+
+            <div class="flex items-center gap-6 mb-6">
+                <div class="flex items-center gap-2">
+                    <img
+                        src="/icons/peso_sign_icon.svg"
+                        alt="signo pesos"
+                        class="w-5 h-5 lg:w-6 lg:h-6"
+                    />
+                    <span class="text-sm md:text-base lg:text-lg font-medium text-gray-700">
+                        {{ taskDetail()!.salary | currencyColombianPipe }}
+                    </span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <img src="/icons/Clock_icon.svg" alt="reloj" class="w-5 h-5 lg:w-6 lg:h-6" />
+                    <span class="text-sm md:text-base lg:text-lg font-medium text-gray-700">
+                        {{ taskDetail()!.duration_hours }} {{ taskDetail()!.duration_hours === 1 ?
+                        'hora' : 'horas' }}
+                    </span>
+                </div>
+            </div>
+
+            <div class="mb-8">
+                <p class="text-black text-sm sm:text-base">{{ taskDetail()!.description }}</p>
+            </div>
+
+            <div class="bg-main-blue rounded-t-lg border border-black">
+                <div class="px-4 py-3">
+                    <h3 class="text-white font-semibold text-base lg:text-lg">
+                        Personas postuladas
+                    </h3>
+                </div>
+            </div>
+
+            <div class="border border-gray-300 rounded-b-lg">
+                @if (applicants().length === 0) {
+                <div class="text-center py-8">
+                    <p class="text-gray-600">No hay personas postuladas aún</p>
+                </div>
+                } @else { @for (applicant of applicants(); track applicant.id) {
+                <div
+                    class="flex items-center justify-between px-4 py-3 border-b border-x border-black last:rounded-b-lg"
+                >
+                    <div class="flex items-center gap-3">
+                        <img
+                            [src]="getPhotoUrl(applicant.photo_url)"
+                            [alt]="applicant.first_name + ' ' + applicant.last_name"
+                            class="w-10 h-10 sm:w-12 sm:h-12 rounded-full object-cover border border-gray-300 cursor-pointer hover:opacity-80 transition-opacity"
+                            (error)="onImageError($event)"
+                            [routerLink]="['/profile', applicant.id]"
+                        />
+                        <span
+                            class="text-sm sm:text-base font-medium text-black cursor-pointer hover:underline"
+                            [routerLink]="['/profile', applicant.id]"
+                        >
+                            {{ applicant.first_name }} {{ applicant.last_name }}
+                        </span>
+                    </div>
+
+                    <button
+                        [class]="getButtonClass(applicant)"
+                        type="button"
+                        (click)="onSelectApplicant(applicant)"
+                        (mouseenter)="onMouseEnterApplicant(applicant.application_id)"
+                        (mouseleave)="onMouseLeaveApplicant()"
+                        [disabled]="isSelectingApplicant() === applicant.application_id || isSelectButtonDisabled()"
+                        [title]="getSelectButtonTooltip()"
+                    >
+                        {{ getButtonText(applicant) }}
+                    </button>
+                </div>
+                } }
+            </div>
+
+            <div
+                class="flex flex-col items-stretch gap-y-2 mt-6 sm:flex-row sm:items-center sm:justify-end sm:gap-x-6"
+            >
+                @if (taskDetail()?.status === 'available' && taskDetail()?.selected_user_id === null
+                && !isStartingTask()) {
+                <p class="text-[12px]">Selecciona a un postulante para empezar la tarea*</p>
+                }
+
+                <div class="flex flex-col sm:flex-row gap-2 sm:gap-4">
+                    @if (canCancelTask() && taskDetail()?.status !== 'cancelled') {
+                    <button
+                        [class]="getCancelTaskButtonClass()"
+                        type="button"
+                        (click)="onCancelTask()"
+                        [disabled]="!isCancelTaskEnabled()"
+                    >
+                        Cancelar tarea
+                    </button>
+                    } @if (!canCompleteTask()) {
+                    <button
+                        [ngClass]="getStartTaskButtonClass()"
+                        class="w-full sm:w-auto"
+                        type="button"
+                        (click)="onStartTask()"
+                        [disabled]="!canStartTask() || isStartingTask()"
+                    >
+                        {{ getStartTaskButtonText() }}
+                    </button>
+                    } @if (canCompleteTask()) {
+                    <button
+                        [class]="getCompleteTaskButtonClass()"
+                        type="button"
+                        (click)="onCompleteTask()"
+                        [disabled]="isCompletingTask()"
+                    >
+                        {{ getCompleteTaskButtonText() }}
+                    </button>
+                    }
+                </div>
+            </div>
+        </main>
+        }
+    </div>
+
+    <app-cancel-task-modal
+        [isOpen]="isCancelModalOpen"
+        [isLoading]="isCancellingTask"
+        (onConfirm)="onConfirmCancel()"
+        (onCancel)="onCancelModal()"
+    />
+
+    <app-help-button />
+
+    <footer class="w-full border-t border-black">
+        <div class="mx-auto pt-3 pb-3 flex items-center justify-between px-4 container">
+            <p class="text-xs md:text-xs text-black">© ADSO - 2025</p>
+            <img
+                src="/images/LOGO/png_sin_fondo/fondo_blanco.png"
+                alt="Jobby Logo"
+                class="h-5 sm:h-6"
+            />
+        </div>
+    </footer>
 </div>

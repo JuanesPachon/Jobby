@@ -1,3 +1,3 @@
 export interface CodeRequest {
-  email: string;
+    email: string;
 }

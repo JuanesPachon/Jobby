@@ -1,56 +1,74 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <title>Jobby - Conectando oportunidades laborales</title>
-    <base href="/" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="icon" type="image/x-icon" href="favicon.ico" />
-  </head>
-  <body class="relative min-h-screen bg-bg-white m-0 p-0">
-    <div id="splash" class="fixed inset-0 z-[9999] flex items-center justify-center bg-bg-white opacity-100 transition-opacity duration-500 ease-out">
-      <div class="absolute inset-0 bg-[url('/images/WebP/main_bg.webp')] bg-fixed bg-no-repeat bg-center bg-cover opacity-70"></div>
-      
-      <div class="absolute inset-0 bg-gradient-to-b from-transparent via-white/20 to-transparent"></div>
-      
-      <div class="relative z-10 flex flex-col items-center gap-8 p-4 text-center">
-        <div class="relative will-change-[opacity]">
-          <img src="/images/LOGO/png_sin_fondo/fondo_blanco.png" alt="Jobby Logo" class="h-24 sm:h-32 md:h-40 w-auto drop-shadow-2xl opacity-0 animate-[fadeIn_0.3s_ease-out_forwards] will-change-[opacity]" />
-          <div class="absolute inset-0 blur-3xl opacity-20 bg-gray-700 pointer-events-none"></div>
-        </div>
-        
-        <div class="opacity-0 animate-[fadeIn_0.3s_ease-out_0.15s_forwards] will-change-[opacity]">
-          <h1 class="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-800 mb-2">
-            Bienvenido a <span class="text-main-blue">Jobby</span>
-          </h1>
-          <p class="text-sm sm:text-base md:text-lg text-gray-600 font-medium">
-            Conectando oportunidades laborales
-          </p>
-        </div>
-      </div>
-    </div>
+    <head>
+        <meta charset="utf-8" />
+        <title>Jobby - Conectando oportunidades laborales</title>
+        <base href="/" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="icon" type="image/x-icon" href="favicon.ico" />
+    </head>
+    <body class="relative min-h-screen bg-bg-white m-0 p-0">
+        <div
+            id="splash"
+            class="fixed inset-0 z-[9999] flex items-center justify-center bg-bg-white opacity-100 transition-opacity duration-500 ease-out"
+        >
+            <div
+                class="absolute inset-0 bg-[url('/images/WebP/main_bg.webp')] bg-fixed bg-no-repeat bg-center bg-cover opacity-70"
+            ></div>
 
-    <div class="absolute inset-0 bg-[url('/images/WebP/main_bg.webp')] bg-fixed bg-no-repeat bg-center bg-cover opacity-80"></div>
+            <div
+                class="absolute inset-0 bg-gradient-to-b from-transparent via-white/20 to-transparent"
+            ></div>
 
-    <div class="relative z-10">
-      <app-root></app-root>
-    </div>
-    
-    <script>
-      document.body.style.overflow = 'hidden';
-      
-      window.addEventListener('load', () => {
-        setTimeout(() => {
-          const splash = document.getElementById('splash');
-          if (splash) {
-            splash.style.opacity = '0';
-            setTimeout(() => {
-              splash.remove();
-              document.body.style.overflow = '';
-            }, 500);
-          }
-        }, 1000);
-      });
-    </script>
-  </body>
+            <div class="relative z-10 flex flex-col items-center gap-8 p-4 text-center">
+                <div class="relative will-change-[opacity]">
+                    <img
+                        src="/images/LOGO/png_sin_fondo/fondo_blanco.png"
+                        alt="Jobby Logo"
+                        class="h-24 sm:h-32 md:h-40 w-auto drop-shadow-2xl opacity-0 animate-[fadeIn_0.3s_ease-out_forwards] will-change-[opacity]"
+                    />
+                    <div
+                        class="absolute inset-0 blur-3xl opacity-20 bg-gray-700 pointer-events-none"
+                    ></div>
+                </div>
+
+                <div
+                    class="opacity-0 animate-[fadeIn_0.3s_ease-out_0.15s_forwards] will-change-[opacity]"
+                >
+                    <h1 class="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-800 mb-2">
+                        Bienvenido a
+                        <span class="text-main-blue">Jobby</span>
+                    </h1>
+                    <p class="text-sm sm:text-base md:text-lg text-gray-600 font-medium">
+                        Conectando oportunidades laborales
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div
+            class="absolute inset-0 bg-[url('/images/WebP/main_bg.webp')] bg-fixed bg-no-repeat bg-center bg-cover opacity-80"
+        ></div>
+
+        <div class="relative z-10">
+            <app-root></app-root>
+        </div>
+
+        <script>
+            document.body.style.overflow = 'hidden';
+
+            window.addEventListener('load', () => {
+                setTimeout(() => {
+                    const splash = document.getElementById('splash');
+                    if (splash) {
+                        splash.style.opacity = '0';
+                        setTimeout(() => {
+                            splash.remove();
+                            document.body.style.overflow = '';
+                        }, 500);
+                    }
+                }, 1000);
+            });
+        </script>
+    </body>
 </html>

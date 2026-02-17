@@ -1,36 +1,36 @@
 export interface SearchFilters {
-  position?: string;
-  city?: string;
-  limit?: number;
-  page?: number;
-  excludeOwnTasks?: boolean;
+    position?: string;
+    city?: string;
+    limit?: number;
+    page?: number;
+    excludeOwnTasks?: boolean;
 }
 
 export interface Task {
-  id: number;
-  creator_id: number;
-  title: string;
-  description: string;
-  city: string;
-  neighborhood?: string;
-  duration_hours: number;
-  salary: number;
-  status: string;
-  created_at: string;
-  updated_at: string;
-  creator: {
     id: number;
-    first_name: string;
-    last_name: string;
-    photo_url?: string;
-  };
+    creator_id: number;
+    title: string;
+    description: string;
+    city: string;
+    neighborhood?: string;
+    duration_hours: number;
+    salary: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+    creator: {
+        id: number;
+        first_name: string;
+        last_name: string;
+        photo_url?: string;
+    };
 }
 
 export interface SearchTasksResponse {
-  success: boolean;
-  message?: string;
-  data?: {
-    tasks: Task[];
-    total: number;
-  };
+    success: boolean;
+    message?: string;
+    data?: {
+        tasks: Task[];
+        total: number;
+    };
 }

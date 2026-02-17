@@ -1,59 +1,69 @@
-<div class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 font-poppins" (click)="onOverlayClick($event)">
-  <div class="bg-white rounded-2xl shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-    <div class="flex items-center justify-between p-6 pb-2 border-b border-gray-200">
-      <h2 class="text-2xl font-semibold text-gray-900">Crear Habilidad</h2>
-      <button class="text-gray-400 hover:text-gray-600 transition-colors cursor-pointer" (click)="closeModal()">
-        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-        </svg>
-      </button>
-    </div>
-
-    <div class="p-6">
-      <form (ngSubmit)="$event.preventDefault()" class="space-y-2">
-        <div class="grid grid-cols-1 gap-6">
-          <div>
-            <label class="block text-sm font-medium text-gray-900 mb-2">Habilidad *:</label>
-            <input 
-              type="text" 
-              [formControl]="skillNameControl"
-              (keydown.enter)="$event.preventDefault(); onSubmit()"
-              class="w-full placeholder:text-gray-500 px-3.5 md:px-3 py-2.5 md:py-2 text-sm md:text-sm border rounded-md focus:ring-2 focus:outline-none transition-all"
-              [ngClass]="skillNameControl.invalid && skillNameControl.touched ? 'border-red-600 focus:ring-red-600' : 'border-gray-400 focus:ring-black'"
-              placeholder="Ej. Manejo del tiempo"
-              [disabled]="isLoading()"
+<div
+    class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 font-poppins"
+    (click)="onOverlayClick($event)"
+>
+    <div class="bg-white rounded-2xl shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+        <div class="flex items-center justify-between p-6 pb-2 border-b border-gray-200">
+            <h2 class="text-2xl font-semibold text-gray-900">Crear Habilidad</h2>
+            <button
+                class="text-gray-400 hover:text-gray-600 transition-colors cursor-pointer"
+                (click)="closeModal()"
             >
-            @if (skillNameControl.hasError('required') && skillNameControl.touched) {
-              <small class="text-red-600">Este campo es obligatorio</small>
-            }
-            @if (skillNameControl.hasError('minlength') && skillNameControl.touched) {
-              <small class="text-red-600">Mínimo 2 caracteres</small>
-            }
-            @if (skillNameControl.hasError('maxlength') && skillNameControl.touched) {
-              <small class="text-red-600">Máximo 50 caracteres</small>
-            }
-            @if (skillNameControl.hasError('pattern') && skillNameControl.touched) {
-              <small class="text-red-600">No se permiten caracteres especiales</small>
-            }
-          </div>
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M6 18L18 6M6 6l12 12"
+                    />
+                </svg>
+            </button>
         </div>
 
-        @if (hasError()) {
-          <div class="text-center">
-            <span class="text-red-600 text-sm">{{ errorMessage() }}</span>
-          </div>
-        }
-        <div class="flex justify-end pt-2">
-          <button 
-            (click)="onSubmit()"
-            type="button" 
-            [disabled]="isLoading() || skillNameControl.invalid"
-            class="bg-main-blue hover:bg-blue-600 disabled:bg-gray-400 disabled:border-gray-400 disabled:text-gray-600 disabled:cursor-not-allowed disabled:opacity-60 text-white px-9 py-2 rounded-full font-medium text-sm border-[1px] border-black cursor-pointer transition"
-          >
-            {{ isLoading() ? 'Cargando...' : 'Agregar' }}
-          </button>
+        <div class="p-6">
+            <form (ngSubmit)="$event.preventDefault()" class="space-y-2">
+                <div class="grid grid-cols-1 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-900 mb-2">
+                            Habilidad *:
+                        </label>
+                        <input
+                            type="text"
+                            [formControl]="skillNameControl"
+                            (keydown.enter)="$event.preventDefault(); onSubmit()"
+                            class="w-full placeholder:text-gray-500 px-3.5 md:px-3 py-2.5 md:py-2 text-sm md:text-sm border rounded-md focus:ring-2 focus:outline-none transition-all"
+                            [ngClass]="skillNameControl.invalid && skillNameControl.touched ? 'border-red-600 focus:ring-red-600' : 'border-gray-400 focus:ring-black'"
+                            placeholder="Ej. Manejo del tiempo"
+                            [disabled]="isLoading()"
+                        />
+                        @if (skillNameControl.hasError('required') && skillNameControl.touched) {
+                        <small class="text-red-600">Este campo es obligatorio</small>
+                        } @if (skillNameControl.hasError('minlength') && skillNameControl.touched) {
+                        <small class="text-red-600">Mínimo 2 caracteres</small>
+                        } @if (skillNameControl.hasError('maxlength') && skillNameControl.touched) {
+                        <small class="text-red-600">Máximo 50 caracteres</small>
+                        } @if (skillNameControl.hasError('pattern') && skillNameControl.touched) {
+                        <small class="text-red-600">No se permiten caracteres especiales</small>
+                        }
+                    </div>
+                </div>
+
+                @if (hasError()) {
+                <div class="text-center">
+                    <span class="text-red-600 text-sm">{{ errorMessage() }}</span>
+                </div>
+                }
+                <div class="flex justify-end pt-2">
+                    <button
+                        (click)="onSubmit()"
+                        type="button"
+                        [disabled]="isLoading() || skillNameControl.invalid"
+                        class="bg-main-blue hover:bg-blue-600 disabled:bg-gray-400 disabled:border-gray-400 disabled:text-gray-600 disabled:cursor-not-allowed disabled:opacity-60 text-white px-9 py-2 rounded-full font-medium text-sm border-[1px] border-black cursor-pointer transition"
+                    >
+                        {{ isLoading() ? 'Cargando...' : 'Agregar' }}
+                    </button>
+                </div>
+            </form>
         </div>
-      </form>
     </div>
-  </div>
 </div>

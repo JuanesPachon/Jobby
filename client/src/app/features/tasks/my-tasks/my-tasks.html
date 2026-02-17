@@ -1,88 +1,109 @@
 <div class="min-h-screen flex flex-col">
-  <app-dashboard-navbar />
+    <app-dashboard-navbar />
 
-  <div class="flex-1 flex">
-    <section class="py-10 font-poppins container mx-auto px-4 md:px-20 w-full">
-      <h2 class="text-center font-semibold mb-6 text-2xl">Mis Tareas</h2>
-      <p class="text-center text-gray-600 mb-8">Gestiona tus actividades como Jobbie o Jobboss</p>
-      
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-        
-        <div [routerLink]="'/applied-tasks'" class="relative overflow-hidden rounded-2xl drop-shadow-2xl h-64 cursor-pointer transition-all duration-300 ease-in-out hover:scale-103 hover:shadow-2xl">
-          <div class="absolute inset-0 bg-gradient-to-br from-blue-500 to-purple-600"></div>
-          <div 
-            class="absolute inset-0 bg-cover bg-center bg-[url('https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=1400&q=80')]"
-          ></div>
-          <div class="absolute inset-0 bg-black/60"></div>
-          
-          <div class="relative z-10 h-full flex flex-col justify-center items-center text-center p-8">
-            <h2 class="text-3xl font-bold text-white mb-4">Jobbie</h2>
-            <p class="text-gray-100 leading-relaxed">
-              Explora oportunidades laborales, postúlate a tareas que se ajusten a tus habilidades y construye tu reputación profesional.
+    <div class="flex-1 flex">
+        <section class="py-10 font-poppins container mx-auto px-4 md:px-20 w-full">
+            <h2 class="text-center font-semibold mb-6 text-2xl">Mis Tareas</h2>
+            <p class="text-center text-gray-600 mb-8">
+                Gestiona tus actividades como Jobbie o Jobboss
             </p>
-          </div>
-        </div>
 
-        <div [routerLink]="'/published-tasks'" class="relative overflow-hidden rounded-2xl drop-shadow-2xl h-64 cursor-pointer transition-all duration-300 ease-in-out hover:scale-103 hover:shadow-2xl">
-          <div class="absolute inset-0 bg-gradient-to-br from-green-500 to-teal-600"></div>
-          <div 
-            class="absolute inset-0 bg-cover bg-center bg-[url('https://images.unsplash.com/photo-1551836022-d5d88e9218df?auto=format&fit=crop&w=1400&q=80')]"
-          ></div>
-          <div class="absolute inset-0 bg-black/60"></div>
-          
-          <div class="relative z-10 h-full flex flex-col justify-center items-center text-center p-8">
-            <h2 class="text-3xl font-bold text-white mb-4">Jobboss</h2>
-            <p class="text-gray-100 leading-relaxed">
-              Gestiona aplicaciones, selecciona candidatos y supervisa el progreso de tus tareas activas.
-            </p>
-          </div>
-        </div>
-
-      </div>
-
-      <div class="container mx-auto mt-15">
-        <div class="bg-white rounded-xl shadow-sm border border-black overflow-hidden">
-          <div class="relative h-48 sm:h-56 lg:h-48">
-            <img
-              src="/images/WebP/background_collage_for_registration_login17.webp"
-              alt="Jobby Premium"
-              class="w-full h-full object-cover"
-            />
-            <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
-            <div class="absolute inset-0 flex items-center justify-center px-4 sm:justify-start sm:pl-6 lg:pl-8">
-              <div class="text-center sm:text-left">
-                <h3 class="text-white font-semibold text-xl sm:text-2xl lg:text-xl mb-2">
-                  Jobby premium
-                </h3>
-                <p class="text-white text-sm sm:text-base lg:text-sm mb-4 max-w-xs sm:max-w-sm">
-                  Descubre ventajas exclusivas y optimiza la búsqueda de tareas
-                </p>
-                <button
-                  class="bg-[#EBC636] text-gray-900 px-6 py-2 sm:px-8 sm:py-3 lg:px-6 lg:py-2 rounded-lg font-medium hover:bg-yellow-500 transition-colors text-sm sm:text-base lg:text-sm"
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                <div
+                    [routerLink]="'/applied-tasks'"
+                    class="relative overflow-hidden rounded-2xl drop-shadow-2xl h-64 cursor-pointer transition-all duration-300 ease-in-out hover:scale-103 hover:shadow-2xl"
                 >
-                  Próximamente...
-                </button>
-              </div>
+                    <div
+                        class="absolute inset-0 bg-gradient-to-br from-blue-500 to-purple-600"
+                    ></div>
+                    <div
+                        class="absolute inset-0 bg-cover bg-center bg-[url('https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=1400&q=80')]"
+                    ></div>
+                    <div class="absolute inset-0 bg-black/60"></div>
+
+                    <div
+                        class="relative z-10 h-full flex flex-col justify-center items-center text-center p-8"
+                    >
+                        <h2 class="text-3xl font-bold text-white mb-4">Jobbie</h2>
+                        <p class="text-gray-100 leading-relaxed">
+                            Explora oportunidades laborales, postúlate a tareas que se ajusten a tus
+                            habilidades y construye tu reputación profesional.
+                        </p>
+                    </div>
+                </div>
+
+                <div
+                    [routerLink]="'/published-tasks'"
+                    class="relative overflow-hidden rounded-2xl drop-shadow-2xl h-64 cursor-pointer transition-all duration-300 ease-in-out hover:scale-103 hover:shadow-2xl"
+                >
+                    <div
+                        class="absolute inset-0 bg-gradient-to-br from-green-500 to-teal-600"
+                    ></div>
+                    <div
+                        class="absolute inset-0 bg-cover bg-center bg-[url('https://images.unsplash.com/photo-1551836022-d5d88e9218df?auto=format&fit=crop&w=1400&q=80')]"
+                    ></div>
+                    <div class="absolute inset-0 bg-black/60"></div>
+
+                    <div
+                        class="relative z-10 h-full flex flex-col justify-center items-center text-center p-8"
+                    >
+                        <h2 class="text-3xl font-bold text-white mb-4">Jobboss</h2>
+                        <p class="text-gray-100 leading-relaxed">
+                            Gestiona aplicaciones, selecciona candidatos y supervisa el progreso de
+                            tus tareas activas.
+                        </p>
+                    </div>
+                </div>
             </div>
-          </div>
-        </div>
-      </div>
 
-    </section>
-  </div>
-
-  <app-help-button />
-
-  <footer class="w-full border-t border-black mt-auto">
-    <div
-      class="mx-auto pt-3 pb-3 flex items-center justify-between px-4 container"
-    >
-      <p class="text-xs md:text-xs text-black">© ADSO - 2025</p>
-      <img
-        src="/images/LOGO/png_sin_fondo/fondo_blanco.png"
-        alt="Jobby Logo"
-        class="h-5 sm:h-6"
-      />
+            <div class="container mx-auto mt-15">
+                <div class="bg-white rounded-xl shadow-sm border border-black overflow-hidden">
+                    <div class="relative h-48 sm:h-56 lg:h-48">
+                        <img
+                            src="/images/WebP/background_collage_for_registration_login17.webp"
+                            alt="Jobby Premium"
+                            class="w-full h-full object-cover"
+                        />
+                        <div
+                            class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"
+                        ></div>
+                        <div
+                            class="absolute inset-0 flex items-center justify-center px-4 sm:justify-start sm:pl-6 lg:pl-8"
+                        >
+                            <div class="text-center sm:text-left">
+                                <h3
+                                    class="text-white font-semibold text-xl sm:text-2xl lg:text-xl mb-2"
+                                >
+                                    Jobby premium
+                                </h3>
+                                <p
+                                    class="text-white text-sm sm:text-base lg:text-sm mb-4 max-w-xs sm:max-w-sm"
+                                >
+                                    Descubre ventajas exclusivas y optimiza la búsqueda de tareas
+                                </p>
+                                <button
+                                    class="bg-[#EBC636] text-gray-900 px-6 py-2 sm:px-8 sm:py-3 lg:px-6 lg:py-2 rounded-lg font-medium hover:bg-yellow-500 transition-colors text-sm sm:text-base lg:text-sm"
+                                >
+                                    Próximamente...
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
     </div>
-  </footer>
+
+    <app-help-button />
+
+    <footer class="w-full border-t border-black mt-auto">
+        <div class="mx-auto pt-3 pb-3 flex items-center justify-between px-4 container">
+            <p class="text-xs md:text-xs text-black">© ADSO - 2025</p>
+            <img
+                src="/images/LOGO/png_sin_fondo/fondo_blanco.png"
+                alt="Jobby Logo"
+                class="h-5 sm:h-6"
+            />
+        </div>
+    </footer>
 </div>

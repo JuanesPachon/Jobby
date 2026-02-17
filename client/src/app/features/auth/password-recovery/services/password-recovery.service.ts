@@ -7,33 +7,32 @@ import { verifyCodeRequest } from '../components/verify-code/interfaces/verifyCo
 import { NewPasswordRequest } from '../components/reset-password/interfaces/newPassword.interface';
 
 @Injectable({
-  providedIn: 'root'
+    providedIn: 'root',
 })
 export class passwordRecoveryService {
-  
-  private http = inject(HttpClient);
+    private http = inject(HttpClient);
 
-  step = signal<number>(1);
+    step = signal<number>(1);
 
-  onNextStep(step: number): void {
-    this.step.set(step)
-  }
+    onNextStep(step: number): void {
+        this.step.set(step);
+    }
 
-  attemptRequestCode(codeRequest: CodeRequest): Observable<any> {
-    return this.http.post<any>(`${environment.apiUrl}/auth/recoveryotp`, codeRequest, {
-      withCredentials: true
-    })
-  }
+    attemptRequestCode(codeRequest: CodeRequest): Observable<any> {
+        return this.http.post<any>(`${environment.apiUrl}/auth/recoveryotp`, codeRequest, {
+            withCredentials: true,
+        });
+    }
 
-  attemptVerifyCode(resetCode: verifyCodeRequest): Observable<any> {
-    return this.http.post<any>(`${environment.apiUrl}/auth/verify-code`, resetCode, {
-      withCredentials: true
-    })
-  }
+    attemptVerifyCode(resetCode: verifyCodeRequest): Observable<any> {
+        return this.http.post<any>(`${environment.apiUrl}/auth/verify-code`, resetCode, {
+            withCredentials: true,
+        });
+    }
 
-  attemptResetPassword(newPassword: NewPasswordRequest): Observable<any> {
-    return this.http.post<any>(`${environment.apiUrl}/auth/reset-password`, newPassword, {
-      withCredentials: true
-    })
-  }
+    attemptResetPassword(newPassword: NewPasswordRequest): Observable<any> {
+        return this.http.post<any>(`${environment.apiUrl}/auth/reset-password`, newPassword, {
+            withCredentials: true,
+        });
+    }
 }

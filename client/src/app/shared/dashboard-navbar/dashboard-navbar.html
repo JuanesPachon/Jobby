@@ -1,45 +1,81 @@
 <header class="w-full p-3 font-poppins relative bg-white border-b-2">
-  <nav class="container mx-auto flex items-center justify-between px-2">
-    <a [routerLink]="'/dashboard'">
-      <img src="/images/LOGO/png_sin_fondo/fondo_blanco.png" alt="Jobby Logo" class="h-10 object-contain">
-    </a>
+    <nav class="container mx-auto flex items-center justify-between px-2">
+        <a [routerLink]="'/dashboard'">
+            <img
+                src="/images/LOGO/png_sin_fondo/fondo_blanco.png"
+                alt="Jobby Logo"
+                class="h-10 object-contain"
+            />
+        </a>
 
-    <div class="relative">
-      <div class="flex items-center gap-2 cursor-pointer" (click)="toggleDropdown()">
-        <span class="font-semibold text-gray-800">{{ getUserFullName() }}</span>
-        <img [src]="getPhotoUrl(userData.profile?.photo_url)" [alt]="getUserFullName() + ' avatar'" class="h-8 w-8 rounded-full object-cover" (error)="onImageError($event)">
-        <svg class="w-4 h-4 text-black transition-transform" [class.rotate-180]="isDropdownOpen()" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-        </svg>
-      </div>
+        <div class="relative">
+            <div class="flex items-center gap-2 cursor-pointer" (click)="toggleDropdown()">
+                <span class="font-semibold text-gray-800">{{ getUserFullName() }}</span>
+                <img
+                    [src]="getPhotoUrl(userData.profile?.photo_url)"
+                    [alt]="getUserFullName() + ' avatar'"
+                    class="h-8 w-8 rounded-full object-cover"
+                    (error)="onImageError($event)"
+                />
+                <svg
+                    class="w-4 h-4 text-black transition-transform"
+                    [class.rotate-180]="isDropdownOpen()"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                >
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M19 9l-7 7-7-7"
+                    ></path>
+                </svg>
+            </div>
 
-      @if (isDropdownOpen()) {
-        <div
-        class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg z-50 flex flex-col p-2 divide-y">
-        <a [routerLink]="'/profile'" class="cursor-pointer flex items-center w-full px-4 py-3 text-left font-semibold hover:bg-gray-100">
-          <img src="/icons/my_profile.svg" alt="Mi perfil" class="h-5 w-5 mr-3" />
-          Mi perfil
-        </a>
-        <a [routerLink]="'/my-tasks'" class="cursor-pointer flex items-center w-full px-4 py-3 text-left font-semibold hover:bg-gray-100">
-          <img src="/icons/my_tasks.svg" alt="Mis tareas" class="h-5 w-5 mr-3" />
-          Mis tareas
-        </a>
-        <a class="cursor-pointer flex items-center w-full px-4 py-3 text-left font-semibold hover:bg-gray-100">
-          <img src="/icons/chats.svg" alt="Chats" class="h-5 w-5 mr-3" />
-          Chats
-        </a>
-        <a class="cursor-pointer flex items-center w-full px-4 py-3 text-left font-semibold hover:bg-gray-100">
-          <img src="/icons/notifications.svg" alt="Notificaciones" class="h-5 w-5 mr-3" />
-          Notificaciones
-        </a>
-        <a (click)="attemptSignOut()" class="cursor-pointer flex items-center w-full px-4 py-3 text-left font-semibold hover:bg-gray-100">
-          <img src="/icons/log_out.svg" alt="Cerrar sesión" class="h-5 w-5 mr-3" />
-          Cerrar sesión
-        </a>
-      </div>}
-    </div>
-  </nav>
+            @if (isDropdownOpen()) {
+            <div
+                class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg z-50 flex flex-col p-2 divide-y"
+            >
+                <a
+                    [routerLink]="'/profile'"
+                    class="cursor-pointer flex items-center w-full px-4 py-3 text-left font-semibold hover:bg-gray-100"
+                >
+                    <img src="/icons/my_profile.svg" alt="Mi perfil" class="h-5 w-5 mr-3" />
+                    Mi perfil
+                </a>
+                <a
+                    [routerLink]="'/my-tasks'"
+                    class="cursor-pointer flex items-center w-full px-4 py-3 text-left font-semibold hover:bg-gray-100"
+                >
+                    <img src="/icons/my_tasks.svg" alt="Mis tareas" class="h-5 w-5 mr-3" />
+                    Mis tareas
+                </a>
+                <a
+                    class="cursor-pointer flex items-center w-full px-4 py-3 text-left font-semibold hover:bg-gray-100"
+                >
+                    <img src="/icons/chats.svg" alt="Chats" class="h-5 w-5 mr-3" />
+                    Chats
+                </a>
+                <a
+                    class="cursor-pointer flex items-center w-full px-4 py-3 text-left font-semibold hover:bg-gray-100"
+                >
+                    <img src="/icons/notifications.svg" alt="Notificaciones" class="h-5 w-5 mr-3" />
+                    Notificaciones
+                </a>
+                <a
+                    (click)="attemptSignOut()"
+                    class="cursor-pointer flex items-center w-full px-4 py-3 text-left font-semibold hover:bg-gray-100"
+                >
+                    <img src="/icons/log_out.svg" alt="Cerrar sesión" class="h-5 w-5 mr-3" />
+                    Cerrar sesión
+                </a>
+            </div>
+            }
+        </div>
+    </nav>
 
-  @if (isDropdownOpen()) { <div class="fixed inset-0 bg-black/50 z-40" (click)="toggleDropdown()"></div>
-  }
+    @if (isDropdownOpen()) {
+    <div class="fixed inset-0 bg-black/50 z-40" (click)="toggleDropdown()"></div>
+    }
 </header>

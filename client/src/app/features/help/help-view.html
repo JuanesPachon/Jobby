@@ -1,80 +1,108 @@
 <div class="min-h-[100dvh] grid grid-rows-[auto_1fr_auto]">
-  @if (isAuthenticated()) {
+    @if (isAuthenticated()) {
     <app-dashboard-navbar />
-  } @else {
+    } @else {
     <app-home-navbar />
-  }
+    }
 
-  <div class="mx-auto container p-4 sm:p-6 md:p-8 lg:p-12 font-poppins flex flex-col">
-    <div class="mb-4 sm:mb-6">
-      <div class="flex items-center mb-4 lg:gap-x-4">
-        <button (click)="goBack()" class="mr-4">
-          <img src="/icons/return-pg_icon.svg" alt="Atrás" class="w-6 h-6 sm:w-7 sm:h-7 cursor-pointer hover:opacity-70 transition-opacity" />
-        </button>
-        <h1 class="text-2xl sm:text-3xl font-bold text-black">¿Necesitas ayuda?</h1>
-      </div>
-    </div>
-
-    <main class="max-w-5xl mx-auto w-full flex-1 flex flex-col justify-center gap-4 sm:gap-5 md:gap-6">
-      <router-outlet />
-      
-      @if (!hasActiveChild()) {
-        <div class="flex flex-col justify-center gap-4 sm:gap-5 md:gap-6">
-          <a 
-            [routerLink]="['terms']"
-            class="block relative overflow-hidden rounded-2xl shadow-lg h-35 sm:h-42 cursor-pointer transition-all duration-300 ease-in-out hover:scale-[1.02] hover:shadow-2xl group"
-          >
-            <div class="absolute inset-0 bg-gradient-to-r from-black/60 to-black/40 z-10"></div>
-            <img 
-              src="https://images.unsplash.com/photo-1450101499163-c8848c66ca85?w=800&h=600&fit=crop" 
-              alt="Términos y condiciones"
-              class="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-            />
-            <div class="absolute inset-0 flex items-center justify-center z-20">
-              <h2 class="text-white text-lg sm:text-xl md:text-2xl font-bold text-center px-4">Términos y condiciones</h2>
+    <div class="mx-auto container p-4 sm:p-6 md:p-8 lg:p-12 font-poppins flex flex-col">
+        <div class="mb-4 sm:mb-6">
+            <div class="flex items-center mb-4 lg:gap-x-4">
+                <button (click)="goBack()" class="mr-4">
+                    <img
+                        src="/icons/return-pg_icon.svg"
+                        alt="Atrás"
+                        class="w-6 h-6 sm:w-7 sm:h-7 cursor-pointer hover:opacity-70 transition-opacity"
+                    />
+                </button>
+                <h1 class="text-2xl sm:text-3xl font-bold text-black">¿Necesitas ayuda?</h1>
             </div>
-          </a>
-
-          <a 
-            [routerLink]="['faq']"
-            class="block relative overflow-hidden rounded-2xl shadow-lg h-35 sm:h-42 cursor-pointer transition-all duration-300 ease-in-out hover:scale-[1.02] hover:shadow-2xl group"
-          >
-            <div class="absolute inset-0 bg-gradient-to-r from-black/60 to-black/40 z-10"></div>
-            <img 
-              src="https://images.unsplash.com/photo-1521737711867-e3b97375f902?w=800&h=600&fit=crop" 
-              alt="Preguntas frecuentes"
-              class="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-            />
-            <div class="absolute inset-0 flex items-center justify-center z-20">
-              <h2 class="text-white text-lg sm:text-xl md:text-2xl font-bold text-center px-4">Preguntas frecuentes</h2>
-            </div>
-          </a>
-
-          <a 
-            href="https://jobby-manual.netlify.app/"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="block relative overflow-hidden rounded-2xl shadow-lg h-35 sm:h-42 cursor-pointer transition-all duration-300 ease-in-out hover:scale-[1.02] hover:shadow-2xl group"
-          >
-            <div class="absolute inset-0 bg-gradient-to-r from-black/60 to-black/40 z-10"></div>
-            <img 
-              src="https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=800&h=600&fit=crop" 
-              alt="Manual de usuario"
-              class="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-            />
-            <div class="absolute inset-0 flex items-center justify-center z-20">
-              <h2 class="text-white text-lg sm:text-xl md:text-2xl font-bold text-center px-4">Manual de usuario</h2>
-            </div>
-          </a>
         </div>
-      }
-    </main>
-  </div>
 
-  <footer class="w-full border-t border-black">
-    <div class="mx-auto pt-3 pb-3 flex items-center justify-between px-4 container">
-      <p class="text-xs md:text-xs text-black">Copyright © ADSO- 2025</p>
-      <img src="/images/LOGO/png_sin_fondo/fondo_blanco.png" alt="Jobby Logo" class="h-5 sm:h-6"/>
+        <main
+            class="max-w-5xl mx-auto w-full flex-1 flex flex-col justify-center gap-4 sm:gap-5 md:gap-6"
+        >
+            <router-outlet />
+
+            @if (!hasActiveChild()) {
+            <div class="flex flex-col justify-center gap-4 sm:gap-5 md:gap-6">
+                <a
+                    [routerLink]="['terms']"
+                    class="block relative overflow-hidden rounded-2xl shadow-lg h-35 sm:h-42 cursor-pointer transition-all duration-300 ease-in-out hover:scale-[1.02] hover:shadow-2xl group"
+                >
+                    <div
+                        class="absolute inset-0 bg-gradient-to-r from-black/60 to-black/40 z-10"
+                    ></div>
+                    <img
+                        src="https://images.unsplash.com/photo-1450101499163-c8848c66ca85?w=800&h=600&fit=crop"
+                        alt="Términos y condiciones"
+                        class="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                    />
+                    <div class="absolute inset-0 flex items-center justify-center z-20">
+                        <h2
+                            class="text-white text-lg sm:text-xl md:text-2xl font-bold text-center px-4"
+                        >
+                            Términos y condiciones
+                        </h2>
+                    </div>
+                </a>
+
+                <a
+                    [routerLink]="['faq']"
+                    class="block relative overflow-hidden rounded-2xl shadow-lg h-35 sm:h-42 cursor-pointer transition-all duration-300 ease-in-out hover:scale-[1.02] hover:shadow-2xl group"
+                >
+                    <div
+                        class="absolute inset-0 bg-gradient-to-r from-black/60 to-black/40 z-10"
+                    ></div>
+                    <img
+                        src="https://images.unsplash.com/photo-1521737711867-e3b97375f902?w=800&h=600&fit=crop"
+                        alt="Preguntas frecuentes"
+                        class="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                    />
+                    <div class="absolute inset-0 flex items-center justify-center z-20">
+                        <h2
+                            class="text-white text-lg sm:text-xl md:text-2xl font-bold text-center px-4"
+                        >
+                            Preguntas frecuentes
+                        </h2>
+                    </div>
+                </a>
+
+                <a
+                    href="https://jobby-manual.netlify.app/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="block relative overflow-hidden rounded-2xl shadow-lg h-35 sm:h-42 cursor-pointer transition-all duration-300 ease-in-out hover:scale-[1.02] hover:shadow-2xl group"
+                >
+                    <div
+                        class="absolute inset-0 bg-gradient-to-r from-black/60 to-black/40 z-10"
+                    ></div>
+                    <img
+                        src="https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=800&h=600&fit=crop"
+                        alt="Manual de usuario"
+                        class="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                    />
+                    <div class="absolute inset-0 flex items-center justify-center z-20">
+                        <h2
+                            class="text-white text-lg sm:text-xl md:text-2xl font-bold text-center px-4"
+                        >
+                            Manual de usuario
+                        </h2>
+                    </div>
+                </a>
+            </div>
+            }
+        </main>
     </div>
-  </footer>
+
+    <footer class="w-full border-t border-black">
+        <div class="mx-auto pt-3 pb-3 flex items-center justify-between px-4 container">
+            <p class="text-xs md:text-xs text-black">Copyright © ADSO- 2025</p>
+            <img
+                src="/images/LOGO/png_sin_fondo/fondo_blanco.png"
+                alt="Jobby Logo"
+                class="h-5 sm:h-6"
+            />
+        </div>
+    </footer>
 </div>

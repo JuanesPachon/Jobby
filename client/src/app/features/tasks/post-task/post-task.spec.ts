@@ -3,21 +3,20 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { PostTask } from './post-task';
 
 describe('PublicTask', () => {
-  let component: PostTask;
-  let fixture: ComponentFixture<PostTask>;
+    let component: PostTask;
+    let fixture: ComponentFixture<PostTask>;
 
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      imports: [PostTask]
-    })
-    .compileComponents();
+    beforeEach(async () => {
+        await TestBed.configureTestingModule({
+            imports: [PostTask],
+        }).compileComponents();
 
-    fixture = TestBed.createComponent(PostTask);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
-  });
+        fixture = TestBed.createComponent(PostTask);
+        component = fixture.componentInstance;
+        fixture.detectChanges();
+    });
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
-  });
+    it('should create', () => {
+        expect(component).toBeTruthy();
+    });
 });

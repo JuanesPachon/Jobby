@@ -1,419 +1,638 @@
 @if (loading()) {
-  <app-user-profile-skeleton></app-user-profile-skeleton>
+<app-user-profile-skeleton></app-user-profile-skeleton>
 } @else if (error()) {
-  <app-user-profile-error 
-    [errorMessage]="error()" 
-    (retry)="loadUserProfile()">
-  </app-user-profile-error>
+<app-user-profile-error
+    [errorMessage]="error()"
+    (retry)="loadUserProfile()"
+></app-user-profile-error>
 } @else {
-<app-dashboard-navbar/>
+<app-dashboard-navbar />
 
 @if (userNotification()) {
-  <div class="fixed top-4 right-4 left-4 sm:left-auto sm:top-6 sm:right-6 bg-main-yelllow px-4 py-3 sm:px-6 sm:py-4 rounded-lg shadow-lg z-50 sm:max-w-sm transform translate-x-0 opacity-100 transition-all duration-300 ease-out">
+<div
+    class="fixed top-4 right-4 left-4 sm:left-auto sm:top-6 sm:right-6 bg-main-yelllow px-4 py-3 sm:px-6 sm:py-4 rounded-lg shadow-lg z-50 sm:max-w-sm transform translate-x-0 opacity-100 transition-all duration-300 ease-out"
+>
     <div class="flex items-center space-x-2 sm:space-x-3">
-      <svg class="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
-      </svg>
-      <span class="text-sm sm:text-base font-medium leading-tight">{{ notificationMessage() }}</span>
+        <svg class="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+            <path
+                fill-rule="evenodd"
+                d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                clip-rule="evenodd"
+            ></path>
+        </svg>
+        <span class="text-sm sm:text-base font-medium leading-tight">
+            {{ notificationMessage() }}
+        </span>
     </div>
-  </div>
+</div>
 }
 
 <div class="min-h-screen font-poppins">
-  <main class="flex justify-center py-6 container mx-auto">
-    <div class="max-w-6xl w-full mx-auto px-2 sm:px-4">
-      <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
-        <div class="lg:col-span-3">
-          <div class="grid grid-cols-1 gap-6 lg:pr-8">
+    <main class="flex justify-center py-6 container mx-auto">
+        <div class="max-w-6xl w-full mx-auto px-2 sm:px-4">
+            <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+                <div class="lg:col-span-3">
+                    <div class="grid grid-cols-1 gap-6 lg:pr-8">
+                        <div
+                            class="bg-white rounded-xl shadow-sm border border-black overflow-hidden"
+                        >
+                            <div
+                                class="h-32 sm:h-40 relative"
+                                style="
+                                    background-image: url('/images/WebP/banner_profile_picture_background1.webp');
+                                    background-size: cover;
+                                    background-position: center;
+                                "
+                            >
+                                <a [routerLink]="'/dashboard'" class="absolute top-7 right-7 z-20">
+                                    <img
+                                        src="/icons/return-pg_icon.svg"
+                                        alt="Atrás"
+                                        class="w-7 h-7 md:w-7 md:h-7 filter invert brightness-0 saturate-0"
+                                    />
+                                </a>
+                                <div
+                                    class="absolute inset-0 bg-gradient-to-r from-black/60 via-black/40 to-black/30"
+                                ></div>
 
-            <div class="bg-white rounded-xl shadow-sm border border-black overflow-hidden">
-              <div class="h-32 sm:h-40 relative" 
-                  style="background-image: url('/images/WebP/banner_profile_picture_background1.webp'); background-size: cover; background-position: center;">
-                <a [routerLink]="'/dashboard'" class="absolute top-7 right-7 z-20">
-                    <img src="/icons/return-pg_icon.svg" alt="Atrás" class="w-7 h-7 md:w-7 md:h-7 filter invert brightness-0 saturate-0">
-                </a>
-                <div class="absolute inset-0 bg-gradient-to-r from-black/60 via-black/40 to-black/30"></div>
-                
-                <div class="absolute -bottom-12 left-6">
-                  <div class="relative">
-                    <img [src]="getPhotoUrl(userData.profile?.photo_url)" 
-                        [alt]="userData.first_name + ' ' + userData.last_name" class="w-24 h-24 sm:w-32 sm:h-32 rounded-full border-4 border-white shadow-lg object-cover" (error)="onImageError($event)">
-                    <button class="absolute bottom-1 right-1 md:bottom-2 md:right-2 bg-white rounded-full p-2 shadow-md hover:bg-gray-300 border border-black cursor-pointer" (click)="openPhotoModal()">
-                      <svg class="w-4 h-4 md:w-5 md:h-5 text-gray-600" fill="currentColor" viewBox="0 0 20 20">
-                        <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"></path>
-                      </svg>
-                    </button>
-                  </div>
-                </div>
-              </div>
+                                <div class="absolute -bottom-12 left-6">
+                                    <div class="relative">
+                                        <img
+                                            [src]="getPhotoUrl(userData.profile?.photo_url)"
+                                            [alt]="userData.first_name + ' ' + userData.last_name"
+                                            class="w-24 h-24 sm:w-32 sm:h-32 rounded-full border-4 border-white shadow-lg object-cover"
+                                            (error)="onImageError($event)"
+                                        />
+                                        <button
+                                            class="absolute bottom-1 right-1 md:bottom-2 md:right-2 bg-white rounded-full p-2 shadow-md hover:bg-gray-300 border border-black cursor-pointer"
+                                            (click)="openPhotoModal()"
+                                        >
+                                            <svg
+                                                class="w-4 h-4 md:w-5 md:h-5 text-gray-600"
+                                                fill="currentColor"
+                                                viewBox="0 0 20 20"
+                                            >
+                                                <path
+                                                    d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"
+                                                ></path>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
 
-              <div class="pt-16 pb-4 px-6">
-                <div class="flex items-start justify-between mb-4">
-                  <div class="font-inter">
-                    <h2 class="text-2xl font-bold text-gray-900 font-poppins mb-2">{{userData.first_name}} {{userData.last_name}}</h2>
-                    @if (userData.profile?.occupation) {
-                      <p class="text-black mb-2">{{userData.profile?.occupation}}</p>
-                    } @else {
-                      <p class="text-gray-400 italic mb-2">Agrega tu ocupación actual</p>
-                    }
-                    @if (userData.profile?.current_location) {
-                      <p class="text-black text-sm">{{userData.profile?.current_location}}</p>
-                    } @else {
-                      <p class="text-gray-400 italic text-sm">Agrega tu ubicación actual</p>
-                    }
-                    <div class="flex items-center space-x-1 mt-3">
-                      <span class="text-yellow-400 text-sm">★</span>
-                      <span class="text-sm text-gray-600">5.0 (23 calificaciones)</span>
+                            <div class="pt-16 pb-4 px-6">
+                                <div class="flex items-start justify-between mb-4">
+                                    <div class="font-inter">
+                                        <h2
+                                            class="text-2xl font-bold text-gray-900 font-poppins mb-2"
+                                        >
+                                            {{userData.first_name}} {{userData.last_name}}
+                                        </h2>
+                                        @if (userData.profile?.occupation) {
+                                        <p class="text-black mb-2">
+                                            {{userData.profile?.occupation}}
+                                        </p>
+                                        } @else {
+                                        <p class="text-gray-400 italic mb-2">
+                                            Agrega tu ocupación actual
+                                        </p>
+                                        } @if (userData.profile?.current_location) {
+                                        <p class="text-black text-sm">
+                                            {{userData.profile?.current_location}}
+                                        </p>
+                                        } @else {
+                                        <p class="text-gray-400 italic text-sm">
+                                            Agrega tu ubicación actual
+                                        </p>
+                                        }
+                                        <div class="flex items-center space-x-1 mt-3">
+                                            <span class="text-yellow-400 text-sm">★</span>
+                                            <span class="text-sm text-gray-600">
+                                                5.0 (23 calificaciones)
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <button
+                                        class="text-gray-600 hover:text-gray-800 cursor-pointer"
+                                        (click)="openBasicInfoModal()"
+                                    >
+                                        <svg
+                                            class="w-5 h-5"
+                                            fill="currentColor"
+                                            viewBox="0 0 20 20"
+                                        >
+                                            <path
+                                                d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"
+                                            ></path>
+                                        </svg>
+                                    </button>
+                                </div>
+
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6">
+                                    <button
+                                        [routerLink]="'/published-tasks'"
+                                        [queryParams]="{ from: 'profile' }"
+                                        class="bg-gray-200 border-[1px] border-black text-black py-3 px-4 rounded-lg font-medium hover:bg-gray-300 transition-colors flex items-center justify-center space-x-2 cursor-pointer"
+                                    >
+                                        <span class="text-sm sm:text-base">TAREAS PUBLICADAS</span>
+                                    </button>
+                                    <button
+                                        class="bg-gray-200 border-[1px] border-black text-black py-3 px-4 rounded-lg font-medium hover:bg-gray-300 transition-colors flex items-center justify-center space-x-2 cursor-pointer"
+                                        [routerLink]="'/applied-tasks'"
+                                        [queryParams]="{ from: 'profile' }"
+                                    >
+                                        <span class="text-sm sm:text-base">TAREAS REALIZADAS</span>
+                                    </button>
+                                </div>
+
+                                <div
+                                    class="flex flex-col sm:flex-row justify-center items-center gap-4 sm:gap-8 mb-6"
+                                >
+                                    <div class="flex items-center space-x-3 text-black">
+                                        <svg
+                                            class="w-5 h-5"
+                                            fill="currentColor"
+                                            viewBox="0 0 20 20"
+                                        >
+                                            <path
+                                                d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"
+                                            ></path>
+                                            <path
+                                                d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"
+                                            ></path>
+                                        </svg>
+                                        <span class="text-sm">
+                                            {{ userData.profile?.mock_email || userData.email }}
+                                        </span>
+                                    </div>
+                                    <div class="flex items-center space-x-3 text-black">
+                                        <svg
+                                            class="w-5 h-5"
+                                            fill="currentColor"
+                                            viewBox="0 0 20 20"
+                                        >
+                                            <path
+                                                d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"
+                                            ></path>
+                                        </svg>
+                                        <span class="text-sm">{{userData.phone}}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-white rounded-xl shadow-sm border border-black p-6">
+                            <div class="flex items-center justify-between mb-3">
+                                <h3 class="text-lg font-semibold text-gray-900">Descripción</h3>
+                                <button
+                                    class="text-gray-600 hover:text-gray-800"
+                                    (click)="toggleEditDescription()"
+                                >
+                                    @if (isEditingDescription()) {
+                                    <svg
+                                        class="w-5 h-5 cursor-pointer"
+                                        fill="currentColor"
+                                        viewBox="0 0 20 20"
+                                    >
+                                        <path
+                                            fill-rule="evenodd"
+                                            d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                                            clip-rule="evenodd"
+                                        ></path>
+                                    </svg>
+                                    } @else {
+                                    <svg
+                                        class="w-5 h-5 cursor-pointer"
+                                        fill="currentColor"
+                                        viewBox="0 0 20 20"
+                                    >
+                                        <path
+                                            d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"
+                                        ></path>
+                                    </svg>
+                                    }
+                                </button>
+                            </div>
+                            @if (isEditingDescription()) {
+                            <textarea
+                                [formControl]="descriptionControl"
+                                class="w-full border rounded-lg p-3 text-black focus:outline-none focus:ring-2 resize-none font-inter"
+                                [ngClass]="descriptionControl.invalid && descriptionControl.touched ? 'border-red-600 focus:ring-red-600' : 'border-gray-400 focus:ring-black'"
+                                rows="6"
+                                [disabled]="isLoadingDescription()"
+                            ></textarea>
+
+                            @if (descriptionControl.hasError('maxlength') &&
+                            descriptionControl.touched) {
+                            <small class="text-red-600 block mt-1">Máximo 2000 caracteres</small>
+                            } @if (hasErrorDescription()) {
+                            <div class="text-center mt-2">
+                                <span class="text-red-600 text-sm">
+                                    {{ errorMessageDescription() }}
+                                </span>
+                            </div>
+                            }
+
+                            <div class="flex justify-end space-x-3 pt-4">
+                                <button
+                                    type="button"
+                                    (click)="toggleEditDescription()"
+                                    [disabled]="isLoadingDescription()"
+                                    class="hover:bg-gray-300 px-9 py-2 rounded-full font-medium text-sm border-[1px] border-black cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                                >
+                                    Cancelar
+                                </button>
+                                <button
+                                    type="button"
+                                    (click)="saveDescription()"
+                                    [disabled]="isLoadingDescription()"
+                                    class="bg-main-blue hover:bg-blue-600 disabled:bg-gray-400 disabled:border-gray-400 disabled:text-gray-600 disabled:cursor-not-allowed disabled:opacity-60 text-white px-9 py-2 rounded-full font-medium text-sm border-[1px] border-black cursor-pointer transition"
+                                >
+                                    {{ isLoadingDescription() ? 'Guardando...' : 'Guardar' }}
+                                </button>
+                            </div>
+                            } @else { @if (userData.profile?.description) {
+                            <p class="text-black leading-relaxed font-inter">
+                                {{userData.profile?.description}}
+                            </p>
+                            } @else {
+                            <p class="text-gray-400 italic leading-relaxed font-inter">
+                                Agrega una descripción sobre ti
+                            </p>
+                            } }
+                        </div>
+
+                        <div class="bg-white rounded-xl shadow-sm border border-black p-6">
+                            <div class="flex items-center justify-between mb-3">
+                                <h3 class="text-lg font-semibold text-gray-900">Experiencia</h3>
+                                <button
+                                    class="text-gray-600 hover:text-gray-800 cursor-pointer"
+                                    (click)="openExperienceModal()"
+                                >
+                                    <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
+                                        <path
+                                            d="M10 5a1 1 0 011 1v3h3a1 1 0 010 2h-3v3a1 1 0 01-2 0v-3H6a1 1 0 010-2h3V6a1 1 0 011-1z"
+                                        ></path>
+                                    </svg>
+                                </button>
+                            </div>
+                            @if (userData.experiences && userData.experiences.length > 0) {
+                            <div class="space-y-4">
+                                @for (experience of userData.experiences; track experience.id) {
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-2 h-2 bg-blue-600 rounded-full"></div>
+                                    <div class="flex-1">
+                                        <h4 class="font-medium text-gray-900">
+                                            {{ experience.title + " - " + experience.company }}
+                                        </h4>
+                                        <p class="text-sm text-gray-600 font-inter">
+                                            {{ formatDate(experience.start_date) }} - {{
+                                            experience.end_date ? formatDate(experience.end_date) :
+                                            'Actualmente' }}
+                                        </p>
+                                    </div>
+                                    <div class="flex items-center space-x-2">
+                                        <button
+                                            class="text-gray-600 hover:text-gray-800 cursor-pointer"
+                                            (click)="openExperienceModal(experience)"
+                                        >
+                                            <svg
+                                                class="w-5 h-5"
+                                                fill="currentColor"
+                                                viewBox="0 0 20 20"
+                                            >
+                                                <path
+                                                    d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"
+                                                ></path>
+                                            </svg>
+                                        </button>
+                                        <button
+                                            class="text-gray-600 hover:text-black cursor-pointer"
+                                            (click)="openDeleteModal('experience', experience.title, experience.id)"
+                                        >
+                                            <svg
+                                                class="w-5 h-5"
+                                                fill="currentColor"
+                                                viewBox="0 0 20 20"
+                                            >
+                                                <path
+                                                    fill-rule="evenodd"
+                                                    d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
+                                                    clip-rule="evenodd"
+                                                ></path>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
+                                }
+                            </div>
+                            } @else {
+                            <p class="text-gray-400 italic leading-relaxed font-inter">
+                                Agrega tu experiencia laboral
+                            </p>
+                            }
+                        </div>
+
+                        <div class="bg-white rounded-xl shadow-sm border border-black p-6">
+                            <div class="flex items-center justify-between mb-3">
+                                <h3 class="text-lg font-semibold text-gray-900">Habilidades</h3>
+                                <button
+                                    class="text-gray-600 hover:text-gray-800 cursor-pointer"
+                                    (click)="openSkillsModal()"
+                                >
+                                    <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
+                                        <path
+                                            d="M10 5a1 1 0 011 1v3h3a1 1 0 010 2h-3v3a1 1 0 01-2 0v-3H6a1 1 0 010-2h3V6a1 1 0 011-1z"
+                                        ></path>
+                                    </svg>
+                                </button>
+                            </div>
+                            @if (userData.skills && userData.skills.length > 0) {
+                            <div class="flex flex-wrap gap-2">
+                                @for (skill of userData.skills; track skill.id) {
+                                <span
+                                    class="bg-blue-600 text-white px-3 py-1 rounded-lg text-sm font-medium flex items-center"
+                                >
+                                    {{ skill.skill_name }}
+                                    <button
+                                        class="ml-2 text-white hover:text-black focus:outline-none cursor-pointer"
+                                        (click)="openDeleteModal('skill', skill.skill_name, skill.id)"
+                                    >
+                                        <svg
+                                            class="w-5 h-5"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            viewBox="0 0 20 20"
+                                        >
+                                            <path
+                                                stroke-linecap="round"
+                                                stroke-linejoin="round"
+                                                stroke-width="2"
+                                                d="M6 6l8 8M6 14L14 6"
+                                            />
+                                        </svg>
+                                    </button>
+                                </span>
+                                }
+                            </div>
+                            } @else {
+                            <p class="text-gray-400 italic leading-relaxed font-inter">
+                                Agrega tus habilidades y competencias
+                            </p>
+                            }
+                        </div>
+
+                        <div class="bg-white rounded-xl shadow-sm border border-black p-6">
+                            <div class="flex items-center justify-between mb-3">
+                                <h3 class="text-lg font-semibold text-gray-900">
+                                    Documentos adjuntos
+                                </h3>
+                                <button
+                                    class="text-gray-600 hover:text-gray-800 cursor-pointer"
+                                    (click)="openDocumentsModal()"
+                                >
+                                    <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
+                                        <path
+                                            d="M10 5a1 1 0 011 1v3h3a1 1 0 010 2h-3v3a1 1 0 01-2 0v-3H6a1 1 0 010-2h3V6a1 1 0 011-1z"
+                                        ></path>
+                                    </svg>
+                                </button>
+                            </div>
+                            @if (userData.documents && userData.documents.length > 0) {
+                            <div class="space-y-2">
+                                @for (document of userData.documents; track document.id) {
+                                <div class="flex items-center space-x-3 p-3 bg-gray-200 rounded-lg">
+                                    <svg
+                                        class="w-6 h-6 text-gray-600 flex-shrink-0"
+                                        fill="currentColor"
+                                        viewBox="0 0 20 20"
+                                    >
+                                        <path
+                                            fill-rule="evenodd"
+                                            d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z"
+                                            clip-rule="evenodd"
+                                        ></path>
+                                    </svg>
+                                    <span class="text-sm text-black flex-1 truncate">
+                                        {{ document.file_url.split('-').pop() }}
+                                    </span>
+                                    <button
+                                        class="text-gray-600 hover:text-black flex-shrink-0 cursor-pointer"
+                                        (click)="viewDocument(document.file_url)"
+                                        title="Ver documento"
+                                    >
+                                        <svg
+                                            class="w-5 h-5"
+                                            fill="currentColor"
+                                            viewBox="0 0 20 20"
+                                        >
+                                            <path d="M10 12a2 2 0 100-4 2 2 0 000 4z"></path>
+                                            <path
+                                                fill-rule="evenodd"
+                                                d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z"
+                                                clip-rule="evenodd"
+                                            ></path>
+                                        </svg>
+                                    </button>
+                                    <button
+                                        class="text-gray-600 hover:text-black flex-shrink-0 cursor-pointer"
+                                        (click)="openDeleteModal('document', document.file_url.split('-').pop() || 'documento', document.id)"
+                                    >
+                                        <svg
+                                            class="w-5 h-5"
+                                            fill="currentColor"
+                                            viewBox="0 0 20 20"
+                                        >
+                                            <path
+                                                fill-rule="evenodd"
+                                                d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
+                                                clip-rule="evenodd"
+                                            ></path>
+                                        </svg>
+                                    </button>
+                                </div>
+                                }
+                            </div>
+                            } @else {
+                            <p class="text-gray-400 italic leading-relaxed font-inter mb-4">
+                                Sube documentos como tu CV, certificados o portafolio para
+                                complementar tu perfil.
+                            </p>
+                            }
+                            <div class="flex justify-center mt-4">
+                                <button
+                                    class="border border-black text-black py-1.5 px-3 rounded-lg font-medium hover:bg-gray-50 transition-colors flex items-center space-x-2 text-sm cursor-pointer"
+                                    (click)="openDocumentsModal()"
+                                >
+                                    <svg
+                                        class="w-4 h-4 text-blue-600"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        viewBox="0 0 24 24"
+                                    >
+                                        <path
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            stroke-width="2"
+                                            d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"
+                                        ></path>
+                                    </svg>
+                                    <span>Subir documento</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div
+                            class="lg:hidden bg-white rounded-xl shadow-sm border border-black p-4"
+                        >
+                            <div class="flex items-center justify-between mb-3">
+                                <h3 class="text-lg font-semibold text-gray-900">
+                                    Idioma del perfil
+                                </h3>
+                                <button class="text-gray-600 hover:text-gray-800">
+                                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                        <path
+                                            d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"
+                                        ></path>
+                                    </svg>
+                                </button>
+                            </div>
+                            <p class="text-gray-600 text-sm">Español</p>
+                        </div>
+
+                        <div
+                            class="lg:hidden bg-white rounded-xl shadow-sm border border-black p-4"
+                        >
+                            <div class="flex items-center justify-between mb-3">
+                                <h3 class="text-lg font-semibold text-gray-900">Preferencias</h3>
+                                <button class="text-gray-600 hover:text-gray-800">
+                                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                        <path
+                                            d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"
+                                        ></path>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div
+                            class="lg:hidden bg-white rounded-xl shadow-sm border border-black overflow-hidden"
+                        >
+                            <div class="relative h-48">
+                                <img
+                                    src="/images/WebP/background_collage_for_registration_login17.webp"
+                                    alt="See who's hiring"
+                                    class="w-full h-full object-cover brightness-60"
+                                />
+                                <div
+                                    class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"
+                                ></div>
+                                <div class="absolute inset-0 flex items-center pl-4">
+                                    <div>
+                                        <h3 class="text-white font-semibold text-lg mb-2">
+                                            Jobby premium
+                                        </h3>
+                                        <p class="text-white text-sm mb-4">
+                                            Descubre ventajas exclusivas y optimiza la busqueda de
+                                            tareas
+                                        </p>
+                                        <button
+                                            class="bg-[#EBC636] text-gray-900 px-4 py-2 rounded-lg font-medium hover:bg-gray-100 transition-colors text-sm"
+                                        >
+                                            Proximamente...
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                  </div>
-                  <button class="text-gray-600 hover:text-gray-800 cursor-pointer" (click)="openBasicInfoModal()">
-                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                      <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"></path>
-                    </svg>
-                  </button>
                 </div>
 
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6">
-                  <button 
-                    [routerLink]="'/published-tasks'"
-                    [queryParams]="{ from: 'profile' }"
-                    class="bg-gray-200 border-[1px] border-black text-black py-3 px-4 rounded-lg font-medium hover:bg-gray-300 transition-colors flex items-center justify-center space-x-2 cursor-pointer">
-                    <span class="text-sm sm:text-base">TAREAS PUBLICADAS</span>
-                  </button>
-                  <button class="bg-gray-200 border-[1px] border-black text-black py-3 px-4 rounded-lg font-medium hover:bg-gray-300 transition-colors flex items-center justify-center space-x-2 cursor-pointer"
-                    [routerLink]="'/applied-tasks'"
-                    [queryParams]="{ from: 'profile' }"
-                    >
-                    <span class="text-sm sm:text-base">TAREAS REALIZADAS</span>
-                  </button>
-                </div>
+                <div class="hidden lg:block lg:col-span-1">
+                    <div class="grid grid-cols-1 gap-6">
+                        <div class="bg-white rounded-xl shadow-sm border border-black p-4">
+                            <div class="flex items-center justify-between mb-3">
+                                <h3 class="text-lg font-semibold text-gray-900">
+                                    Idioma del perfil
+                                </h3>
+                            </div>
+                            <p class="text-gray-600 text-sm">Español</p>
+                        </div>
 
-                <div class="flex flex-col sm:flex-row justify-center items-center gap-4 sm:gap-8 mb-6">
-                  <div class="flex items-center space-x-3 text-black">
-                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                      <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"></path>
-                      <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"></path>
-                    </svg>
-                    <span class="text-sm">{{ userData.profile?.mock_email || userData.email }}</span>
-                  </div>
-                  <div class="flex items-center space-x-3 text-black">
-                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                      <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"></path>
-                    </svg>
-                    <span class="text-sm">{{userData.phone}}</span>
-                  </div>
-                </div>
-              </div>
-            </div>
+                        <div class="bg-white rounded-xl shadow-sm border border-black p-4">
+                            <div class="flex items-center justify-between mb-3">
+                                <h3 class="text-lg font-semibold text-gray-900">Preferencias</h3>
+                            </div>
+                            <p class="text-gray-600 text-sm">Proximamente...</p>
+                        </div>
 
-            <div class="bg-white rounded-xl shadow-sm border border-black p-6">
-              <div class="flex items-center justify-between mb-3">
-                <h3 class="text-lg font-semibold text-gray-900">Descripción</h3>
-                <button class="text-gray-600 hover:text-gray-800" (click)="toggleEditDescription()">
-                  @if (isEditingDescription()) {
-                    <svg class="w-5 h-5 cursor-pointer" fill="currentColor" viewBox="0 0 20 20">
-                      <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
-                    </svg>
-                  } @else {
-                    <svg class="w-5 h-5 cursor-pointer" fill="currentColor" viewBox="0 0 20 20">
-                      <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"></path>
-                    </svg>
-                  }
-                </button>
-              </div>
-              @if (isEditingDescription()) {
-                <textarea 
-                  [formControl]="descriptionControl"
-                  class="w-full border rounded-lg p-3 text-black focus:outline-none focus:ring-2 resize-none font-inter"
-                  [ngClass]="descriptionControl.invalid && descriptionControl.touched ? 'border-red-600 focus:ring-red-600' : 'border-gray-400 focus:ring-black'"
-                  rows="6"
-                  [disabled]="isLoadingDescription()"
-                ></textarea>
-                
-                @if (descriptionControl.hasError('maxlength') && descriptionControl.touched) {
-                  <small class="text-red-600 block mt-1">Máximo 2000 caracteres</small>
-                }
-                
-                @if (hasErrorDescription()) {
-                  <div class="text-center mt-2">
-                    <span class="text-red-600 text-sm">{{ errorMessageDescription() }}</span>
-                  </div>
-                }
-                
-                <div class="flex justify-end space-x-3 pt-4">
-                  <button 
-                    type="button"
-                    (click)="toggleEditDescription()"
-                    [disabled]="isLoadingDescription()"
-                    class="hover:bg-gray-300 px-9 py-2 rounded-full font-medium text-sm border-[1px] border-black cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    Cancelar
-                  </button>
-                  <button 
-                    type="button"
-                    (click)="saveDescription()"
-                    [disabled]="isLoadingDescription()"
-                    class="bg-main-blue hover:bg-blue-600 disabled:bg-gray-400 disabled:border-gray-400 disabled:text-gray-600 disabled:cursor-not-allowed disabled:opacity-60 text-white px-9 py-2 rounded-full font-medium text-sm border-[1px] border-black cursor-pointer transition"
-                  >
-                    {{ isLoadingDescription() ? 'Guardando...' : 'Guardar' }}
-                  </button>
-                </div>
-              } @else {
-                @if (userData.profile?.description) {
-                  <p class="text-black leading-relaxed font-inter">
-                    {{userData.profile?.description}}
-                  </p>
-                } @else {
-                  <p class="text-gray-400 italic leading-relaxed font-inter">
-                    Agrega una descripción sobre ti
-                  </p>
-                }
-              }
-            </div>
-
-            <div class="bg-white rounded-xl shadow-sm border border-black p-6">
-              <div class="flex items-center justify-between mb-3">
-                <h3 class="text-lg font-semibold text-gray-900">Experiencia</h3>
-                <button class="text-gray-600 hover:text-gray-800 cursor-pointer" (click)="openExperienceModal()">
-                  <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
-                    <path d="M10 5a1 1 0 011 1v3h3a1 1 0 010 2h-3v3a1 1 0 01-2 0v-3H6a1 1 0 010-2h3V6a1 1 0 011-1z"></path>
-                  </svg>
-                </button>
-              </div>
-              @if (userData.experiences && userData.experiences.length > 0) {
-                <div class="space-y-4">
-                  @for (experience of userData.experiences; track experience.id) {
-                    <div class="flex items-center space-x-3">
-                      <div class="w-2 h-2 bg-blue-600 rounded-full"></div>
-                      <div class="flex-1">
-                        <h4 class="font-medium text-gray-900">{{ experience.title + " - " + experience.company }}</h4>
-                        <p class="text-sm text-gray-600 font-inter">{{ formatDate(experience.start_date) }} - {{ experience.end_date ? formatDate(experience.end_date) : 'Actualmente' }}</p>
-                      </div>
-                      <div class="flex items-center space-x-2">
-                        <button class="text-gray-600 hover:text-gray-800 cursor-pointer" (click)="openExperienceModal(experience)">
-                          <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                            <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"></path>
-                          </svg>
-                        </button>
-                        <button class="text-gray-600 hover:text-black cursor-pointer" (click)="openDeleteModal('experience', experience.title, experience.id)">
-                          <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"></path>
-                          </svg>
-                        </button>
-                      </div>
+                        <div
+                            class="bg-white rounded-xl shadow-sm border border-black overflow-hidden"
+                        >
+                            <div class="relative h-48">
+                                <img
+                                    src="/images/WebP/background_collage_for_registration_login17.webp"
+                                    alt="See who's hiring"
+                                    class="w-full h-full object-cover brightness-60"
+                                />
+                                <div
+                                    class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"
+                                ></div>
+                                <div class="absolute inset-0 flex items-center pl-4">
+                                    <div>
+                                        <h3 class="text-white font-semibold text-lg mb-2">
+                                            Jobby premium
+                                        </h3>
+                                        <p class="text-white text-sm mb-4">
+                                            Descubre ventajas exclusivas y optimiza la busqueda de
+                                            tareas
+                                        </p>
+                                        <button
+                                            class="bg-[#EBC636] text-gray-900 px-4 py-2 rounded-lg font-medium hover:bg-gray-100 transition-colors text-sm"
+                                        >
+                                            Proximamente...
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                  }
                 </div>
-              } @else {
-                <p class="text-gray-400 italic leading-relaxed font-inter">
-                  Agrega tu experiencia laboral
-                </p>
-              }
             </div>
-
-            <div class="bg-white rounded-xl shadow-sm border border-black p-6">
-              <div class="flex items-center justify-between mb-3">
-                <h3 class="text-lg font-semibold text-gray-900">Habilidades</h3>
-                <button class="text-gray-600 hover:text-gray-800 cursor-pointer" (click)="openSkillsModal()">
-                  <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
-                    <path d="M10 5a1 1 0 011 1v3h3a1 1 0 010 2h-3v3a1 1 0 01-2 0v-3H6a1 1 0 010-2h3V6a1 1 0 011-1z"></path>
-                  </svg>
-                </button>
-              </div>
-              @if (userData.skills && userData.skills.length > 0) {
-                <div class="flex flex-wrap gap-2">
-                  @for (skill of userData.skills; track skill.id) {
-                    <span class="bg-blue-600 text-white px-3 py-1 rounded-lg text-sm font-medium flex items-center">
-                      {{ skill.skill_name }}
-                      <button class="ml-2 text-white hover:text-black focus:outline-none cursor-pointer" (click)="openDeleteModal('skill', skill.skill_name, skill.id)">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 20 20">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 6l8 8M6 14L14 6"/>
-                        </svg>
-                      </button>
-                    </span>
-                  }
-                </div>
-              } @else {
-                <p class="text-gray-400 italic leading-relaxed font-inter">
-                  Agrega tus habilidades y competencias
-                </p>
-              }
-            </div>
-
-            <div class="bg-white rounded-xl shadow-sm border border-black p-6">
-              <div class="flex items-center justify-between mb-3">
-                <h3 class="text-lg font-semibold text-gray-900">Documentos adjuntos</h3>
-                <button class="text-gray-600 hover:text-gray-800 cursor-pointer" (click)="openDocumentsModal()">
-                  <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
-                    <path d="M10 5a1 1 0 011 1v3h3a1 1 0 010 2h-3v3a1 1 0 01-2 0v-3H6a1 1 0 010-2h3V6a1 1 0 011-1z"></path>
-                  </svg>
-                </button>
-              </div>
-              @if (userData.documents && userData.documents.length > 0) {
-                <div class="space-y-2">
-                  @for (document of userData.documents; track document.id) {
-                    <div class="flex items-center space-x-3 p-3 bg-gray-200 rounded-lg">
-                      <svg class="w-6 h-6 text-gray-600 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd"></path>
-                      </svg>
-                      <span class="text-sm text-black flex-1 truncate">{{ document.file_url.split('-').pop() }}</span>
-                      <button 
-                        class="text-gray-600 hover:text-black flex-shrink-0 cursor-pointer"
-                        (click)="viewDocument(document.file_url)"
-                        title="Ver documento"
-                      >
-                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                          <path d="M10 12a2 2 0 100-4 2 2 0 000 4z"></path>
-                          <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd"></path>
-                        </svg>
-                      </button>
-                      <button class="text-gray-600 hover:text-black flex-shrink-0 cursor-pointer" (click)="openDeleteModal('document', document.file_url.split('-').pop() || 'documento', document.id)">
-                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                          <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"></path>
-                        </svg>
-                      </button>
-                    </div>
-                  }
-                </div>
-              } @else {
-                <p class="text-gray-400 italic leading-relaxed font-inter mb-4">
-                  Sube documentos como tu CV, certificados o portafolio para complementar tu perfil.
-                </p>
-              }
-              <div class="flex justify-center mt-4">
-                <button class="border border-black text-black py-1.5 px-3 rounded-lg font-medium hover:bg-gray-50 transition-colors flex items-center space-x-2 text-sm cursor-pointer" (click)="openDocumentsModal()"> 
-                  <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"></path>
-                  </svg>
-                  <span>Subir documento</span>
-                </button>
-              </div>
-            </div>
-
-            <div class="lg:hidden bg-white rounded-xl shadow-sm border border-black p-4">
-              <div class="flex items-center justify-between mb-3">
-                <h3 class="text-lg font-semibold text-gray-900">Idioma del perfil</h3>
-                <button class="text-gray-600 hover:text-gray-800">
-                  <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                    <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"></path>
-                  </svg>
-                </button>
-              </div>
-              <p class="text-gray-600 text-sm">Español</p>
-            </div>
-
-            <div class="lg:hidden bg-white rounded-xl shadow-sm border border-black p-4">
-              <div class="flex items-center justify-between mb-3">
-                <h3 class="text-lg font-semibold text-gray-900">Preferencias</h3>
-                <button class="text-gray-600 hover:text-gray-800">
-                  <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                    <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"></path>
-                  </svg>
-                </button>
-              </div>
-            </div>
-
-            <div class="lg:hidden bg-white rounded-xl shadow-sm border border-black overflow-hidden">
-              <div class="relative h-48">
-                <img
-                  src="/images/WebP/background_collage_for_registration_login17.webp"
-                  alt="See who's hiring"
-                  class="w-full h-full object-cover brightness-60"
-                />
-                <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
-                <div class="absolute inset-0 flex items-center pl-4">
-                  <div>
-                    <h3 class="text-white font-semibold text-lg mb-2">
-                      Jobby premium
-                    </h3>
-                    <p class="text-white text-sm mb-4">
-                      Descubre ventajas exclusivas y optimiza la busqueda de tareas
-                    </p>
-                    <button
-                      class="bg-[#EBC636] text-gray-900 px-4 py-2 rounded-lg font-medium hover:bg-gray-100 transition-colors text-sm"
-                    >
-                      Proximamente...
-                    </button>
-                  </div>
-                </div> 
-              </div> 
-            </div>
-
-          </div>
         </div>
 
-        <div class="hidden lg:block lg:col-span-1">
-          <div class="grid grid-cols-1 gap-6">
-            
-            <div class="bg-white rounded-xl shadow-sm border border-black p-4">
-              <div class="flex items-center justify-between mb-3">
-                <h3 class="text-lg font-semibold text-gray-900">Idioma del perfil</h3>
-              </div>
-              <p class="text-gray-600 text-sm">Español</p>
-            </div>
+        <app-help-button />
+    </main>
 
-            <div class="bg-white rounded-xl shadow-sm border border-black p-4">
-              <div class="flex items-center justify-between mb-3">
-                <h3 class="text-lg font-semibold text-gray-900">Preferencias</h3>
-              </div>
-              <p class="text-gray-600 text-sm">Proximamente...</p>
-            </div>
-
-            <div class="bg-white rounded-xl shadow-sm border border-black overflow-hidden">
-              <div class="relative h-48">
-                <img
-                  src="/images/WebP/background_collage_for_registration_login17.webp"
-                  alt="See who's hiring"
-                  class="w-full h-full object-cover brightness-60"
-                />
-                <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
-                <div class="absolute inset-0 flex items-center pl-4">
-                  <div>
-                    <h3 class="text-white font-semibold text-lg mb-2">
-                      Jobby premium
-                    </h3>
-                    <p class="text-white text-sm mb-4">
-                      Descubre ventajas exclusivas y optimiza la busqueda de tareas
-                    </p>
-                    <button
-                      class="bg-[#EBC636] text-gray-900 px-4 py-2 rounded-lg font-medium hover:bg-gray-100 transition-colors text-sm"
-                    >
-                      Proximamente...
-                    </button>
-                  </div>
-                </div> 
-              </div> 
-            </div> 
-          </div> 
-        </div> 
-
-      </div> 
-    </div> 
-
-    <app-help-button />
-
-  </main>
-  
-  <footer class="w-full border-t border-black">
-    <div class="mx-auto pt-3 pb-3 flex items-center justify-between px-4 container">
-      <p class="text-xs md:text-xs text-black">© ADSO - 2025</p>
-      <img src="/images/LOGO/png_sin_fondo/fondo_blanco.png" alt="Jobby Logo" class="h-5 sm:h-6" />
-    </div>
-  </footer>
+    <footer class="w-full border-t border-black">
+        <div class="mx-auto pt-3 pb-3 flex items-center justify-between px-4 container">
+            <p class="text-xs md:text-xs text-black">© ADSO - 2025</p>
+            <img
+                src="/images/LOGO/png_sin_fondo/fondo_blanco.png"
+                alt="Jobby Logo"
+                class="h-5 sm:h-6"
+            />
+        </div>
+    </footer>
 </div>
 
-}
-
-@if (isExperienceModalOpen()) {
-  <app-edit-experiences [experienceData]="selectedExperience()" (close)="closeExperienceModal()"/>
+} @if (isExperienceModalOpen()) {
+<app-edit-experiences [experienceData]="selectedExperience()" (close)="closeExperienceModal()" />
 } @else if (isSkillsModalOpen()) {
-  <app-edit-skills (close)="closeSkillsModal()"/>
+<app-edit-skills (close)="closeSkillsModal()" />
 } @else if (isDocumentsModalOpen()) {
-  <app-edit-documents (close)="closeDocumentsModal()"/>
+<app-edit-documents (close)="closeDocumentsModal()" />
 } @else if (isPhotoModalOpen()) {
-  <app-edit-photo (close)="closePhotoModal()"/>
+<app-edit-photo (close)="closePhotoModal()" />
 } @else if (isBasicInfoModalOpen()) {
-  <app-edit-basic-info [userData]="userData" (close)="closeBasicInfoModal()"/>
+<app-edit-basic-info [userData]="userData" (close)="closeBasicInfoModal()" />
 } @else if (isDeleteModalOpen()) {
-  <app-delete-confirmation-modal #deleteModal [resourceType]="deleteResourceType()" [resourceName]="deleteResourceName()" (confirm)="confirmDelete()" (cancel)="closeDeleteModal()"/>
+<app-delete-confirmation-modal
+    #deleteModal
+    [resourceType]="deleteResourceType()"
+    [resourceName]="deleteResourceName()"
+    (confirm)="confirmDelete()"
+    (cancel)="closeDeleteModal()"
+/>
 }
